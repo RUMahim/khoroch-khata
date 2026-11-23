@@ -143,143 +143,208 @@
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-7 space-y-5">
 
     <!-- Top Header -->
-    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-      <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-brand-600 dark:bg-brand-500 text-white flex items-center justify-center shadow-sm shrink-0">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 no-print">
+      <!-- Top Row (Mobile: Full Width Bar | Desktop: Left Side) -->
+      <div class="flex items-center justify-between gap-3 w-full sm:w-auto">
+        <!-- App Brand & Title -->
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-600 dark:bg-brand-500 text-white flex items-center justify-center shadow-sm shrink-0">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
           <div>
-            <p class="text-xs font-medium tracking-wide text-slate-500 dark:text-slate-400">ব্যক্তিগত আয়-ব্যয় ও হিসাব</p>
-            <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight leading-tight">খরচের খাতা</h1>
+            <h1 class="font-display text-xl sm:text-2xl font-bold tracking-tight leading-none text-slate-900 dark:text-white">খরচের খাতা</h1>
+            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">দৈনিক আয়-ব্যয় ও পারিবারিক হিসাব</p>
           </div>
         </div>
 
-        <!-- Mobile Quick Action Icons -->
-        <div class="flex sm:hidden items-center gap-1.5 no-print">
-          <button type="button" id="authOpenBtnMob" class="px-2.5 py-1.5 rounded-xl bg-brand-600 text-white font-semibold text-xs shadow-sm" aria-label="লগইন" title="লগইন / সাইন-আপ">
-            লগইন
-          </button>
-          <button type="button" id="userBadgeMob" class="hidden items-center gap-1.5 px-2 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm" title="প্রোফাইল ও খাতা">
-            <div class="w-6 h-6 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-[10px] uppercase shrink-0 overflow-hidden">
-              <img id="userAvatarImgMob" src="" class="w-full h-full object-cover hidden" alt="Avatar">
-              <span id="userAvatarInitialsMob">U</span>
-            </div>
-            <span id="userEmailShortMob" class="text-xs font-semibold text-slate-800 dark:text-slate-100 max-w-[85px] truncate">প্রোফাইল</span>
+        <!-- Mobile Header Right Actions: Quick Theme & Profile Button (Sofascore Style) -->
+        <div class="flex sm:hidden items-center gap-2">
+          <button type="button" id="themeBtnMob" class="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition" aria-label="থিম পরিবর্তন" title="থিম পরিবর্তন">
+            <span class="theme-icon"></span>
           </button>
 
-          <button type="button" id="pinBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="পিন লক" title="পিন লক">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-          </button>
-          <button type="button" id="dataBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="ব্যাকআপ ও রিপোর্ট" title="ব্যাকআপ ও রিপোর্ট">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-          </button>
-          <button type="button" id="themeBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="থিম পরিবর্তন">
-            <span class="theme-icon"></span>
+          <!-- Mobile Profile Button Trigger -->
+          <button type="button" id="profileMenuBtnMob" class="p-1 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm active:scale-95 transition" aria-label="প্রোফাইল মেনু" title="প্রোফাইল মেনু">
+            <div class="relative w-9 h-9 rounded-xl bg-brand-50 dark:bg-brand-950/60 border border-brand-200/60 dark:border-brand-800 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs uppercase shrink-0 overflow-hidden">
+              <img id="navAvatarImgMob" src="" class="w-full h-full object-cover hidden" alt="Avatar">
+              <span id="navAvatarInitialsMob" class="hidden">U</span>
+              <svg id="navGuestIconMob" class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span id="navOnlineDotMob" class="hidden absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white dark:border-slate-900"></span>
+            </div>
           </button>
         </div>
       </div>
 
-      <!-- Month Switcher & Desktop Actions -->
-      <div class="flex items-center justify-between sm:justify-end gap-2">
-        <nav class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full p-1 shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start" aria-label="মাস পরিবর্তন">
-          <button type="button" id="prevMonth" class="no-print w-9 h-9 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="আগের মাস">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+      <!-- Month Switcher & Desktop Actions (Mobile: Row 2 | Desktop: Right Side) -->
+      <div class="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto">
+        <!-- Month Selector Pill -->
+        <nav class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-1 shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start" aria-label="মাস পরিবর্তন">
+          <button type="button" id="prevMonth" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="আগের মাস">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
           </button>
-          <span id="monthLabel" class="px-3 min-w-[130px] text-center font-semibold text-sm sm:text-base select-none" aria-live="polite"></span>
-          <button type="button" id="nextMonth" class="no-print w-9 h-9 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition disabled:opacity-30 disabled:cursor-not-allowed" aria-label="পরের মাস">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          <span id="monthLabel" class="px-3 min-w-[120px] text-center font-semibold text-xs sm:text-sm select-none text-slate-800 dark:text-slate-200" aria-live="polite"></span>
+          <button type="button" id="nextMonth" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed" aria-label="পরের মাস">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
           </button>
         </nav>
 
-        <!-- Desktop Controls -->
-        <div class="hidden sm:flex items-center gap-2 no-print">
-          <!-- Cloud Sync Status -->
-          <div id="cloudSyncBadge" class="hidden items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="cloudSyncText">সিঙ্কড</span>
-          </div>
-
-          <!-- Auth Button (When Logged Out) -->
-          <button type="button" id="authOpenBtnDesk" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
-            <span>লগইন / সাইন-আপ</span>
-          </button>
-
-          <!-- Logged In User Card (Clear Email, Name, Khata Switcher, Logout) -->
-          <div id="userProfileAreaDesk" class="hidden items-center gap-2">
-            <!-- Khata Switcher -->
-            <button type="button" id="khataSwitcherBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition" title="খাতা পরিবর্তন বা ফ্যামিলি কোড">
-              <span id="khataIconDesk">👤</span>
-              <span id="khataLabelDesk" class="max-w-[120px] truncate">ব্যক্তিগত খাতা</span>
-              <span class="text-[10px] text-slate-400">▾</span>
-            </button>
-
-            <!-- User Badge with Initials Fallback -->
-            <div class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div class="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0 overflow-hidden shadow-sm">
-                <img id="userAvatarImgDesk" src="" class="w-full h-full object-cover hidden" alt="Avatar">
-                <span id="userAvatarInitialsDesk">U</span>
-              </div>
-              <div class="text-left text-xs leading-tight min-w-0">
-                <p id="userNameDisplayDesk" class="font-bold text-slate-900 dark:text-white truncate max-w-[120px]">ব্যবহারকারী</p>
-                <p id="userEmailDisplayDesk" class="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[120px] font-mono"></p>
-              </div>
-              <button type="button" id="quickLogoutBtnDesk" class="ml-1 px-1.5 py-0.5 rounded text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition" title="লগআউট করুন">লগআউট</button>
-            </div>
-          </div>
-
-          <button type="button" id="printBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="সরাসরি PDF ডাউনলোড">
+        <!-- Desktop Quick Controls & Profile Menu Trigger -->
+        <div class="hidden sm:flex items-center gap-2">
+          <button type="button" id="printBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm transition" title="সরাসরি PDF ডাউনলোড">
             <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            <span>PDF ডাউনলোড</span>
+            <span>PDF</span>
           </button>
-          <button type="button" id="dataBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-            <svg class="w-4 h-4 text-brand-600 dark:text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            <span>ব্যাকআপ</span>
-          </button>
-          <button type="button" id="pinBtnDesk" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="পিন লক" title="পিন লক সেটিংস">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-          </button>
-          <button type="button" id="themeBtnDesk" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="থিম পরিবর্তন">
+          <button type="button" id="themeBtnDesk" class="p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm transition" aria-label="থিম পরিবর্তন" title="থিম পরিবর্তন">
             <span class="theme-icon"></span>
+          </button>
+
+          <!-- Desktop Profile Menu Trigger (Sofascore Style) -->
+          <button type="button" id="profileMenuBtnDesk" class="flex items-center gap-2 p-1 pl-1.5 pr-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 shadow-sm transition active:scale-95" aria-label="প্রোফাইল মেনু">
+            <div class="relative w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-950/60 border border-brand-200/60 dark:border-brand-800 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs uppercase shrink-0 overflow-hidden">
+              <img id="navAvatarImgDesk" src="" class="w-full h-full object-cover hidden" alt="Avatar">
+              <span id="navAvatarInitialsDesk" class="hidden">U</span>
+              <svg id="navGuestIconDesk" class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span id="navOnlineDotDesk" class="hidden absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white dark:border-slate-900"></span>
+            </div>
+            <div class="text-left text-xs leading-tight min-w-0 max-w-[100px]">
+              <p id="navUserNameDesk" class="font-bold text-slate-800 dark:text-slate-100 truncate">লগইন</p>
+              <p id="navKhataDesk" class="text-[10px] text-slate-400 truncate">অফলাইন</p>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- ================= PROMINENT USER PROFILE BAR (ACTIVE WHEN LOGGED IN) ================= -->
-    <section id="userProfileBar" class="hidden no-print p-3.5 sm:p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
-      <div class="flex items-center gap-3.5 min-w-0">
-        <!-- Avatar with Image or Initial Circle + Online Status Dot -->
-        <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-500 text-white flex items-center justify-center font-bold text-base uppercase shrink-0 shadow-sm overflow-hidden">
-          <img id="userAvatarImgBar" src="" class="w-full h-full object-cover hidden" alt="Profile">
-          <span id="userAvatarInitialsBar">U</span>
-          <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" title="অনলাইন"></span>
+    <!-- ================= SOFASCORE STYLE PROFILE DROPDOWN MENU ================= -->
+    <!-- Backdrop to easily click outside and close -->
+    <div id="profileDropdownBackdrop" class="hidden fixed inset-0 z-40 bg-slate-950/30 backdrop-blur-[2px]"></div>
+
+    <!-- Dropdown Popover Card (Styled exactly after Sofascore) -->
+    <div id="profileDropdown" class="hidden fixed sm:absolute right-3 sm:right-6 lg:right-8 top-16 sm:top-20 w-[calc(100vw-1.5rem)] sm:w-84 max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl z-50 space-y-4 transition">
+      
+      <!-- STATE 1: GUEST (NOT LOGGED IN) - MATCHES SOFASCORE SCREENSHOT EXACTLY -->
+      <div id="dropdownGuestState" class="space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            ৳
+          </div>
+          <div>
+            <h4 class="font-display font-bold text-base text-slate-900 dark:text-white leading-tight">খরচের খাতা প্রোফাইল</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">সব সুবিধা পেতে অ্যাকাউন্টে প্রবেশ করুন</p>
+          </div>
         </div>
-        <div class="min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <h2 id="userNameDisplayBar" class="font-display font-bold text-base text-slate-900 dark:text-white truncate">ব্যবহারকারী</h2>
-            <span id="userKhataBadgeBar" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+
+        <!-- Primary Sign In Button (Like Blue Button in Sofascore) -->
+        <button type="button" id="dropdownSignInBtn" class="w-full h-12 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 transition">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+          <span>লগইন / সাইন-আপ (SIGN IN)</span>
+        </button>
+
+        <!-- Feature Benefit List (Like Sofascore Screenshot Features) -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800 space-y-3.5 text-xs">
+          <div class="flex items-start gap-3 text-slate-700 dark:text-slate-300">
+            <span class="text-base shrink-0">⭐</span>
+            <div>
+              <p class="font-bold text-slate-900 dark:text-white">সব ডিভাইসে লাইভ সিঙ্ক</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">মোবাইল বা কম্পিউটার পরিবর্তন করলেও ডাটা নিরাপদ</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 text-slate-700 dark:text-slate-300">
+            <span class="text-base shrink-0">👨‍👩‍👧</span>
+            <div>
+              <p class="font-bold text-slate-900 dark:text-white">ফ্যামিলি ও মেস খাতা</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">পরিবার বা মেসের সদস্যদের সাথে যৌথ হিসাব</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 text-slate-700 dark:text-slate-300">
+            <span class="text-base shrink-0">🔒</span>
+            <div>
+              <p class="font-bold text-slate-900 dark:text-white">ব্যক্তিগত হিসাবের শতভাগ গোপনীয়তা</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">আপনার ব্যক্তিগত হিসাব কেবল আপনিই দেখতে পাবেন</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Utilities -->
+        <div class="pt-1 flex items-center justify-between text-xs text-slate-500">
+          <button type="button" id="dropdownDataBtnGuest" class="hover:text-brand-600 dark:hover:text-brand-400 font-medium">💾 ব্যাকআপ / রিস্টোর</button>
+          <button type="button" id="dropdownPinBtnGuest" class="hover:text-brand-600 dark:hover:text-brand-400 font-medium">🔑 পিন লক</button>
+        </div>
+      </div>
+
+      <!-- STATE 2: LOGGED IN USER - Clean Profile Info & Actions -->
+      <div id="dropdownUserState" class="hidden space-y-4">
+        <!-- User Profile Card -->
+        <div class="p-4 rounded-2xl bg-brand-50/70 dark:bg-brand-950/40 border border-brand-200/60 dark:border-brand-800 flex items-center gap-3.5">
+          <div class="relative w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-500 text-white flex items-center justify-center font-bold text-lg uppercase shrink-0 shadow-sm overflow-hidden">
+            <img id="dropdownAvatarImg" src="" class="w-full h-full object-cover hidden" alt="Avatar">
+            <span id="dropdownAvatarInitials">U</span>
+            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" title="অনলাইন"></span>
+          </div>
+          <div class="min-w-0">
+            <h4 id="dropdownUserName" class="font-bold text-sm text-slate-900 dark:text-white truncate">ব্যবহারকারী</h4>
+            <p id="dropdownUserEmail" class="text-xs text-slate-500 dark:text-slate-400 font-mono truncate mt-0.5">user@example.com</p>
+            <span id="dropdownKhataBadge" class="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white dark:bg-slate-900 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
               👤 ব্যক্তিগত খাতা
             </span>
           </div>
-          <p id="userEmailDisplayBar" class="text-xs text-slate-500 dark:text-slate-400 font-mono truncate mt-0.5">user@example.com</p>
+        </div>
+
+        <!-- Quick Action List -->
+        <div class="space-y-1 text-xs">
+          <button type="button" id="dropdownKhataBtn" class="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-slate-700 dark:text-slate-200 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="text-base">👨‍👩‍👧</span>
+              <span>খাতা সেটিংস ও ফ্যামিলি কোড</span>
+            </span>
+            <span class="text-slate-400">→</span>
+          </button>
+          <button type="button" id="dropdownPdfBtn" class="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-slate-700 dark:text-slate-200 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="text-base text-rose-500">📄</span>
+              <span>মাসিক PDF রিপোর্ট ডাউনলোড</span>
+            </span>
+            <span class="text-slate-400">→</span>
+          </button>
+          <button type="button" id="dropdownBackupBtn" class="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-slate-700 dark:text-slate-200 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="text-base text-brand-600">💾</span>
+              <span>ডাটা ব্যাকআপ ও এক্সপোর্ট</span>
+            </span>
+            <span class="text-slate-400">→</span>
+          </button>
+          <button type="button" id="dropdownPinBtn" class="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-medium text-slate-700 dark:text-slate-200 transition">
+            <span class="flex items-center gap-2.5">
+              <span class="text-base">🔑</span>
+              <span>পিন লক সিকিউরিটি</span>
+            </span>
+            <span class="text-slate-400">→</span>
+          </button>
+        </div>
+
+        <!-- Divider & Logout Button -->
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="dropdownLogoutBtn" class="w-full h-11 rounded-2xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center justify-center gap-2 transition active:scale-95">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>লগআউট করুন (SIGN OUT)</span>
+          </button>
         </div>
       </div>
-      <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
-        <button type="button" id="barKhataBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition">
-          <span>👨‍👩‍👧</span>
-          <span>খাতা সুইচ / ফ্যামিলি</span>
-        </button>
-        <button type="button" id="barLogoutBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-xs font-semibold transition">
-          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-          <span>লগআউট</span>
-        </button>
-      </div>
-    </section>
 
+    </div>
 
     <!-- Primary Feature Tabs -->
     <nav id="mainTabs" class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar pb-1" aria-label="মূল মেনু">
@@ -1259,16 +1324,22 @@
         // Cloud & User UI
         cloudSyncBadge: $('cloudSyncBadge'), cloudSyncText: $('cloudSyncText'),
         authOpenBtnDesk: $('authOpenBtnDesk'), authOpenBtnMob: $('authOpenBtnMob'),
-        userProfileAreaDesk: $('userProfileAreaDesk'), userAvatarImgDesk: $('userAvatarImgDesk'),
-        userAvatarInitialsDesk: $('userAvatarInitialsDesk'), userNameDisplayDesk: $('userNameDisplayDesk'),
-        userEmailDisplayDesk: $('userEmailDisplayDesk'), quickLogoutBtnDesk: $('quickLogoutBtnDesk'),
-        khataSwitcherBtnDesk: $('khataSwitcherBtnDesk'), khataIconDesk: $('khataIconDesk'), khataLabelDesk: $('khataLabelDesk'),
-        userBadgeMob: $('userBadgeMob'), userAvatarImgMob: $('userAvatarImgMob'), userAvatarInitialsMob: $('userAvatarInitialsMob'),
-        userEmailShortMob: $('userEmailShortMob'), khataIconMob: $('khataIconMob'),
-        userProfileBar: $('userProfileBar'), userNameDisplayBar: $('userNameDisplayBar'),
-        userEmailDisplayBar: $('userEmailDisplayBar'), userKhataBadgeBar: $('userKhataBadgeBar'),
-        userAvatarImgBar: $('userAvatarImgBar'), userAvatarInitialsBar: $('userAvatarInitialsBar'),
-        barKhataBtn: $('barKhataBtn'), barLogoutBtn: $('barLogoutBtn'),
+        profileMenuBtnMob: $('profileMenuBtnMob'), profileMenuBtnDesk: $('profileMenuBtnDesk'),
+        profileDropdown: $('profileDropdown'), profileDropdownBackdrop: $('profileDropdownBackdrop'),
+        dropdownGuestState: $('dropdownGuestState'), dropdownUserState: $('dropdownUserState'),
+        dropdownSignInBtn: $('dropdownSignInBtn'), dropdownLogoutBtn: $('dropdownLogoutBtn'),
+        dropdownAvatarImg: $('dropdownAvatarImg'), dropdownAvatarInitials: $('dropdownAvatarInitials'),
+        dropdownUserName: $('dropdownUserName'), dropdownUserEmail: $('dropdownUserEmail'),
+        dropdownKhataBadge: $('dropdownKhataBadge'), dropdownKhataBtn: $('dropdownKhataBtn'),
+        dropdownPdfBtn: $('dropdownPdfBtn'), dropdownBackupBtn: $('dropdownBackupBtn'),
+        dropdownPinBtn: $('dropdownPinBtn'), dropdownDataBtnGuest: $('dropdownDataBtnGuest'),
+        dropdownPinBtnGuest: $('dropdownPinBtnGuest'),
+        navAvatarImgMob: $('navAvatarImgMob'), navAvatarInitialsMob: $('navAvatarInitialsMob'),
+        navGuestIconMob: $('navGuestIconMob'), navOnlineDotMob: $('navOnlineDotMob'),
+        navAvatarImgDesk: $('navAvatarImgDesk'), navAvatarInitialsDesk: $('navAvatarInitialsDesk'),
+        navGuestIconDesk: $('navGuestIconDesk'), navOnlineDotDesk: $('navOnlineDotDesk'),
+        navUserNameDesk: $('navUserNameDesk'), navKhataDesk: $('navKhataDesk'),
+        khataSwitcherBtnDesk: $('dropdownKhataBtn'),
 
         // Auth Modal
         authModal: $('authModal'), closeAuthModal: $('closeAuthModal'),
@@ -1412,27 +1483,15 @@
       function updateAuthUI() {
         var isLogged = !!state.currentUser;
 
-        // Toggle Login buttons
-        if (el.authOpenBtnDesk) el.authOpenBtnDesk.classList.toggle('hidden', isLogged);
-        if (el.authOpenBtnMob) el.authOpenBtnMob.classList.toggle('hidden', isLogged);
+        // Toggle Dropdown Guest vs User State
+        if (el.dropdownGuestState) el.dropdownGuestState.classList.toggle('hidden', isLogged);
+        if (el.dropdownUserState) el.dropdownUserState.classList.toggle('hidden', !isLogged);
 
-        // Header Desktop Profile Area
-        if (el.userProfileAreaDesk) {
-          el.userProfileAreaDesk.classList.toggle('hidden', !isLogged);
-          el.userProfileAreaDesk.classList.toggle('flex', isLogged);
-        }
-
-        // Header Mobile Profile Badge
-        if (el.userBadgeMob) {
-          el.userBadgeMob.classList.toggle('hidden', !isLogged);
-          el.userBadgeMob.classList.toggle('flex', isLogged);
-        }
-
-        // Prominent Profile Bar
-        if (el.userProfileBar) {
-          el.userProfileBar.classList.toggle('hidden', !isLogged);
-          el.userProfileBar.classList.toggle('flex', isLogged);
-        }
+        // Header Icons (Both Mobile & Desktop)
+        if (el.navGuestIconMob) el.navGuestIconMob.classList.toggle('hidden', isLogged);
+        if (el.navGuestIconDesk) el.navGuestIconDesk.classList.toggle('hidden', isLogged);
+        if (el.navOnlineDotMob) el.navOnlineDotMob.classList.toggle('hidden', !isLogged);
+        if (el.navOnlineDotDesk) el.navOnlineDotDesk.classList.toggle('hidden', !isLogged);
 
         if (isLogged) {
           var u = state.currentUser;
@@ -1440,46 +1499,38 @@
           var email = u.email || '';
           var initial = (name || email || 'U').trim().charAt(0).toUpperCase();
 
-          // Bar elements
-          if (el.userNameDisplayBar) el.userNameDisplayBar.textContent = name;
-          if (el.userEmailDisplayBar) el.userEmailDisplayBar.textContent = email;
-
-          // Header Desktop elements
-          if (el.userNameDisplayDesk) el.userNameDisplayDesk.textContent = name;
-          if (el.userEmailDisplayDesk) el.userEmailDisplayDesk.textContent = email;
-
-          // Header Mobile elements
-          if (el.userEmailShortMob) el.userEmailShortMob.textContent = name;
-
-          // Modal elements
+          // Dropdown profile card elements
+          if (el.dropdownUserName) el.dropdownUserName.textContent = name;
+          if (el.dropdownUserEmail) el.dropdownUserEmail.textContent = email;
           if (el.modalUserEmail) el.modalUserEmail.textContent = email ? (name + ' (' + email + ')') : name;
 
-          // Set Avatars (Photo or Initial fallback)
+          // Header preview on desktop
+          if (el.navUserNameDesk) el.navUserNameDesk.textContent = name;
+
+          // Avatars (Photo or Initial fallback)
           if (u.photoURL) {
-            if (el.userAvatarImgBar) { el.userAvatarImgBar.src = u.photoURL; el.userAvatarImgBar.classList.remove('hidden'); }
-            if (el.userAvatarInitialsBar) el.userAvatarInitialsBar.classList.add('hidden');
-            if (el.userAvatarImgDesk) { el.userAvatarImgDesk.src = u.photoURL; el.userAvatarImgDesk.classList.remove('hidden'); }
-            if (el.userAvatarInitialsDesk) el.userAvatarInitialsDesk.classList.add('hidden');
-            if (el.userAvatarImgMob) { el.userAvatarImgMob.src = u.photoURL; el.userAvatarImgMob.classList.remove('hidden'); }
-            if (el.userAvatarInitialsMob) el.userAvatarInitialsMob.classList.add('hidden');
+            if (el.dropdownAvatarImg) { el.dropdownAvatarImg.src = u.photoURL; el.dropdownAvatarImg.classList.remove('hidden'); }
+            if (el.dropdownAvatarInitials) el.dropdownAvatarInitials.classList.add('hidden');
+            if (el.navAvatarImgMob) { el.navAvatarImgMob.src = u.photoURL; el.navAvatarImgMob.classList.remove('hidden'); }
+            if (el.navAvatarInitialsMob) el.navAvatarInitialsMob.classList.add('hidden');
+            if (el.navAvatarImgDesk) { el.navAvatarImgDesk.src = u.photoURL; el.navAvatarImgDesk.classList.remove('hidden'); }
+            if (el.navAvatarInitialsDesk) el.navAvatarInitialsDesk.classList.add('hidden');
             if (el.modalUserAvatar) el.modalUserAvatar.src = u.photoURL;
           } else {
-            if (el.userAvatarImgBar) el.userAvatarImgBar.classList.add('hidden');
-            if (el.userAvatarInitialsBar) { el.userAvatarInitialsBar.textContent = initial; el.userAvatarInitialsBar.classList.remove('hidden'); }
-            if (el.userAvatarImgDesk) el.userAvatarImgDesk.classList.add('hidden');
-            if (el.userAvatarInitialsDesk) { el.userAvatarInitialsDesk.textContent = initial; el.userAvatarInitialsDesk.classList.remove('hidden'); }
-            if (el.userAvatarImgMob) el.userAvatarImgMob.classList.add('hidden');
-            if (el.userAvatarInitialsMob) { el.userAvatarInitialsMob.textContent = initial; el.userAvatarInitialsMob.classList.remove('hidden'); }
+            if (el.dropdownAvatarImg) el.dropdownAvatarImg.classList.add('hidden');
+            if (el.dropdownAvatarInitials) { el.dropdownAvatarInitials.textContent = initial; el.dropdownAvatarInitials.classList.remove('hidden'); }
+            if (el.navAvatarImgMob) el.navAvatarImgMob.classList.add('hidden');
+            if (el.navAvatarInitialsMob) { el.navAvatarInitialsMob.textContent = initial; el.navAvatarInitialsMob.classList.remove('hidden'); }
+            if (el.navAvatarImgDesk) el.navAvatarImgDesk.classList.add('hidden');
+            if (el.navAvatarInitialsDesk) { el.navAvatarInitialsDesk.textContent = initial; el.navAvatarInitialsDesk.classList.remove('hidden'); }
             if (el.modalUserAvatar) el.modalUserAvatar.src = 'https://api.dicebear.com/7.x/identicon/svg?seed=' + u.uid;
           }
 
           // Update Khata Mode label
           var isPersonal = state.khataMode === 'personal';
           var khataText = isPersonal ? '👤 ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || '👨‍👩‍👧 ফ্যামিলি খাতা');
-          if (el.khataIconDesk) el.khataIconDesk.textContent = isPersonal ? '👤' : '👨‍👩‍👧';
-          if (el.khataIconMob) el.khataIconMob.textContent = isPersonal ? '👤' : '👨‍👩‍👧';
-          if (el.khataLabelDesk) el.khataLabelDesk.textContent = isPersonal ? 'ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || 'ফ্যামিলি খাতা');
-          if (el.userKhataBadgeBar) el.userKhataBadgeBar.textContent = khataText;
+          if (el.dropdownKhataBadge) el.dropdownKhataBadge.textContent = khataText;
+          if (el.navKhataDesk) el.navKhataDesk.textContent = isPersonal ? 'ব্যক্তিগত' : 'ফ্যামিলি';
 
           if (state.familyData) {
             if (el.modalFamilyName) el.modalFamilyName.textContent = state.familyData.name || 'আমার পরিবার';
@@ -1489,6 +1540,12 @@
 
           setSyncStatus('synced');
         } else {
+          if (el.navUserNameDesk) el.navUserNameDesk.textContent = 'লগইন';
+          if (el.navKhataDesk) el.navKhataDesk.textContent = 'অফলাইন';
+          if (el.navAvatarImgMob) el.navAvatarImgMob.classList.add('hidden');
+          if (el.navAvatarInitialsMob) el.navAvatarInitialsMob.classList.add('hidden');
+          if (el.navAvatarImgDesk) el.navAvatarImgDesk.classList.add('hidden');
+          if (el.navAvatarInitialsDesk) el.navAvatarInitialsDesk.classList.add('hidden');
           setSyncStatus('offline');
         }
       }
@@ -1798,6 +1855,7 @@
       }
 
       function openAuthModal(defaultMode) {
+        closeProfileDropdown();
         setAuthView(defaultMode || 'signin');
         if (el.authModal) el.authModal.classList.remove('hidden');
       }
@@ -1806,8 +1864,34 @@
         if (el.authModal) el.authModal.classList.add('hidden');
       }
 
-      if (el.authOpenBtnDesk) el.authOpenBtnDesk.addEventListener('click', function () { openAuthModal('signin'); });
-      if (el.authOpenBtnMob) el.authOpenBtnMob.addEventListener('click', function () { openAuthModal('signin'); });
+      // Dropdown Toggle & Close
+      function toggleProfileDropdown() {
+        if (!el.profileDropdown) return;
+        var isHidden = el.profileDropdown.classList.contains('hidden');
+        if (isHidden) {
+          el.profileDropdown.classList.remove('hidden');
+          if (el.profileDropdownBackdrop) el.profileDropdownBackdrop.classList.remove('hidden');
+        } else {
+          closeProfileDropdown();
+        }
+      }
+
+      function closeProfileDropdown() {
+        if (el.profileDropdown) el.profileDropdown.classList.add('hidden');
+        if (el.profileDropdownBackdrop) el.profileDropdownBackdrop.classList.add('hidden');
+      }
+
+      if (el.profileMenuBtnMob) el.profileMenuBtnMob.addEventListener('click', toggleProfileDropdown);
+      if (el.profileMenuBtnDesk) el.profileMenuBtnDesk.addEventListener('click', toggleProfileDropdown);
+      if (el.profileDropdownBackdrop) el.profileDropdownBackdrop.addEventListener('click', closeProfileDropdown);
+
+      if (el.dropdownSignInBtn) {
+        el.dropdownSignInBtn.addEventListener('click', function () {
+          closeProfileDropdown();
+          openAuthModal('signin');
+        });
+      }
+
       if (el.closeAuthModal) el.closeAuthModal.addEventListener('click', closeAuthModal);
       if (el.authModal) {
         el.authModal.addEventListener('click', function (ev) {
@@ -1958,9 +2042,44 @@
           });
         }
       }
-      if (el.quickLogoutBtnDesk) el.quickLogoutBtnDesk.addEventListener('click', performLogout);
-      if (el.barLogoutBtn) el.barLogoutBtn.addEventListener('click', performLogout);
-      if (el.barKhataBtn) el.barKhataBtn.addEventListener('click', openKhataModal);
+      if (el.dropdownLogoutBtn) {
+        el.dropdownLogoutBtn.addEventListener('click', function () {
+          closeProfileDropdown();
+          performLogout();
+        });
+      }
+      if (el.dropdownKhataBtn) {
+        el.dropdownKhataBtn.addEventListener('click', function () {
+          closeProfileDropdown();
+          openKhataModal();
+        });
+      }
+      if (el.dropdownPdfBtn) {
+        el.dropdownPdfBtn.addEventListener('click', function () {
+          closeProfileDropdown();
+          exportPdfDirect();
+        });
+      }
+      if (el.dropdownBackupBtn) {
+        el.dropdownBackupBtn.addEventListener('click', function () {
+          closeProfileDropdown();
+          el.dataModal.classList.remove('hidden');
+        });
+      }
+      if (el.dropdownDataBtnGuest) {
+        el.dropdownDataBtnGuest.addEventListener('click', function () {
+          closeProfileDropdown();
+          el.dataModal.classList.remove('hidden');
+        });
+      }
+      var openPinModalFunc = function () {
+        closeProfileDropdown();
+        if (state.pin) { el.pinCurrentSection.classList.remove('hidden'); }
+        else { el.pinCurrentSection.classList.add('hidden'); }
+        el.pinModal.classList.remove('hidden');
+      };
+      if (el.dropdownPinBtn) el.dropdownPinBtn.addEventListener('click', openPinModalFunc);
+      if (el.dropdownPinBtnGuest) el.dropdownPinBtnGuest.addEventListener('click', openPinModalFunc);
       if (el.logoutBtn) el.logoutBtn.addEventListener('click', performLogout);
 
       if (el.copyFamilyCodeBtn) {
