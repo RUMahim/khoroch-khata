@@ -278,7 +278,8 @@
 
         <!-- Quick Utilities -->
         <div class="pt-1 flex items-center justify-between text-xs text-slate-500">
-          <button type="button" id="dropdownDataBtnGuest" class="hover:text-brand-600 dark:hover:text-brand-400 font-medium">💾 ব্যাকআপ / রিস্টোর</button>
+          <button type="button" id="dropdownDataBtnGuest" class="hover:text-brand-600 dark:hover:text-brand-400 font-medium">💾 ব্যাকআপ</button>
+          <button type="button" id="dropdownPdfBtnGuest" class="hover:text-brand-600 dark:hover:text-brand-400 font-medium text-rose-500 font-semibold">📄 PDF রিপোর্ট</button>
           <button type="button" id="dropdownPinBtnGuest" class="hover:text-brand-600 dark:hover:text-brand-400 font-medium">🔑 পিন লক</button>
         </div>
       </div>
@@ -796,7 +797,7 @@
     <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="font-display text-lg font-bold">নিজের ক্যাটাগরি তৈরি করুন</h3>
-        <button type="button" id="closeCatModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+        <button type="button" id="closeCatModal" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="বন্ধ করুন"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
       </div>
       <form id="customCatForm" class="space-y-3">
         <div>
@@ -832,7 +833,7 @@
     <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="font-display text-lg font-bold">পিন লক (নিরাপত্তা)</h3>
-        <button type="button" id="closePinModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+        <button type="button" id="closePinModal" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="বন্ধ করুন"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
       </div>
       <p id="pinStatusText" class="text-xs text-slate-500 dark:text-slate-400"></p>
       <form id="pinSetupForm" class="space-y-3">
@@ -852,7 +853,7 @@
     <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between">
         <h3 id="duePayTitle" class="font-display text-lg font-bold">আংশিক পরিশোধ</h3>
-        <button type="button" id="closeDuePayModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+        <button type="button" id="closeDuePayModal" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="বন্ধ করুন"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
       </div>
       <div id="duePayInfo" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs space-y-1"></div>
       <form id="duePayForm" class="space-y-3" novalidate>
@@ -885,7 +886,7 @@
     <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="font-display text-lg font-bold">ব্যাকআপ ও রিপোর্ট</h3>
-        <button type="button" id="closeDataModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+        <button type="button" id="closeDataModal" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="বন্ধ করুন"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
       </div>
       <div class="space-y-2.5">
         <button type="button" id="printBtnModal" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500 text-sm font-semibold transition">
@@ -1037,7 +1038,7 @@
             <p class="text-xs text-slate-500">যেকোনো ডিভাইস থেকে একযোগে হিসাব রাখুন</p>
           </div>
         </div>
-        <button type="button" id="closeFamilyModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+        <button type="button" id="closeFamilyModal" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="বন্ধ করুন"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
       </div>
 
       <!-- Current Family Share Card -->
@@ -1333,7 +1334,8 @@
         dropdownKhataBadge: $('dropdownKhataBadge'), dropdownKhataBtn: $('dropdownKhataBtn'),
         dropdownPdfBtn: $('dropdownPdfBtn'), dropdownBackupBtn: $('dropdownBackupBtn'),
         dropdownPinBtn: $('dropdownPinBtn'), dropdownDataBtnGuest: $('dropdownDataBtnGuest'),
-        dropdownPinBtnGuest: $('dropdownPinBtnGuest'),
+        dropdownPdfBtnGuest: $('dropdownPdfBtnGuest'), dropdownPinBtnGuest: $('dropdownPinBtnGuest'),
+        pinCurrentSection: $('pinActiveActions'),
         navAvatarImgMob: $('navAvatarImgMob'), navAvatarInitialsMob: $('navAvatarInitialsMob'),
         navGuestIconMob: $('navGuestIconMob'), navOnlineDotMob: $('navOnlineDotMob'),
         navAvatarImgDesk: $('navAvatarImgDesk'), navAvatarInitialsDesk: $('navAvatarInitialsDesk'),
@@ -1869,6 +1871,7 @@
         if (!el.profileDropdown) return;
         var isHidden = el.profileDropdown.classList.contains('hidden');
         if (isHidden) {
+          updateAuthUI();
           el.profileDropdown.classList.remove('hidden');
           if (el.profileDropdownBackdrop) el.profileDropdownBackdrop.classList.remove('hidden');
         } else {
@@ -1920,7 +1923,17 @@
           if (!email || !pass) return;
           try {
             toast('লগইন হচ্ছে...');
-            await fbAuth.signInWithEmailAndPassword(email, pass);
+            var cred = await fbAuth.signInWithEmailAndPassword(email, pass);
+            if (cred && cred.user) {
+              state.currentUser = {
+                uid: cred.user.uid,
+                name: cred.user.displayName || (cred.user.email ? cred.user.email.split('@')[0] : 'ব্যবহারকারী'),
+                email: cred.user.email || '',
+                photoURL: cred.user.photoURL || ''
+              };
+              updateAuthUI();
+              initUserCloud(cred.user);
+            }
             closeAuthModal();
             el.signInEmail.value = ''; el.signInPass.value = '';
             toast('সফলভাবে লগইন হয়েছে!');
@@ -1965,6 +1978,14 @@
             toast('অ্যাকাউন্ট তৈরি হচ্ছে...');
             var cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
             await cred.user.updateProfile({ displayName: name });
+            state.currentUser = {
+              uid: cred.user.uid,
+              name: name,
+              email: email,
+              photoURL: cred.user.photoURL || ''
+            };
+            updateAuthUI();
+            initUserCloud(cred.user);
             closeAuthModal();
             el.signUpName.value = ''; el.signUpEmail.value = ''; el.signUpPass.value = '';
             if (el.signUpConfirmPass) el.signUpConfirmPass.value = '';
@@ -2008,7 +2029,17 @@
       function loginWithGoogle() {
         if (!fbAuth) { toast('Firebase সক্রিয় নেই'); return; }
         var provider = new firebase.auth.GoogleAuthProvider();
-        fbAuth.signInWithPopup(provider).then(function () {
+        fbAuth.signInWithPopup(provider).then(function (result) {
+          if (result && result.user) {
+            state.currentUser = {
+              uid: result.user.uid,
+              name: result.user.displayName || (result.user.email ? result.user.email.split('@')[0] : 'ব্যবহারকারী'),
+              email: result.user.email || '',
+              photoURL: result.user.photoURL || ''
+            };
+            updateAuthUI();
+            initUserCloud(result.user);
+          }
           closeAuthModal();
           toast('গুগল দিয়ে সফলভাবে লগইন হয়েছে!');
         }).catch(function (error) {
@@ -2057,26 +2088,30 @@
       if (el.dropdownPdfBtn) {
         el.dropdownPdfBtn.addEventListener('click', function () {
           closeProfileDropdown();
-          exportPdfDirect();
+          downloadPdfReport();
+        });
+      }
+      if (el.dropdownPdfBtnGuest) {
+        el.dropdownPdfBtnGuest.addEventListener('click', function () {
+          closeProfileDropdown();
+          downloadPdfReport();
         });
       }
       if (el.dropdownBackupBtn) {
         el.dropdownBackupBtn.addEventListener('click', function () {
           closeProfileDropdown();
-          el.dataModal.classList.remove('hidden');
+          if (el.dataModal) el.dataModal.classList.remove('hidden');
         });
       }
       if (el.dropdownDataBtnGuest) {
         el.dropdownDataBtnGuest.addEventListener('click', function () {
           closeProfileDropdown();
-          el.dataModal.classList.remove('hidden');
+          if (el.dataModal) el.dataModal.classList.remove('hidden');
         });
       }
       var openPinModalFunc = function () {
         closeProfileDropdown();
-        if (state.pin) { el.pinCurrentSection.classList.remove('hidden'); }
-        else { el.pinCurrentSection.classList.add('hidden'); }
-        el.pinModal.classList.remove('hidden');
+        openPinModal();
       };
       if (el.dropdownPinBtn) el.dropdownPinBtn.addEventListener('click', openPinModalFunc);
       if (el.dropdownPinBtnGuest) el.dropdownPinBtnGuest.addEventListener('click', openPinModalFunc);
@@ -3495,17 +3530,19 @@
       });
 
       function openPinModal() {
-        el.pinStatusText.textContent = state.pin
-          ? 'পিন লক চালু আছে। আপনি চাইলে নতুন পিন সেট করতে বা পিন বন্ধ করতে পারেন।'
-          : 'ব্যক্তিগত হিসাব সুরক্ষিত রাখতে ৪ সংখ্যার পিন সেট করুন।';
-        el.pinActiveActions.classList.toggle('hidden', !state.pin);
-        el.pinSetupInput.value = '';
-        el.pinModal.classList.remove('hidden');
+        if (el.pinStatusText) {
+          el.pinStatusText.textContent = state.pin
+            ? 'পিন লক চালু আছে। আপনি চাইলে নতুন পিন সেট করতে বা পিন বন্ধ করতে পারেন।'
+            : 'ব্যক্তিগত হিসাব সুরক্ষিত রাখতে ৪ সংখ্যার পিন সেট করুন।';
+        }
+        if (el.pinActiveActions) el.pinActiveActions.classList.toggle('hidden', !state.pin);
+        if (el.pinSetupInput) el.pinSetupInput.value = '';
+        if (el.pinModal) el.pinModal.classList.remove('hidden');
       }
-      $('pinBtnDesk').addEventListener('click', openPinModal);
-      $('pinBtnMob').addEventListener('click', openPinModal);
-      el.closePinModal.addEventListener('click', function () { el.pinModal.classList.add('hidden'); });
-      el.pinModal.addEventListener('click', function (ev) { if (ev.target === el.pinModal) el.pinModal.classList.add('hidden'); });
+      if ($('pinBtnDesk')) $('pinBtnDesk').addEventListener('click', openPinModal);
+      if ($('pinBtnMob')) $('pinBtnMob').addEventListener('click', openPinModal);
+      if (el.closePinModal) el.closePinModal.addEventListener('click', function () { if (el.pinModal) el.pinModal.classList.add('hidden'); });
+      if (el.pinModal) el.pinModal.addEventListener('click', function (ev) { if (ev.target === el.pinModal) el.pinModal.classList.add('hidden'); });
 
       el.pinSetupForm.addEventListener('submit', function (ev) {
         ev.preventDefault();
@@ -3647,15 +3684,17 @@
           window.print();
         });
       }
-      $('printBtnDesk').addEventListener('click', downloadPdfReport);
-      $('printBtnModal').addEventListener('click', downloadPdfReport);
+      window.downloadPdfReport = downloadPdfReport;
+      window.exportPdfDirect = downloadPdfReport;
+      if ($('printBtnDesk')) $('printBtnDesk').addEventListener('click', downloadPdfReport);
+      if ($('printBtnModal')) $('printBtnModal').addEventListener('click', downloadPdfReport);
 
-      function openDataModal() { el.dataModal.classList.remove('hidden'); }
-      function closeDataModal() { el.dataModal.classList.add('hidden'); }
-      $('dataBtnDesk').addEventListener('click', openDataModal);
-      $('dataBtnMob').addEventListener('click', openDataModal);
-      el.closeDataModal.addEventListener('click', closeDataModal);
-      el.dataModal.addEventListener('click', function (ev) { if (ev.target === el.dataModal) closeDataModal(); });
+      function openDataModal() { if (el.dataModal) el.dataModal.classList.remove('hidden'); }
+      function closeDataModal() { if (el.dataModal) el.dataModal.classList.add('hidden'); }
+      if ($('dataBtnDesk')) $('dataBtnDesk').addEventListener('click', openDataModal);
+      if ($('dataBtnMob')) $('dataBtnMob').addEventListener('click', openDataModal);
+      if (el.closeDataModal) el.closeDataModal.addEventListener('click', closeDataModal);
+      if (el.dataModal) el.dataModal.addEventListener('click', function (ev) { if (ev.target === el.dataModal) closeDataModal(); });
 
       function downloadFile(blob, name) {
         var url = URL.createObjectURL(blob);
@@ -3753,6 +3792,31 @@
           }
         });
       }
+
+      
+      // Global Escape Key & Click Outside Handlers for Modals and Profile Dropdown
+      document.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape' || ev.key === 'Esc') {
+          closeProfileDropdown();
+          if (el.authModal && !el.authModal.classList.contains('hidden')) closeAuthModal();
+          if (el.dataModal && !el.dataModal.classList.contains('hidden')) closeDataModal();
+          if (el.pinModal && !el.pinModal.classList.contains('hidden')) el.pinModal.classList.add('hidden');
+          if (el.catModal && !el.catModal.classList.contains('hidden')) el.catModal.classList.add('hidden');
+          if (el.duePayModal && !el.duePayModal.classList.contains('hidden')) el.duePayModal.classList.add('hidden');
+          if (el.familyModal && !el.familyModal.classList.contains('hidden')) el.familyModal.classList.add('hidden');
+          if (el.formDrawer && !el.formDrawer.classList.contains('hidden')) closeDrawer();
+        }
+      });
+
+      document.addEventListener('click', function (ev) {
+        if (!el.profileDropdown || el.profileDropdown.classList.contains('hidden')) return;
+        var inDropdown = el.profileDropdown.contains(ev.target);
+        var inBtnDesk = el.profileMenuBtnDesk && el.profileMenuBtnDesk.contains(ev.target);
+        var inBtnMob = el.profileMenuBtnMob && el.profileMenuBtnMob.contains(ev.target);
+        if (!inDropdown && !inBtnDesk && !inBtnMob) {
+          closeProfileDropdown();
+        }
+      });
 
       /* ================= INIT ================= */
       loadAll();
