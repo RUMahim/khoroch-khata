@@ -162,9 +162,12 @@
           <button type="button" id="authOpenBtnMob" class="px-2.5 py-1.5 rounded-xl bg-brand-600 text-white font-semibold text-xs shadow-sm" aria-label="লগইন" title="লগইন / সাইন-আপ">
             লগইন
           </button>
-          <button type="button" id="userBadgeMob" class="hidden flex items-center gap-1 p-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" title="প্রোফাইল ও খাতা">
-            <img id="userAvatarImgMob" src="" class="w-6 h-6 rounded-full object-cover bg-slate-200">
-            <span id="khataIconMob" class="text-xs">👤</span>
+          <button type="button" id="userBadgeMob" class="hidden items-center gap-1.5 px-2 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm" title="প্রোফাইল ও খাতা">
+            <div class="w-6 h-6 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-[10px] uppercase shrink-0 overflow-hidden">
+              <img id="userAvatarImgMob" src="" class="w-full h-full object-cover hidden" alt="Avatar">
+              <span id="userAvatarInitialsMob">U</span>
+            </div>
+            <span id="userEmailShortMob" class="text-xs font-semibold text-slate-800 dark:text-slate-100 max-w-[85px] truncate">প্রোফাইল</span>
           </button>
 
           <button type="button" id="pinBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="পিন লক" title="পিন লক">
@@ -214,12 +217,15 @@
               <span class="text-[10px] text-slate-400">▾</span>
             </button>
 
-            <!-- User Badge -->
+            <!-- User Badge with Initials Fallback -->
             <div class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <img id="userAvatarImgDesk" src="" class="w-7 h-7 rounded-full object-cover bg-slate-200 shrink-0">
+              <div class="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0 overflow-hidden shadow-sm">
+                <img id="userAvatarImgDesk" src="" class="w-full h-full object-cover hidden" alt="Avatar">
+                <span id="userAvatarInitialsDesk">U</span>
+              </div>
               <div class="text-left text-xs leading-tight min-w-0">
-                <p id="userNameDisplayDesk" class="font-bold text-slate-900 dark:text-white truncate max-w-[120px]"></p>
-                <p id="userEmailDisplayDesk" class="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[120px]"></p>
+                <p id="userNameDisplayDesk" class="font-bold text-slate-900 dark:text-white truncate max-w-[120px]">ব্যবহারকারী</p>
+                <p id="userEmailDisplayDesk" class="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[120px] font-mono"></p>
               </div>
               <button type="button" id="quickLogoutBtnDesk" class="ml-1 px-1.5 py-0.5 rounded text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition" title="লগআউট করুন">লগআউট</button>
             </div>
@@ -242,6 +248,38 @@
         </div>
       </div>
     </header>
+
+    <!-- ================= PROMINENT USER PROFILE BAR (ACTIVE WHEN LOGGED IN) ================= -->
+    <section id="userProfileBar" class="hidden no-print p-3.5 sm:p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
+      <div class="flex items-center gap-3.5 min-w-0">
+        <!-- Avatar with Image or Initial Circle + Online Status Dot -->
+        <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-500 text-white flex items-center justify-center font-bold text-base uppercase shrink-0 shadow-sm overflow-hidden">
+          <img id="userAvatarImgBar" src="" class="w-full h-full object-cover hidden" alt="Profile">
+          <span id="userAvatarInitialsBar">U</span>
+          <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" title="অনলাইন"></span>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 id="userNameDisplayBar" class="font-display font-bold text-base text-slate-900 dark:text-white truncate">ব্যবহারকারী</h2>
+            <span id="userKhataBadgeBar" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+              👤 ব্যক্তিগত খাতা
+            </span>
+          </div>
+          <p id="userEmailDisplayBar" class="text-xs text-slate-500 dark:text-slate-400 font-mono truncate mt-0.5">user@example.com</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+        <button type="button" id="barKhataBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition">
+          <span>👨‍👩‍👧</span>
+          <span>খাতা সুইচ / ফ্যামিলি</span>
+        </button>
+        <button type="button" id="barLogoutBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-xs font-semibold transition">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          <span>লগআউট</span>
+        </button>
+      </div>
+    </section>
+
 
     <!-- Primary Feature Tabs -->
     <nav id="mainTabs" class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar pb-1" aria-label="মূল মেনু">
@@ -1222,10 +1260,15 @@
         cloudSyncBadge: $('cloudSyncBadge'), cloudSyncText: $('cloudSyncText'),
         authOpenBtnDesk: $('authOpenBtnDesk'), authOpenBtnMob: $('authOpenBtnMob'),
         userProfileAreaDesk: $('userProfileAreaDesk'), userAvatarImgDesk: $('userAvatarImgDesk'),
-        userNameDisplayDesk: $('userNameDisplayDesk'), userEmailDisplayDesk: $('userEmailDisplayDesk'),
-        quickLogoutBtnDesk: $('quickLogoutBtnDesk'),
+        userAvatarInitialsDesk: $('userAvatarInitialsDesk'), userNameDisplayDesk: $('userNameDisplayDesk'),
+        userEmailDisplayDesk: $('userEmailDisplayDesk'), quickLogoutBtnDesk: $('quickLogoutBtnDesk'),
         khataSwitcherBtnDesk: $('khataSwitcherBtnDesk'), khataIconDesk: $('khataIconDesk'), khataLabelDesk: $('khataLabelDesk'),
-        userBadgeMob: $('userBadgeMob'), userAvatarImgMob: $('userAvatarImgMob'), khataIconMob: $('khataIconMob'),
+        userBadgeMob: $('userBadgeMob'), userAvatarImgMob: $('userAvatarImgMob'), userAvatarInitialsMob: $('userAvatarInitialsMob'),
+        userEmailShortMob: $('userEmailShortMob'), khataIconMob: $('khataIconMob'),
+        userProfileBar: $('userProfileBar'), userNameDisplayBar: $('userNameDisplayBar'),
+        userEmailDisplayBar: $('userEmailDisplayBar'), userKhataBadgeBar: $('userKhataBadgeBar'),
+        userAvatarImgBar: $('userAvatarImgBar'), userAvatarInitialsBar: $('userAvatarInitialsBar'),
+        barKhataBtn: $('barKhataBtn'), barLogoutBtn: $('barLogoutBtn'),
 
         // Auth Modal
         authModal: $('authModal'), closeAuthModal: $('closeAuthModal'),
@@ -1369,27 +1412,74 @@
       function updateAuthUI() {
         var isLogged = !!state.currentUser;
 
+        // Toggle Login buttons
         if (el.authOpenBtnDesk) el.authOpenBtnDesk.classList.toggle('hidden', isLogged);
         if (el.authOpenBtnMob) el.authOpenBtnMob.classList.toggle('hidden', isLogged);
-        if (el.userProfileAreaDesk) el.userProfileAreaDesk.classList.toggle('hidden', !isLogged);
-        if (el.userBadgeMob) el.userBadgeMob.classList.toggle('hidden', !isLogged);
+
+        // Header Desktop Profile Area
+        if (el.userProfileAreaDesk) {
+          el.userProfileAreaDesk.classList.toggle('hidden', !isLogged);
+          el.userProfileAreaDesk.classList.toggle('flex', isLogged);
+        }
+
+        // Header Mobile Profile Badge
+        if (el.userBadgeMob) {
+          el.userBadgeMob.classList.toggle('hidden', !isLogged);
+          el.userBadgeMob.classList.toggle('flex', isLogged);
+        }
+
+        // Prominent Profile Bar
+        if (el.userProfileBar) {
+          el.userProfileBar.classList.toggle('hidden', !isLogged);
+          el.userProfileBar.classList.toggle('flex', isLogged);
+        }
 
         if (isLogged) {
-          var avatar = state.currentUser.photoURL || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + state.currentUser.uid;
-          if (el.userAvatarImgDesk) el.userAvatarImgDesk.src = avatar;
-          if (el.userAvatarImgMob) el.userAvatarImgMob.src = avatar;
-          if (el.userNameDisplayDesk) el.userNameDisplayDesk.textContent = state.currentUser.name || 'ব্যবহারকারী';
-          if (el.userEmailDisplayDesk) el.userEmailDisplayDesk.textContent = state.currentUser.email || '';
-          if (el.modalUserAvatar) el.modalUserAvatar.src = avatar;
-          if (el.modalUserEmail) el.modalUserEmail.textContent = state.currentUser.email || state.currentUser.name;
+          var u = state.currentUser;
+          var name = (u.name && u.name.trim()) ? u.name.trim() : (u.email ? u.email.split('@')[0] : 'ব্যবহারকারী');
+          var email = u.email || '';
+          var initial = (name || email || 'U').trim().charAt(0).toUpperCase();
+
+          // Bar elements
+          if (el.userNameDisplayBar) el.userNameDisplayBar.textContent = name;
+          if (el.userEmailDisplayBar) el.userEmailDisplayBar.textContent = email;
+
+          // Header Desktop elements
+          if (el.userNameDisplayDesk) el.userNameDisplayDesk.textContent = name;
+          if (el.userEmailDisplayDesk) el.userEmailDisplayDesk.textContent = email;
+
+          // Header Mobile elements
+          if (el.userEmailShortMob) el.userEmailShortMob.textContent = name;
+
+          // Modal elements
+          if (el.modalUserEmail) el.modalUserEmail.textContent = email ? (name + ' (' + email + ')') : name;
+
+          // Set Avatars (Photo or Initial fallback)
+          if (u.photoURL) {
+            if (el.userAvatarImgBar) { el.userAvatarImgBar.src = u.photoURL; el.userAvatarImgBar.classList.remove('hidden'); }
+            if (el.userAvatarInitialsBar) el.userAvatarInitialsBar.classList.add('hidden');
+            if (el.userAvatarImgDesk) { el.userAvatarImgDesk.src = u.photoURL; el.userAvatarImgDesk.classList.remove('hidden'); }
+            if (el.userAvatarInitialsDesk) el.userAvatarInitialsDesk.classList.add('hidden');
+            if (el.userAvatarImgMob) { el.userAvatarImgMob.src = u.photoURL; el.userAvatarImgMob.classList.remove('hidden'); }
+            if (el.userAvatarInitialsMob) el.userAvatarInitialsMob.classList.add('hidden');
+            if (el.modalUserAvatar) el.modalUserAvatar.src = u.photoURL;
+          } else {
+            if (el.userAvatarImgBar) el.userAvatarImgBar.classList.add('hidden');
+            if (el.userAvatarInitialsBar) { el.userAvatarInitialsBar.textContent = initial; el.userAvatarInitialsBar.classList.remove('hidden'); }
+            if (el.userAvatarImgDesk) el.userAvatarImgDesk.classList.add('hidden');
+            if (el.userAvatarInitialsDesk) { el.userAvatarInitialsDesk.textContent = initial; el.userAvatarInitialsDesk.classList.remove('hidden'); }
+            if (el.userAvatarImgMob) el.userAvatarImgMob.classList.add('hidden');
+            if (el.userAvatarInitialsMob) { el.userAvatarInitialsMob.textContent = initial; el.userAvatarInitialsMob.classList.remove('hidden'); }
+            if (el.modalUserAvatar) el.modalUserAvatar.src = 'https://api.dicebear.com/7.x/identicon/svg?seed=' + u.uid;
+          }
 
           // Update Khata Mode label
           var isPersonal = state.khataMode === 'personal';
+          var khataText = isPersonal ? '👤 ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || '👨‍👩‍👧 ফ্যামিলি খাতা');
           if (el.khataIconDesk) el.khataIconDesk.textContent = isPersonal ? '👤' : '👨‍👩‍👧';
           if (el.khataIconMob) el.khataIconMob.textContent = isPersonal ? '👤' : '👨‍👩‍👧';
-          if (el.khataLabelDesk) {
-            el.khataLabelDesk.textContent = isPersonal ? 'ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || 'ফ্যামিলি খাতা');
-          }
+          if (el.khataLabelDesk) el.khataLabelDesk.textContent = isPersonal ? 'ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || 'ফ্যামিলি খাতা');
+          if (el.userKhataBadgeBar) el.userKhataBadgeBar.textContent = khataText;
 
           if (state.familyData) {
             if (el.modalFamilyName) el.modalFamilyName.textContent = state.familyData.name || 'আমার পরিবার';
@@ -1609,7 +1699,8 @@
           toast('লগইন সম্পন্ন: ' + (user.displayName || user.email));
         } catch (err) {
           console.error("Cloud init error:", err);
-          toast("ক্লাউড লোড হতে সমস্যা: " + err.message);
+          updateAuthUI(); // Ensure profile stays visible even if Firestore rules or sync fail
+          toast("ক্লাউড সিঙ্ক সতর্কতা: " + err.message);
         }
       }
 
@@ -1868,6 +1959,8 @@
         }
       }
       if (el.quickLogoutBtnDesk) el.quickLogoutBtnDesk.addEventListener('click', performLogout);
+      if (el.barLogoutBtn) el.barLogoutBtn.addEventListener('click', performLogout);
+      if (el.barKhataBtn) el.barKhataBtn.addEventListener('click', openKhataModal);
       if (el.logoutBtn) el.logoutBtn.addEventListener('click', performLogout);
 
       if (el.copyFamilyCodeBtn) {
@@ -3528,6 +3621,7 @@
               email: user.email || '',
               photoURL: user.photoURL || ''
             };
+            updateAuthUI(); // IMMEDIATE UPDATE - Shows profile instantly
             initUserCloud(user);
           } else {
             state.currentUser = null;
