@@ -159,11 +159,12 @@
 
         <!-- Mobile Quick Action Icons -->
         <div class="flex sm:hidden items-center gap-1.5 no-print">
-          <button type="button" id="googleLoginBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="গুগল লগইন" title="গুগল লগইন">
-            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          <button type="button" id="authOpenBtnMob" class="px-2.5 py-1.5 rounded-xl bg-brand-600 text-white font-semibold text-xs shadow-sm" aria-label="লগইন" title="লগইন / সাইন-আপ">
+            লগইন
           </button>
-          <button type="button" id="familyKhataBtnMob" class="hidden p-2.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-700 dark:text-brand-300" aria-label="ফ্যামিলি খাতা" title="ফ্যামিলি খাতা">
-            <span>👨‍👩‍👧</span>
+          <button type="button" id="userBadgeMob" class="hidden flex items-center gap-1 p-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800" title="প্রোফাইল ও খাতা">
+            <img id="userAvatarImgMob" src="" class="w-6 h-6 rounded-full object-cover bg-slate-200">
+            <span id="khataIconMob" class="text-xs">👤</span>
           </button>
 
           <button type="button" id="pinBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="পিন লক" title="পিন লক">
@@ -192,24 +193,36 @@
 
         <!-- Desktop Controls -->
         <div class="hidden sm:flex items-center gap-2 no-print">
-          <!-- Cloud Sync Badge & Auth Button -->
+          <!-- Cloud Sync Status -->
           <div id="cloudSyncBadge" class="hidden items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span id="cloudSyncText">সিঙ্কড</span>
           </div>
-          <button type="button" id="googleLoginBtnDesk" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition shadow-sm">
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-            <span>গুগল লগইন</span>
+
+          <!-- Auth Button (When Logged Out) -->
+          <button type="button" id="authOpenBtnDesk" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+            <span>লগইন / সাইন-আপ</span>
           </button>
-          <div id="userProfileAreaDesk" class="hidden items-center gap-1.5">
-            <button type="button" id="familyKhataBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700/50 text-xs sm:text-sm font-semibold text-brand-700 dark:text-brand-300 hover:bg-brand-100 transition">
-              <span>👨‍👩‍👧</span>
-              <span id="activeFamilyNameDesk" class="max-w-[100px] truncate">ফ্যামিলি খাতা</span>
-              <span id="activeFamilyCodeBadgeDesk" class="text-[10px] bg-brand-600 text-white px-1.5 py-0.5 rounded-full font-mono"></span>
+
+          <!-- Logged In User Card (Clear Email, Name, Khata Switcher, Logout) -->
+          <div id="userProfileAreaDesk" class="hidden items-center gap-2">
+            <!-- Khata Switcher -->
+            <button type="button" id="khataSwitcherBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition" title="খাতা পরিবর্তন বা ফ্যামিলি কোড">
+              <span id="khataIconDesk">👤</span>
+              <span id="khataLabelDesk" class="max-w-[120px] truncate">ব্যক্তিগত খাতা</span>
+              <span class="text-[10px] text-slate-400">▾</span>
             </button>
-            <button type="button" id="userAvatarBtnDesk" class="flex items-center rounded-full border border-slate-200 dark:border-slate-800 p-0.5 hover:ring-2 hover:ring-brand-500 transition" title="প্রোফাইল ও সেটিংস">
-              <img id="userAvatarImgDesk" src="" class="w-8 h-8 rounded-full object-cover bg-slate-200">
-            </button>
+
+            <!-- User Badge -->
+            <div class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <img id="userAvatarImgDesk" src="" class="w-7 h-7 rounded-full object-cover bg-slate-200 shrink-0">
+              <div class="text-left text-xs leading-tight min-w-0">
+                <p id="userNameDisplayDesk" class="font-bold text-slate-900 dark:text-white truncate max-w-[120px]"></p>
+                <p id="userEmailDisplayDesk" class="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[120px]"></p>
+              </div>
+              <button type="button" id="quickLogoutBtnDesk" class="ml-1 px-1.5 py-0.5 rounded text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition" title="লগআউট করুন">লগআউট</button>
+            </div>
           </div>
 
           <button type="button" id="printBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="সরাসরি PDF ডাউনলোড">
@@ -793,7 +806,71 @@
     </div>
   </div>
 
-    <!-- ================= MODAL: FAMILY & MULTI-DEVICE KHATA ================= -->
+      <!-- ================= MODAL: SIGN IN / SIGN UP ================= -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="font-display text-lg font-bold">খরচের খাতায় স্বাগতম</h3>
+          <p class="text-xs text-slate-500">আপনার তথ্যের ক্লাউড ব্যাকআপ রাখতে লগইন করুন</p>
+        </div>
+        <button type="button" id="closeAuthModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <!-- Auth Tabs: Sign In vs Sign Up -->
+      <div class="grid grid-cols-2 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800">
+        <button type="button" id="authTabSignIn" class="py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-sm transition">লগইন (Sign In)</button>
+        <button type="button" id="authTabSignUp" class="py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition">নতুন অ্যাকাউন্ট</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="signInForm" class="space-y-3">
+        <div>
+          <label for="signInEmail" class="block text-xs font-medium mb-1">ইমেইল অ্যাড্রেস</label>
+          <input type="email" id="signInEmail" required placeholder="name@example.com" class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label for="signInPass" class="block text-xs font-medium">পাসওয়ার্ড</label>
+            <button type="button" id="forgotPassBtn" class="text-[11px] text-brand-600 dark:text-brand-400 hover:underline">পাসওয়ার্ড ভুলে গেছেন?</button>
+          </div>
+          <input type="password" id="signInPass" required placeholder="••••••••" class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <button type="submit" id="signInSubmitBtn" class="w-full h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-sm transition">লগইন করুন</button>
+      </form>
+
+      <!-- Sign Up Form (Hidden by default) -->
+      <form id="signUpForm" class="hidden space-y-3">
+        <div>
+          <label for="signUpName" class="block text-xs font-medium mb-1">আপনার নাম</label>
+          <input type="text" id="signUpName" required placeholder="যেমন: রাকিব উদ্দিন" class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <div>
+          <label for="signUpEmail" class="block text-xs font-medium mb-1">ইমেইল অ্যাড্রেস</label>
+          <input type="email" id="signUpEmail" required placeholder="name@example.com" class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <div>
+          <label for="signUpPass" class="block text-xs font-medium mb-1">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label>
+          <input type="password" id="signUpPass" required minlength="6" placeholder="••••••••" class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <button type="submit" id="signUpSubmitBtn" class="w-full h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-sm transition">অ্যাকাউন্ট তৈরি করুন</button>
+      </form>
+
+      <!-- Divider -->
+      <div class="relative py-1 flex items-center justify-center">
+        <div class="border-t border-slate-200 dark:border-slate-800 w-full"></div>
+        <span class="bg-white dark:bg-slate-900 px-3 text-[11px] text-slate-400 uppercase tracking-wider absolute">অথবা</span>
+      </div>
+
+      <!-- 1-Click Google Login -->
+      <button type="button" id="authGoogleBtn" class="w-full h-11 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center gap-2.5 text-xs sm:text-sm font-semibold transition">
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+        <span>Google দিয়ে ১-ক্লিকে লগইন</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: FAMILY & MULTI-DEVICE KHATA ================= -->
   <div id="familyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true">
     <div class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between">
@@ -937,7 +1014,7 @@
         customCats: 'khoroch-khata:customCats',
         pin: 'khoroch-khata:pin',
         theme: 'khoroch-khata:theme',
-        activeFam: 'khoroch-khata:activeFamilyId'
+        khataMode: 'khoroch-khata:khataMode'
       };
 
       /* ================= FORMATTERS & HELPERS ================= */
@@ -1017,10 +1094,11 @@
         itemsExpanded: false,
         selectedWeekDay: today,
 
-        // Cloud & Family State
+        // Auth & Multi-Khata State
         currentUser: null,
-        activeFamilyId: localStorage.getItem(KEYS.activeFam) || '',
-        activeFamily: null,
+        khataMode: localStorage.getItem(KEYS.khataMode) || 'personal', // 'personal' or 'family'
+        activeLedgerId: '', // 'user_<uid>' for personal, or familyId for family
+        familyData: null,
         isCloudMode: false,
         unsubListeners: []
       };
@@ -1086,13 +1164,25 @@
         dataModal: $('dataModal'), closeDataModal: $('closeDataModal'),
         exportCsvBtn: $('exportCsvBtn'), exportJsonBtn: $('exportJsonBtn'), importJsonInput: $('importJsonInput'),
         toast: $('toast'),
-        // Cloud & Family UI
+
+        // Cloud & User UI
         cloudSyncBadge: $('cloudSyncBadge'), cloudSyncText: $('cloudSyncText'),
-        googleLoginBtnDesk: $('googleLoginBtnDesk'), googleLoginBtnMob: $('googleLoginBtnMob'),
-        userProfileAreaDesk: $('userProfileAreaDesk'), familyKhataBtnDesk: $('familyKhataBtnDesk'),
-        activeFamilyNameDesk: $('activeFamilyNameDesk'), activeFamilyCodeBadgeDesk: $('activeFamilyCodeBadgeDesk'),
-        userAvatarBtnDesk: $('userAvatarBtnDesk'), userAvatarImgDesk: $('userAvatarImgDesk'),
-        familyKhataBtnMob: $('familyKhataBtnMob'),
+        authOpenBtnDesk: $('authOpenBtnDesk'), authOpenBtnMob: $('authOpenBtnMob'),
+        userProfileAreaDesk: $('userProfileAreaDesk'), userAvatarImgDesk: $('userAvatarImgDesk'),
+        userNameDisplayDesk: $('userNameDisplayDesk'), userEmailDisplayDesk: $('userEmailDisplayDesk'),
+        quickLogoutBtnDesk: $('quickLogoutBtnDesk'),
+        khataSwitcherBtnDesk: $('khataSwitcherBtnDesk'), khataIconDesk: $('khataIconDesk'), khataLabelDesk: $('khataLabelDesk'),
+        userBadgeMob: $('userBadgeMob'), userAvatarImgMob: $('userAvatarImgMob'), khataIconMob: $('khataIconMob'),
+
+        // Auth Modal
+        authModal: $('authModal'), closeAuthModal: $('closeAuthModal'),
+        authTabSignIn: $('authTabSignIn'), authTabSignUp: $('authTabSignUp'),
+        signInForm: $('signInForm'), signInEmail: $('signInEmail'), signInPass: $('signInPass'),
+        forgotPassBtn: $('forgotPassBtn'),
+        signUpForm: $('signUpForm'), signUpName: $('signUpName'), signUpEmail: $('signUpEmail'), signUpPass: $('signUpPass'),
+        authGoogleBtn: $('authGoogleBtn'),
+
+        // Family / Khata Modal
         cloudMigrateBanner: $('cloudMigrateBanner'), localCountText: $('localCountText'),
         migrateLocalConfirmBtn: $('migrateLocalConfirmBtn'), migrateLocalDismissBtn: $('migrateLocalDismissBtn'),
         familyModal: $('familyModal'), closeFamilyModal: $('closeFamilyModal'),
@@ -1110,7 +1200,7 @@
         el.toast.textContent = msg;
         el.toast.classList.remove('hidden');
         clearTimeout(toastTimer);
-        toastTimer = setTimeout(function () { el.toast.classList.add('hidden'); }, 2600);
+        toastTimer = setTimeout(function () { el.toast.classList.add('hidden'); }, 2800);
       }
 
       /* ================= THEME ================= */
@@ -1205,7 +1295,7 @@
         } catch (e) {}
       }
 
-      /* ================= CLOUD SYNC & FAMILY LOGIC ================= */
+      /* ================= CLOUD SYNC & AUTH LOGIC ================= */
       function setSyncStatus(status) {
         if (!el.cloudSyncBadge) return;
         if (status === 'synced') {
@@ -1223,27 +1313,35 @@
 
       function updateAuthUI() {
         var isLogged = !!state.currentUser;
-        if (el.googleLoginBtnDesk) el.googleLoginBtnDesk.classList.toggle('hidden', isLogged);
-        if (el.googleLoginBtnMob) el.googleLoginBtnMob.classList.toggle('hidden', isLogged);
+
+        if (el.authOpenBtnDesk) el.authOpenBtnDesk.classList.toggle('hidden', isLogged);
+        if (el.authOpenBtnMob) el.authOpenBtnMob.classList.toggle('hidden', isLogged);
         if (el.userProfileAreaDesk) el.userProfileAreaDesk.classList.toggle('hidden', !isLogged);
-        if (el.familyKhataBtnMob) el.familyKhataBtnMob.classList.toggle('hidden', !isLogged);
+        if (el.userBadgeMob) el.userBadgeMob.classList.toggle('hidden', !isLogged);
 
         if (isLogged) {
           var avatar = state.currentUser.photoURL || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + state.currentUser.uid;
           if (el.userAvatarImgDesk) el.userAvatarImgDesk.src = avatar;
+          if (el.userAvatarImgMob) el.userAvatarImgMob.src = avatar;
+          if (el.userNameDisplayDesk) el.userNameDisplayDesk.textContent = state.currentUser.name || 'ব্যবহারকারী';
+          if (el.userEmailDisplayDesk) el.userEmailDisplayDesk.textContent = state.currentUser.email || '';
           if (el.modalUserAvatar) el.modalUserAvatar.src = avatar;
           if (el.modalUserEmail) el.modalUserEmail.textContent = state.currentUser.email || state.currentUser.name;
 
-          var famName = (state.activeFamily && state.activeFamily.name) || 'ফ্যামিলি খাতা';
-          var famCode = (state.activeFamily && state.activeFamily.code) || '';
-          if (el.activeFamilyNameDesk) el.activeFamilyNameDesk.textContent = famName;
-          if (el.activeFamilyCodeBadgeDesk) {
-            el.activeFamilyCodeBadgeDesk.textContent = famCode;
-            el.activeFamilyCodeBadgeDesk.classList.toggle('hidden', !famCode);
+          // Update Khata Mode label
+          var isPersonal = state.khataMode === 'personal';
+          if (el.khataIconDesk) el.khataIconDesk.textContent = isPersonal ? '👤' : '👨‍👩‍👧';
+          if (el.khataIconMob) el.khataIconMob.textContent = isPersonal ? '👤' : '👨‍👩‍👧';
+          if (el.khataLabelDesk) {
+            el.khataLabelDesk.textContent = isPersonal ? 'ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || 'ফ্যামিলি খাতা');
           }
-          if (el.modalFamilyName) el.modalFamilyName.textContent = famName;
-          if (el.modalFamilyCode) el.modalFamilyCode.textContent = famCode;
-          renderFamilyMembers();
+
+          if (state.familyData) {
+            if (el.modalFamilyName) el.modalFamilyName.textContent = state.familyData.name || 'আমার পরিবার';
+            if (el.modalFamilyCode) el.modalFamilyCode.textContent = state.familyData.code || '';
+            renderFamilyMembers();
+          }
+
           setSyncStatus('synced');
         } else {
           setSyncStatus('offline');
@@ -1251,10 +1349,10 @@
       }
 
       function renderFamilyMembers() {
-        if (!el.familyMemberList || !state.activeFamily) return;
-        var list = state.activeFamily.members || [];
+        if (!el.familyMemberList || !state.familyData) return;
+        var list = state.familyData.members || [];
         if (!list.length) {
-          el.familyMemberList.innerHTML = '<p class="text-xs text-slate-400">কোনো সদস্য তথ্য পাওয়া যায়নি</p>';
+          el.familyMemberList.innerHTML = '<p class="text-xs text-slate-400">কোনো সদস্য পাওয়া যায়নি</p>';
           return;
         }
         el.familyMemberList.innerHTML = list.map(function (m) {
@@ -1282,21 +1380,24 @@
         }
       }
 
-      function attachFamilyListeners(familyId) {
-        if (!fbDb || !familyId) return;
+      /* Attach listeners for the ACTIVE ledger (either personal or family) */
+      function attachLedgerListeners(ledgerId) {
+        if (!fbDb || !ledgerId) return;
         detachListeners();
 
-        // 1. Listen to Family Metadata
-        var uFam = fbDb.collection('families').doc(familyId).onSnapshot(function (doc) {
-          if (doc.exists) {
-            state.activeFamily = doc.data();
-            updateAuthUI();
-          }
-        }, function (err) { console.warn('Family meta sync err:', err); });
-        state.unsubListeners.push(uFam);
+        // 1. If in family mode, listen to family metadata
+        if (state.khataMode === 'family') {
+          var uFam = fbDb.collection('families').doc(ledgerId).onSnapshot(function (doc) {
+            if (doc.exists) {
+              state.familyData = doc.data();
+              updateAuthUI();
+            }
+          }, function (err) { console.warn('Family meta sync err:', err); });
+          state.unsubListeners.push(uFam);
+        }
 
         // 2. Listen to Ledger Items
-        var uItems = fbDb.collection('ledger_items').where('familyId', '==', familyId).onSnapshot(function (snap) {
+        var uItems = fbDb.collection('ledger_items').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var items = [];
           snap.forEach(function (doc) {
             var c = cleanItem(doc.data());
@@ -1310,7 +1411,7 @@
         state.unsubListeners.push(uItems);
 
         // 3. Listen to Dues
-        var uDues = fbDb.collection('ledger_dues').where('familyId', '==', familyId).onSnapshot(function (snap) {
+        var uDues = fbDb.collection('ledger_dues').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var dues = [];
           snap.forEach(function (doc) { dues.push(doc.data()); });
           state.dues = dues;
@@ -1320,7 +1421,7 @@
         state.unsubListeners.push(uDues);
 
         // 4. Listen to Recurring
-        var uRec = fbDb.collection('ledger_recurring').where('familyId', '==', familyId).onSnapshot(function (snap) {
+        var uRec = fbDb.collection('ledger_recurring').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var rec = [];
           snap.forEach(function (doc) { rec.push(doc.data()); });
           state.recurring = rec;
@@ -1330,7 +1431,7 @@
         state.unsubListeners.push(uRec);
 
         // 5. Listen to Checklist
-        var uChk = fbDb.collection('ledger_checklist').where('familyId', '==', familyId).onSnapshot(function (snap) {
+        var uChk = fbDb.collection('ledger_checklist').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var chk = [];
           snap.forEach(function (doc) { chk.push(doc.data()); });
           state.checklist = chk;
@@ -1340,7 +1441,7 @@
         state.unsubListeners.push(uChk);
 
         // 6. Listen to Custom Categories
-        var uCats = fbDb.collection('ledger_customCats').where('familyId', '==', familyId).onSnapshot(function (snap) {
+        var uCats = fbDb.collection('ledger_customCats').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var cats = [];
           snap.forEach(function (doc) { cats.push(doc.data()); });
           state.customCats = cats;
@@ -1352,7 +1453,7 @@
         state.unsubListeners.push(uCats);
 
         // 7. Listen to Budgets
-        var uBud = fbDb.collection('ledger_budgets').doc(familyId).onSnapshot(function (doc) {
+        var uBud = fbDb.collection('ledger_budgets').doc(ledgerId).onSnapshot(function (doc) {
           if (doc.exists) {
             state.budgets = doc.data().budgets || {};
             saveKey(KEYS.budgets, state.budgets);
@@ -1360,6 +1461,25 @@
           }
         }, function (err) { console.warn('Budget sync err:', err); });
         state.unsubListeners.push(uBud);
+      }
+
+      /* Switch Khata between Personal and Family */
+      function setKhataMode(mode) {
+        state.khataMode = mode;
+        saveKey(KEYS.khataMode, mode);
+        if (!state.currentUser) return;
+
+        if (mode === 'personal') {
+          state.activeLedgerId = 'user_' + state.currentUser.uid;
+          attachLedgerListeners(state.activeLedgerId);
+          toast('👤 ব্যক্তিগত খাতা লোড হয়েছে (শুধুমাত্র আপনার হিসাব)');
+        } else {
+          var famId = state.currentUser.familyId || ('fam_' + state.currentUser.uid);
+          state.activeLedgerId = famId;
+          attachLedgerListeners(famId);
+          toast('👨‍👩‍👧 ফ্যামিলি যৌথ খাতা লোড হয়েছে');
+        }
+        updateAuthUI();
       }
 
       async function initUserCloud(user) {
@@ -1370,7 +1490,10 @@
           var userDoc = await userRef.get();
           var userData = userDoc.exists ? userDoc.data() : null;
 
-          var familyId = (userData && userData.activeFamilyId) ? userData.activeFamilyId : (state.activeFamilyId || ('fam_' + user.uid));
+          var familyId = (userData && userData.familyId) ? userData.familyId : ('fam_' + user.uid);
+          state.currentUser.familyId = familyId;
+
+          // Fetch family metadata
           var familyRef = fbDb.collection('families').doc(familyId);
           var famDoc = await familyRef.get();
 
@@ -1392,10 +1515,10 @@
               }]
             };
             await familyRef.set(newFam);
-            state.activeFamily = newFam;
+            state.familyData = newFam;
           } else {
-            state.activeFamily = famDoc.data();
-            var members = state.activeFamily.members || [];
+            state.familyData = famDoc.data();
+            var members = state.familyData.members || [];
             if (!members.some(function (m) { return m.uid === user.uid; })) {
               members.push({
                 uid: user.uid,
@@ -1414,18 +1537,21 @@
               name: user.displayName || '',
               email: user.email || '',
               photoURL: user.photoURL || '',
-              activeFamilyId: familyId,
+              familyId: familyId,
               updatedAt: Date.now()
             });
           }
 
-          state.activeFamilyId = familyId;
-          saveKey(KEYS.activeFam, familyId);
           state.isCloudMode = true;
+
+          // Default to personal ledger or saved preference
+          var mode = state.khataMode || 'personal';
+          state.activeLedgerId = mode === 'personal' ? ('user_' + user.uid) : familyId;
+
           updateAuthUI();
-          attachFamilyListeners(familyId);
+          attachLedgerListeners(state.activeLedgerId);
           checkLocalMigrationOffer();
-          toast('ক্লাউডে যুক্ত হয়েছে: ' + (state.activeFamily.name || 'ফ্যামিলি খাতা'));
+          toast('লগইন সম্পন্ন: ' + (user.displayName || user.email));
         } catch (err) {
           console.error("Cloud init error:", err);
           toast("ক্লাউড লোড হতে সমস্যা: " + err.message);
@@ -1443,8 +1569,8 @@
 
       /* Unified Cloud & Local Save */
       function cloudSaveItem(item) {
-        if (state.isCloudMode && fbDb && state.activeFamilyId) {
-          item.familyId = state.activeFamilyId;
+        if (state.isCloudMode && fbDb && state.activeLedgerId) {
+          item.familyId = state.activeLedgerId;
           if (state.currentUser) {
             item.addedBy = {
               uid: state.currentUser.uid,
@@ -1465,8 +1591,8 @@
         }
       }
       function cloudSaveDue(due) {
-        if (state.isCloudMode && fbDb && state.activeFamilyId) {
-          due.familyId = state.activeFamilyId;
+        if (state.isCloudMode && fbDb && state.activeLedgerId) {
+          due.familyId = state.activeLedgerId;
           fbDb.collection('ledger_dues').doc(due.id).set(due).catch(function (e) {});
         }
       }
@@ -1476,8 +1602,8 @@
         }
       }
       function cloudSaveRecurring(rec) {
-        if (state.isCloudMode && fbDb && state.activeFamilyId) {
-          rec.familyId = state.activeFamilyId;
+        if (state.isCloudMode && fbDb && state.activeLedgerId) {
+          rec.familyId = state.activeLedgerId;
           fbDb.collection('ledger_recurring').doc(rec.id).set(rec).catch(function (e) {});
         }
       }
@@ -1487,8 +1613,8 @@
         }
       }
       function cloudSaveChecklist(chk) {
-        if (state.isCloudMode && fbDb && state.activeFamilyId) {
-          chk.familyId = state.activeFamilyId;
+        if (state.isCloudMode && fbDb && state.activeLedgerId) {
+          chk.familyId = state.activeLedgerId;
           fbDb.collection('ledger_checklist').doc(chk.id).set(chk).catch(function (e) {});
         }
       }
@@ -1498,13 +1624,13 @@
         }
       }
       function cloudSaveBudget(budgets) {
-        if (state.isCloudMode && fbDb && state.activeFamilyId) {
-          fbDb.collection('ledger_budgets').doc(state.activeFamilyId).set({ budgets: budgets }).catch(function (e) {});
+        if (state.isCloudMode && fbDb && state.activeLedgerId) {
+          fbDb.collection('ledger_budgets').doc(state.activeLedgerId).set({ budgets: budgets }).catch(function (e) {});
         }
       }
       function cloudSaveCustomCat(cat) {
-        if (state.isCloudMode && fbDb && state.activeFamilyId) {
-          cat.familyId = state.activeFamilyId;
+        if (state.isCloudMode && fbDb && state.activeLedgerId) {
+          cat.familyId = state.activeLedgerId;
           fbDb.collection('ledger_customCats').doc(cat.id).set(cat).catch(function (e) {});
         }
       }
@@ -1514,11 +1640,105 @@
         }
       }
 
-      /* Google Auth Triggers */
+      /* Auth Modal Triggers & Tab Switching */
+      function openAuthModal() {
+        if (el.authModal) el.authModal.classList.remove('hidden');
+      }
+      function closeAuthModal() {
+        if (el.authModal) el.authModal.classList.add('hidden');
+      }
+
+      if (el.authOpenBtnDesk) el.authOpenBtnDesk.addEventListener('click', openAuthModal);
+      if (el.authOpenBtnMob) el.authOpenBtnMob.addEventListener('click', openAuthModal);
+      if (el.closeAuthModal) el.closeAuthModal.addEventListener('click', closeAuthModal);
+      if (el.authModal) el.authModal.addEventListener('click', function (ev) { if (ev.target === el.authModal) closeAuthModal(); });
+
+      if (el.authTabSignIn) {
+        el.authTabSignIn.addEventListener('click', function () {
+          el.authTabSignIn.className = 'py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-sm transition';
+          el.authTabSignUp.className = 'py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition';
+          el.signInForm.classList.remove('hidden');
+          el.signUpForm.classList.add('hidden');
+        });
+      }
+      if (el.authTabSignUp) {
+        el.authTabSignUp.addEventListener('click', function () {
+          el.authTabSignUp.className = 'py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-sm transition';
+          el.authTabSignIn.className = 'py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition';
+          el.signUpForm.classList.remove('hidden');
+          el.signInForm.classList.add('hidden');
+        });
+      }
+
+      // Email / Password Sign In
+      if (el.signInForm) {
+        el.signInForm.addEventListener('submit', async function (ev) {
+          ev.preventDefault();
+          var email = el.signInEmail.value.trim();
+          var pass = el.signInPass.value;
+          if (!email || !pass) return;
+          try {
+            toast('লগইন হচ্ছে...');
+            await fbAuth.signInWithEmailAndPassword(email, pass);
+            closeAuthModal();
+            el.signInEmail.value = ''; el.signInPass.value = '';
+          } catch (err) {
+            var msg = err.message;
+            if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') msg = 'ভুল পাসওয়ার্ড বা ইমেইল!';
+            else if (err.code === 'auth/user-not-found') msg = 'এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি। "নতুন অ্যাকাউন্ট" ট্যাবে যান।';
+            else if (err.code === 'auth/operation-not-allowed') msg = 'Firebase Console-এ Email/Password এনাবল করে নিন।';
+            toast(msg);
+          }
+        });
+      }
+
+      // Email / Password Sign Up
+      if (el.signUpForm) {
+        el.signUpForm.addEventListener('submit', async function (ev) {
+          ev.preventDefault();
+          var name = el.signUpName.value.trim();
+          var email = el.signUpEmail.value.trim();
+          var pass = el.signUpPass.value;
+          if (!name || !email || !pass) return;
+          if (pass.length < 6) { toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'); return; }
+          try {
+            toast('অ্যাকাউন্ট তৈরি হচ্ছে...');
+            var cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
+            await cred.user.updateProfile({ displayName: name });
+            closeAuthModal();
+            el.signUpName.value = ''; el.signUpEmail.value = ''; el.signUpPass.value = '';
+          } catch (err) {
+            var msg = err.message;
+            if (err.code === 'auth/email-already-in-use') msg = 'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট খোলা হয়েছে। লগইন ট্যাবে যান।';
+            else if (err.code === 'auth/weak-password') msg = 'পাসওয়ার্ড আরও শক্তিশালী করুন।';
+            else if (err.code === 'auth/operation-not-allowed') msg = 'Firebase Console-এ Email/Password এনাবল করে নিন।';
+            toast(msg);
+          }
+        });
+      }
+
+      // Forgot Password
+      if (el.forgotPassBtn) {
+        el.forgotPassBtn.addEventListener('click', async function () {
+          var email = el.signInEmail.value.trim();
+          if (!email) { email = prompt('আপনার নিবন্ধিত ইমেইল অ্যাড্রেসটি লিখুন:'); }
+          if (!email) return;
+          try {
+            await fbAuth.sendPasswordResetEmail(email);
+            toast('পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে পাঠানো হয়েছে');
+          } catch (err) {
+            toast('ত্রুটি: ' + err.message);
+          }
+        });
+      }
+
+      // 1-Click Google Sign In
       function loginWithGoogle() {
-        if (!fbAuth) { toast('Firebase সংযোগ সক্রিয় নেই'); return; }
+        if (!fbAuth) { toast('Firebase সক্রিয় নেই'); return; }
         var provider = new firebase.auth.GoogleAuthProvider();
-        fbAuth.signInWithPopup(provider).catch(function (error) {
+        fbAuth.signInWithPopup(provider).then(function () {
+          closeAuthModal();
+        }).catch(function (error) {
           if (error.code === 'auth/popup-blocked') {
             fbAuth.signInWithRedirect(provider);
           } else {
@@ -1526,24 +1746,34 @@
           }
         });
       }
+      if (el.authGoogleBtn) el.authGoogleBtn.addEventListener('click', loginWithGoogle);
 
-      if (el.googleLoginBtnDesk) el.googleLoginBtnDesk.addEventListener('click', loginWithGoogle);
-      if (el.googleLoginBtnMob) el.googleLoginBtnMob.addEventListener('click', loginWithGoogle);
-
-      function openFamilyModal() {
-        if (!state.currentUser) { loginWithGoogle(); return; }
+      // Khata Switcher Modal Trigger
+      function openKhataModal() {
+        if (!state.currentUser) { openAuthModal(); return; }
         updateAuthUI();
         el.familyModal.classList.remove('hidden');
       }
-      if (el.familyKhataBtnDesk) el.familyKhataBtnDesk.addEventListener('click', openFamilyModal);
-      if (el.familyKhataBtnMob) el.familyKhataBtnMob.addEventListener('click', openFamilyModal);
-      if (el.userAvatarBtnDesk) el.userAvatarBtnDesk.addEventListener('click', openFamilyModal);
+      if (el.khataSwitcherBtnDesk) el.khataSwitcherBtnDesk.addEventListener('click', openKhataModal);
+      if (el.userBadgeMob) el.userBadgeMob.addEventListener('click', openKhataModal);
       if (el.closeFamilyModal) el.closeFamilyModal.addEventListener('click', function () { el.familyModal.classList.add('hidden'); });
       if (el.familyModal) el.familyModal.addEventListener('click', function (ev) { if (ev.target === el.familyModal) el.familyModal.classList.add('hidden'); });
 
+      // Direct Quick Logout
+      function performLogout() {
+        if (confirm('আপনি কি এই ডিভাইস থেকে লগআউট করতে চান?')) {
+          fbAuth.signOut().then(function () {
+            if (el.familyModal) el.familyModal.classList.add('hidden');
+            toast('লগআউট সম্পন্ন হয়েছে');
+          });
+        }
+      }
+      if (el.quickLogoutBtnDesk) el.quickLogoutBtnDesk.addEventListener('click', performLogout);
+      if (el.logoutBtn) el.logoutBtn.addEventListener('click', performLogout);
+
       if (el.copyFamilyCodeBtn) {
         el.copyFamilyCodeBtn.addEventListener('click', function () {
-          var code = state.activeFamily ? state.activeFamily.code : '';
+          var code = state.familyData ? state.familyData.code : '';
           if (!code) return;
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(code).then(function () {
@@ -1557,11 +1787,12 @@
 
       if (el.editFamilyNameBtn) {
         el.editFamilyNameBtn.addEventListener('click', async function () {
-          var cur = state.activeFamily ? state.activeFamily.name : '';
+          var cur = state.familyData ? state.familyData.name : '';
           var newName = prompt('পরিবার বা খাতার নতুন নাম লিখুন:', cur);
           if (!newName || !newName.trim()) return;
           try {
-            await fbDb.collection('families').doc(state.activeFamilyId).update({ name: newName.trim() });
+            var famId = state.currentUser.familyId;
+            await fbDb.collection('families').doc(famId).update({ name: newName.trim() });
             toast('খাতার নাম পরিবর্তন হয়েছে');
           } catch (e) { toast('পরিবর্তন করা যায়নি: ' + e.message); }
         });
@@ -1591,12 +1822,10 @@
               });
               await fbDb.collection('families').doc(targetFam.id).update({ members: members });
             }
-            await fbDb.collection('users').doc(state.currentUser.uid).update({ activeFamilyId: targetFam.id });
-            state.activeFamilyId = targetFam.id;
-            saveKey(KEYS.activeFam, targetFam.id);
-            state.activeFamily = targetFam;
-            attachFamilyListeners(targetFam.id);
-            updateAuthUI();
+            await fbDb.collection('users').doc(state.currentUser.uid).update({ familyId: targetFam.id });
+            state.currentUser.familyId = targetFam.id;
+            state.familyData = targetFam;
+            setKhataMode('family');
             el.joinCodeInput.value = '';
             el.familyModal.classList.add('hidden');
             toast('✓ সফলভাবে "' + targetFam.name + '" খাতায় যুক্ত হয়েছেন!');
@@ -1629,28 +1858,15 @@
               }]
             };
             await fbDb.collection('families').doc(newId).set(newFam);
-            await fbDb.collection('users').doc(state.currentUser.uid).update({ activeFamilyId: newId });
-            state.activeFamilyId = newId;
-            saveKey(KEYS.activeFam, newId);
-            state.activeFamily = newFam;
-            attachFamilyListeners(newId);
-            updateAuthUI();
+            await fbDb.collection('users').doc(state.currentUser.uid).update({ familyId: newId });
+            state.currentUser.familyId = newId;
+            state.familyData = newFam;
+            setKhataMode('family');
             el.createFamilyInput.value = '';
             el.familyModal.classList.add('hidden');
             toast('নতুন খাতা তৈরি হয়েছে: ' + name);
           } catch (e) {
             toast('খাতা তৈরি ব্যর্থ: ' + e.message);
-          }
-        });
-      }
-
-      if (el.logoutBtn) {
-        el.logoutBtn.addEventListener('click', function () {
-          if (confirm('আপনি কি এই ডিভাইস থেকে লগআউট করতে চান?')) {
-            fbAuth.signOut().then(function () {
-              el.familyModal.classList.add('hidden');
-              toast('লগআউট সম্পন্ন হয়েছে');
-            });
           }
         });
       }
@@ -1663,7 +1879,7 @@
             toast('ক্লাউডে আপলোড হচ্ছে...');
             var batch = fbDb.batch();
             localItems.forEach(function (it) {
-              it.familyId = state.activeFamilyId;
+              it.familyId = state.activeLedgerId;
               it.addedBy = { uid: state.currentUser.uid, name: state.currentUser.name };
               var ref = fbDb.collection('ledger_items').doc(it.id);
               batch.set(ref, it);
@@ -2103,7 +2319,7 @@
                 '</ul></details>';
             }
 
-            var memberBadge = (state.isCloudMode && i.addedBy && i.addedBy.name)
+            var memberBadge = (state.isCloudMode && state.khataMode === 'family' && i.addedBy && i.addedBy.name)
               ? '<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium shrink-0">👤 ' + esc(i.addedBy.name.split(' ')[0]) + '</span>'
               : '';
 
@@ -3085,7 +3301,7 @@
           '<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0d7a61;padding-bottom:12px;margin-bottom:16px;">' +
             '<div>' +
               '<h1 style="margin:0;font-size:22px;font-weight:700;color:#0d7a61;">খরচের খাতা — মাসিক রিপোর্ট</h1>' +
-              '<p style="margin:2px 0 0;font-size:12px;color:#64748b;">তৈরির তারিখ: ' + esc(today) + (state.activeFamily ? ' · খাতা: ' + esc(state.activeFamily.name) : '') + '</p>' +
+              '<p style="margin:2px 0 0;font-size:12px;color:#64748b;">তৈরির তারিখ: ' + esc(today) + (state.currentUser ? ' · ইউজার: ' + esc(state.currentUser.email) : '') + '</p>' +
             '</div>' +
             '<div style="font-size:15px;font-weight:700;color:#0f172a;">' + esc(monthTitle) + '</div>' +
           '</div>' +
@@ -3155,8 +3371,9 @@
 
       el.exportJsonBtn.addEventListener('click', function () {
         var payload = {
-          app: 'khorocher-khata', version: 4, exportedAt: new Date().toISOString(),
-          family: state.activeFamily || null,
+          app: 'khorocher-khata', version: 5, exportedAt: new Date().toISOString(),
+          user: state.currentUser ? state.currentUser.email : 'local',
+          khataMode: state.khataMode,
           budgets: state.budgets, items: state.items, dues: state.dues,
           recurring: state.recurring, checklist: state.checklist, customCats: state.customCats
         };
@@ -3216,8 +3433,8 @@
           } else {
             state.currentUser = null;
             state.isCloudMode = false;
-            state.activeFamilyId = '';
-            state.activeFamily = null;
+            state.activeLedgerId = '';
+            state.familyData = null;
             detachListeners();
             updateAuthUI();
             renderAll();
