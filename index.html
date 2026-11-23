@@ -18,6 +18,11 @@
   <!-- Direct PDF Generator Library (Supports Bengali Fonts via Browser Rendering) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <!-- Firebase App, Auth, and Firestore (Compat CDN for browser) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -154,6 +159,13 @@
 
         <!-- Mobile Quick Action Icons -->
         <div class="flex sm:hidden items-center gap-1.5 no-print">
+          <button type="button" id="googleLoginBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="গুগল লগইন" title="গুগল লগইন">
+            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          </button>
+          <button type="button" id="familyKhataBtnMob" class="hidden p-2.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-700 dark:text-brand-300" aria-label="ফ্যামিলি খাতা" title="ফ্যামিলি খাতা">
+            <span>👨‍👩‍👧</span>
+          </button>
+
           <button type="button" id="pinBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="পিন লক" title="পিন লক">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
           </button>
@@ -180,6 +192,26 @@
 
         <!-- Desktop Controls -->
         <div class="hidden sm:flex items-center gap-2 no-print">
+          <!-- Cloud Sync Badge & Auth Button -->
+          <div id="cloudSyncBadge" class="hidden items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="cloudSyncText">সিঙ্কড</span>
+          </div>
+          <button type="button" id="googleLoginBtnDesk" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition shadow-sm">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            <span>গুগল লগইন</span>
+          </button>
+          <div id="userProfileAreaDesk" class="hidden items-center gap-1.5">
+            <button type="button" id="familyKhataBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700/50 text-xs sm:text-sm font-semibold text-brand-700 dark:text-brand-300 hover:bg-brand-100 transition">
+              <span>👨‍👩‍👧</span>
+              <span id="activeFamilyNameDesk" class="max-w-[100px] truncate">ফ্যামিলি খাতা</span>
+              <span id="activeFamilyCodeBadgeDesk" class="text-[10px] bg-brand-600 text-white px-1.5 py-0.5 rounded-full font-mono"></span>
+            </button>
+            <button type="button" id="userAvatarBtnDesk" class="flex items-center rounded-full border border-slate-200 dark:border-slate-800 p-0.5 hover:ring-2 hover:ring-brand-500 transition" title="প্রোফাইল ও সেটিংস">
+              <img id="userAvatarImgDesk" src="" class="w-8 h-8 rounded-full object-cover bg-slate-200">
+            </button>
+          </div>
+
           <button type="button" id="printBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="সরাসরি PDF ডাউনলোড">
             <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             <span>PDF ডাউনলোড</span>
@@ -218,6 +250,21 @@
 
     <!-- ================= TAB 1: LEDGER (INCOME & EXPENSE) ================= -->
     <div id="tab-ledger" class="tab-panel space-y-6">
+
+            <!-- Cloud Migrate Local Data Banner -->
+      <div id="cloudMigrateBanner" class="hidden no-print flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-100">
+        <div class="flex items-center gap-2.5 text-sm">
+          <span class="text-2xl">📥</span>
+          <div>
+            <p class="font-bold">লোকাল হিসাব ক্লাউডে যুক্ত করবেন?</p>
+            <p class="text-xs text-amber-800 dark:text-amber-300">আপনার ব্রাউজারে থাকা আগের <strong id="localCountText">০টি</strong> হিসাব এই ক্লাউড ফ্যামিলি খাতায় আপলোড করুন।</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" id="migrateLocalConfirmBtn" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-sm transition">ক্লাউডে সিঙ্ক করুন</button>
+          <button type="button" id="migrateLocalDismissBtn" class="px-3 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 text-xs">পরে</button>
+        </div>
+      </div>
 
       <!-- Demo Mode Banner -->
       <div id="demoBanner" class="hidden no-print flex items-center gap-2 px-4 py-3 rounded-2xl bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-700/40 text-sm text-brand-900 dark:text-brand-100">
@@ -746,6 +793,79 @@
     </div>
   </div>
 
+    <!-- ================= MODAL: FAMILY & MULTI-DEVICE KHATA ================= -->
+  <div id="familyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="w-10 h-10 rounded-2xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xl">👨‍👩‍👧</span>
+          <div>
+            <h3 class="font-display text-lg font-bold">ফ্যামিলি ও ক্লাউড খাতা</h3>
+            <p class="text-xs text-slate-500">যেকোনো ডিভাইস থেকে একযোগে হিসাব রাখুন</p>
+          </div>
+        </div>
+        <button type="button" id="closeFamilyModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <!-- Current Family Share Card -->
+      <div class="p-4 rounded-2xl bg-brand-50/70 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800/60 space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs text-brand-800 dark:text-brand-300 font-medium">চলতি খাতার নাম</p>
+            <p id="modalFamilyName" class="font-display font-bold text-lg text-slate-900 dark:text-white mt-0.5">আমার পরিবার</p>
+          </div>
+          <button type="button" id="editFamilyNameBtn" class="text-xs text-brand-600 dark:text-brand-400 hover:underline">নাম পরিবর্তন</button>
+        </div>
+
+        <div class="pt-2 border-t border-brand-200/60 dark:border-brand-800/60 flex items-center justify-between gap-2">
+          <div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">পরিবারের সদস্যদের জন্য ইনভাইট কোড:</p>
+            <p id="modalFamilyCode" class="font-mono text-2xl font-bold tracking-wider text-brand-700 dark:text-brand-300 select-all"></p>
+          </div>
+          <button type="button" id="copyFamilyCodeBtn" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-sm transition">
+            📋 কোড কপি করুন
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+          💡 পরিবারের অন্য সদস্যরা তাদের ফোনে গুগল লগইন করে এই কোডটি লিখলেই সবাই একই খাতা একসাথে ব্যবহার করতে পারবেন।
+        </p>
+      </div>
+
+      <!-- Connected Members List -->
+      <div class="space-y-2">
+        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">যুক্ত থাকা সদস্যগণ:</p>
+        <div id="familyMemberList" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
+      </div>
+
+      <!-- Join another family ledger -->
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">অন্য পরিবার/খাতায় যুক্ত হবেন?</p>
+        <form id="joinFamilyForm" class="flex gap-2">
+          <input type="text" id="joinCodeInput" placeholder="ইনভাইট কোড লিখুন" maxlength="10" class="flex-1 h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-brand-500">
+          <button type="submit" class="px-4 h-10 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs font-semibold hover:opacity-90 transition">যুক্ত হন</button>
+        </form>
+      </div>
+
+      <!-- Create another ledger -->
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">আলাদা নতুন খাতা বানাতে চান?</p>
+        <form id="createFamilyForm" class="flex gap-2">
+          <input type="text" id="createFamilyInput" placeholder="নতুন খাতার নাম (যেমন: মেস খরচ)" maxlength="30" class="flex-1 h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+          <button type="submit" class="px-4 h-10 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition">তৈরি করুন</button>
+        </form>
+      </div>
+
+      <!-- User Account & Logout -->
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+        <div class="flex items-center gap-2 min-w-0">
+          <img id="modalUserAvatar" src="" class="w-6 h-6 rounded-full object-cover bg-slate-200">
+          <span id="modalUserEmail" class="text-slate-500 dark:text-slate-400 truncate max-w-[170px]"></span>
+        </div>
+        <button type="button" id="logoutBtn" class="text-rose-600 dark:text-rose-400 font-semibold hover:underline">লগআউট</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" role="status" aria-live="polite"
     class="hidden fixed left-1/2 -translate-x-1/2 bottom-6 z-[60] px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-medium shadow-xl max-w-[90vw] text-center">
@@ -754,6 +874,30 @@
   <script>
     (function () {
       'use strict';
+
+      /* ================= FIREBASE INITIALIZATION ================= */
+      var firebaseConfig = {
+        apiKey: "AIzaSyD4IBdMytSS1hocpUR8mVUzWahPBSA8FkM",
+        authDomain: "expense-tracker-fdf3d.firebaseapp.com",
+        projectId: "expense-tracker-fdf3d",
+        storageBucket: "expense-tracker-fdf3d.firebasestorage.app",
+        messagingSenderId: "722724182275",
+        appId: "1:722724182275:web:22e76d585f706f282c3136"
+      };
+
+      var fbApp = null, fbAuth = null, fbDb = null;
+      try {
+        if (typeof firebase !== 'undefined') {
+          fbApp = firebase.initializeApp(firebaseConfig);
+          fbAuth = firebase.auth();
+          fbDb = firebase.firestore();
+          fbDb.enablePersistence({ synchronizeTabs: true }).catch(function (err) {
+            console.warn("Firestore offline persistence notice:", err.message);
+          });
+        }
+      } catch (e) {
+        console.warn("Firebase initialization error:", e);
+      }
 
       /* ================= DEFAULT CATEGORIES & METHODS ================= */
       var DEFAULT_EXP_CATS = [
@@ -792,7 +936,8 @@
         checklist: 'khoroch-khata:checklist',
         customCats: 'khoroch-khata:customCats',
         pin: 'khoroch-khata:pin',
-        theme: 'khoroch-khata:theme'
+        theme: 'khoroch-khata:theme',
+        activeFam: 'khoroch-khata:activeFamilyId'
       };
 
       /* ================= FORMATTERS & HELPERS ================= */
@@ -843,7 +988,7 @@
         return String(s || '').replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); });
       }
       function parseAmount(s) {
-        var t = toEngDigits(s).replace(/[,\s৳]/g, '');
+        var t = toEngDigits(s).replace(/[,s৳]/g, '');
         if (!t) return NaN;
         var n = Number(t);
         return isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : NaN;
@@ -870,7 +1015,14 @@
         editingDueId: '',
         pendingDueDelete: '',
         itemsExpanded: false,
-        selectedWeekDay: today
+        selectedWeekDay: today,
+
+        // Cloud & Family State
+        currentUser: null,
+        activeFamilyId: localStorage.getItem(KEYS.activeFam) || '',
+        activeFamily: null,
+        isCloudMode: false,
+        unsubListeners: []
       };
 
       function getAllCats(type) {
@@ -933,12 +1085,28 @@
         lockNowBtn: $('lockNowBtn'), removePinBtn: $('removePinBtn'),
         dataModal: $('dataModal'), closeDataModal: $('closeDataModal'),
         exportCsvBtn: $('exportCsvBtn'), exportJsonBtn: $('exportJsonBtn'), importJsonInput: $('importJsonInput'),
-        toast: $('toast')
+        toast: $('toast'),
+        // Cloud & Family UI
+        cloudSyncBadge: $('cloudSyncBadge'), cloudSyncText: $('cloudSyncText'),
+        googleLoginBtnDesk: $('googleLoginBtnDesk'), googleLoginBtnMob: $('googleLoginBtnMob'),
+        userProfileAreaDesk: $('userProfileAreaDesk'), familyKhataBtnDesk: $('familyKhataBtnDesk'),
+        activeFamilyNameDesk: $('activeFamilyNameDesk'), activeFamilyCodeBadgeDesk: $('activeFamilyCodeBadgeDesk'),
+        userAvatarBtnDesk: $('userAvatarBtnDesk'), userAvatarImgDesk: $('userAvatarImgDesk'),
+        familyKhataBtnMob: $('familyKhataBtnMob'),
+        cloudMigrateBanner: $('cloudMigrateBanner'), localCountText: $('localCountText'),
+        migrateLocalConfirmBtn: $('migrateLocalConfirmBtn'), migrateLocalDismissBtn: $('migrateLocalDismissBtn'),
+        familyModal: $('familyModal'), closeFamilyModal: $('closeFamilyModal'),
+        modalFamilyName: $('modalFamilyName'), editFamilyNameBtn: $('editFamilyNameBtn'),
+        modalFamilyCode: $('modalFamilyCode'), copyFamilyCodeBtn: $('copyFamilyCodeBtn'),
+        familyMemberList: $('familyMemberList'), joinFamilyForm: $('joinFamilyForm'), joinCodeInput: $('joinCodeInput'),
+        createFamilyForm: $('createFamilyForm'), createFamilyInput: $('createFamilyInput'),
+        modalUserAvatar: $('modalUserAvatar'), modalUserEmail: $('modalUserEmail'), logoutBtn: $('logoutBtn')
       };
 
       /* ================= TOAST ================= */
       var toastTimer;
       function toast(msg) {
+        if (!el.toast) return;
         el.toast.textContent = msg;
         el.toast.classList.remove('hidden');
         clearTimeout(toastTimer);
@@ -993,6 +1161,8 @@
           : [];
         return {
           id: raw.id ? String(raw.id) : newId(),
+          familyId: raw.familyId || '',
+          addedBy: raw.addedBy || null,
           type: raw.type === 'income' ? 'income' : 'expense',
           amount: Math.round(amount * 100) / 100,
           cat: raw.cat || (raw.type === 'income' ? 'other_in' : 'other'),
@@ -1006,7 +1176,7 @@
 
       function saveKey(key, val) {
         try { localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val)); }
-        catch (e) { toast('ব্রাউজারে তথ্য সংরক্ষণ করা যাচ্ছে না'); }
+        catch (e) {}
       }
 
       function loadAll() {
@@ -1035,6 +1205,483 @@
         } catch (e) {}
       }
 
+      /* ================= CLOUD SYNC & FAMILY LOGIC ================= */
+      function setSyncStatus(status) {
+        if (!el.cloudSyncBadge) return;
+        if (status === 'synced') {
+          el.cloudSyncBadge.classList.remove('hidden');
+          el.cloudSyncBadge.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800';
+          el.cloudSyncText.textContent = 'সিঙ্কড';
+        } else if (status === 'syncing') {
+          el.cloudSyncBadge.classList.remove('hidden');
+          el.cloudSyncBadge.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
+          el.cloudSyncText.textContent = 'সিঙ্ক হচ্ছে...';
+        } else {
+          el.cloudSyncBadge.classList.add('hidden');
+        }
+      }
+
+      function updateAuthUI() {
+        var isLogged = !!state.currentUser;
+        if (el.googleLoginBtnDesk) el.googleLoginBtnDesk.classList.toggle('hidden', isLogged);
+        if (el.googleLoginBtnMob) el.googleLoginBtnMob.classList.toggle('hidden', isLogged);
+        if (el.userProfileAreaDesk) el.userProfileAreaDesk.classList.toggle('hidden', !isLogged);
+        if (el.familyKhataBtnMob) el.familyKhataBtnMob.classList.toggle('hidden', !isLogged);
+
+        if (isLogged) {
+          var avatar = state.currentUser.photoURL || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + state.currentUser.uid;
+          if (el.userAvatarImgDesk) el.userAvatarImgDesk.src = avatar;
+          if (el.modalUserAvatar) el.modalUserAvatar.src = avatar;
+          if (el.modalUserEmail) el.modalUserEmail.textContent = state.currentUser.email || state.currentUser.name;
+
+          var famName = (state.activeFamily && state.activeFamily.name) || 'ফ্যামিলি খাতা';
+          var famCode = (state.activeFamily && state.activeFamily.code) || '';
+          if (el.activeFamilyNameDesk) el.activeFamilyNameDesk.textContent = famName;
+          if (el.activeFamilyCodeBadgeDesk) {
+            el.activeFamilyCodeBadgeDesk.textContent = famCode;
+            el.activeFamilyCodeBadgeDesk.classList.toggle('hidden', !famCode);
+          }
+          if (el.modalFamilyName) el.modalFamilyName.textContent = famName;
+          if (el.modalFamilyCode) el.modalFamilyCode.textContent = famCode;
+          renderFamilyMembers();
+          setSyncStatus('synced');
+        } else {
+          setSyncStatus('offline');
+        }
+      }
+
+      function renderFamilyMembers() {
+        if (!el.familyMemberList || !state.activeFamily) return;
+        var list = state.activeFamily.members || [];
+        if (!list.length) {
+          el.familyMemberList.innerHTML = '<p class="text-xs text-slate-400">কোনো সদস্য তথ্য পাওয়া যায়নি</p>';
+          return;
+        }
+        el.familyMemberList.innerHTML = list.map(function (m) {
+          var isSelf = state.currentUser && m.uid === state.currentUser.uid;
+          var av = m.photoURL || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + (m.uid || 'u');
+          return '<div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">' +
+            '<div class="flex items-center gap-2 min-w-0">' +
+              '<img src="' + esc(av) + '" class="w-7 h-7 rounded-full object-cover bg-slate-200">' +
+              '<div class="min-w-0">' +
+                '<p class="text-xs font-bold truncate">' + esc(m.name || 'সদস্য') + (isSelf ? ' (আপনি)' : '') + '</p>' +
+                '<p class="text-[10px] text-slate-400 truncate">' + esc(m.email || '') + '</p>' +
+              '</div>' +
+            '</div>' +
+            '<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold ' + (m.role === 'owner' ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400') + '">' +
+              (m.role === 'owner' ? 'মালিক' : 'যুক্ত') +
+            '</span>' +
+          '</div>';
+        }).join('');
+      }
+
+      function detachListeners() {
+        if (state.unsubListeners && state.unsubListeners.length) {
+          state.unsubListeners.forEach(function (unsub) { try { unsub(); } catch (e) {} });
+          state.unsubListeners = [];
+        }
+      }
+
+      function attachFamilyListeners(familyId) {
+        if (!fbDb || !familyId) return;
+        detachListeners();
+
+        // 1. Listen to Family Metadata
+        var uFam = fbDb.collection('families').doc(familyId).onSnapshot(function (doc) {
+          if (doc.exists) {
+            state.activeFamily = doc.data();
+            updateAuthUI();
+          }
+        }, function (err) { console.warn('Family meta sync err:', err); });
+        state.unsubListeners.push(uFam);
+
+        // 2. Listen to Ledger Items
+        var uItems = fbDb.collection('ledger_items').where('familyId', '==', familyId).onSnapshot(function (snap) {
+          var items = [];
+          snap.forEach(function (doc) {
+            var c = cleanItem(doc.data());
+            if (c) items.push(c);
+          });
+          state.items = items;
+          saveKey(KEYS.items, state.items);
+          renderAll();
+          setSyncStatus('synced');
+        }, function (err) { console.warn('Items sync err:', err); });
+        state.unsubListeners.push(uItems);
+
+        // 3. Listen to Dues
+        var uDues = fbDb.collection('ledger_dues').where('familyId', '==', familyId).onSnapshot(function (snap) {
+          var dues = [];
+          snap.forEach(function (doc) { dues.push(doc.data()); });
+          state.dues = dues;
+          saveKey(KEYS.dues, state.dues);
+          renderDues();
+        }, function (err) { console.warn('Dues sync err:', err); });
+        state.unsubListeners.push(uDues);
+
+        // 4. Listen to Recurring
+        var uRec = fbDb.collection('ledger_recurring').where('familyId', '==', familyId).onSnapshot(function (snap) {
+          var rec = [];
+          snap.forEach(function (doc) { rec.push(doc.data()); });
+          state.recurring = rec;
+          saveKey(KEYS.recurring, state.recurring);
+          renderRecurring();
+        }, function (err) { console.warn('Recurring sync err:', err); });
+        state.unsubListeners.push(uRec);
+
+        // 5. Listen to Checklist
+        var uChk = fbDb.collection('ledger_checklist').where('familyId', '==', familyId).onSnapshot(function (snap) {
+          var chk = [];
+          snap.forEach(function (doc) { chk.push(doc.data()); });
+          state.checklist = chk;
+          saveKey(KEYS.checklist, state.checklist);
+          renderChecklist();
+        }, function (err) { console.warn('Checklist sync err:', err); });
+        state.unsubListeners.push(uChk);
+
+        // 6. Listen to Custom Categories
+        var uCats = fbDb.collection('ledger_customCats').where('familyId', '==', familyId).onSnapshot(function (snap) {
+          var cats = [];
+          snap.forEach(function (doc) { cats.push(doc.data()); });
+          state.customCats = cats;
+          saveKey(KEYS.customCats, state.customCats);
+          buildDropdowns();
+          renderFormCategories();
+          renderAll();
+        }, function (err) { console.warn('Cats sync err:', err); });
+        state.unsubListeners.push(uCats);
+
+        // 7. Listen to Budgets
+        var uBud = fbDb.collection('ledger_budgets').doc(familyId).onSnapshot(function (doc) {
+          if (doc.exists) {
+            state.budgets = doc.data().budgets || {};
+            saveKey(KEYS.budgets, state.budgets);
+            renderAll();
+          }
+        }, function (err) { console.warn('Budget sync err:', err); });
+        state.unsubListeners.push(uBud);
+      }
+
+      async function initUserCloud(user) {
+        if (!fbDb) return;
+        try {
+          setSyncStatus('syncing');
+          var userRef = fbDb.collection('users').doc(user.uid);
+          var userDoc = await userRef.get();
+          var userData = userDoc.exists ? userDoc.data() : null;
+
+          var familyId = (userData && userData.activeFamilyId) ? userData.activeFamilyId : (state.activeFamilyId || ('fam_' + user.uid));
+          var familyRef = fbDb.collection('families').doc(familyId);
+          var famDoc = await familyRef.get();
+
+          if (!famDoc.exists) {
+            var famName = (user.displayName ? user.displayName.split(' ')[0] : 'আমার') + '-এর পরিবার';
+            var newCode = 'KHK' + Math.floor(100 + Math.random() * 900);
+            var newFam = {
+              id: familyId,
+              name: famName,
+              code: newCode,
+              createdBy: user.uid,
+              createdAt: Date.now(),
+              members: [{
+                uid: user.uid,
+                name: user.displayName || 'ব্যবহারকারী',
+                email: user.email || '',
+                photoURL: user.photoURL || '',
+                role: 'owner'
+              }]
+            };
+            await familyRef.set(newFam);
+            state.activeFamily = newFam;
+          } else {
+            state.activeFamily = famDoc.data();
+            var members = state.activeFamily.members || [];
+            if (!members.some(function (m) { return m.uid === user.uid; })) {
+              members.push({
+                uid: user.uid,
+                name: user.displayName || 'ব্যবহারকারী',
+                email: user.email || '',
+                photoURL: user.photoURL || '',
+                role: 'member'
+              });
+              await familyRef.update({ members: members });
+            }
+          }
+
+          if (!userDoc.exists) {
+            await userRef.set({
+              uid: user.uid,
+              name: user.displayName || '',
+              email: user.email || '',
+              photoURL: user.photoURL || '',
+              activeFamilyId: familyId,
+              updatedAt: Date.now()
+            });
+          }
+
+          state.activeFamilyId = familyId;
+          saveKey(KEYS.activeFam, familyId);
+          state.isCloudMode = true;
+          updateAuthUI();
+          attachFamilyListeners(familyId);
+          checkLocalMigrationOffer();
+          toast('ক্লাউডে যুক্ত হয়েছে: ' + (state.activeFamily.name || 'ফ্যামিলি খাতা'));
+        } catch (err) {
+          console.error("Cloud init error:", err);
+          toast("ক্লাউড লোড হতে সমস্যা: " + err.message);
+        }
+      }
+
+      function checkLocalMigrationOffer() {
+        if (!el.cloudMigrateBanner) return;
+        var localItems = JSON.parse(localStorage.getItem(KEYS.items) || '[]');
+        if (localItems.length > 0 && isDemo() === false) {
+          el.localCountText.textContent = nfInt.format(localItems.length) + 'টি';
+          el.cloudMigrateBanner.classList.remove('hidden');
+        }
+      }
+
+      /* Unified Cloud & Local Save */
+      function cloudSaveItem(item) {
+        if (state.isCloudMode && fbDb && state.activeFamilyId) {
+          item.familyId = state.activeFamilyId;
+          if (state.currentUser) {
+            item.addedBy = {
+              uid: state.currentUser.uid,
+              name: state.currentUser.name,
+              photoURL: state.currentUser.photoURL || ''
+            };
+          }
+          fbDb.collection('ledger_items').doc(item.id).set(item).catch(function (e) {
+            console.warn("Item save err:", e);
+          });
+        }
+      }
+      function cloudDeleteItem(id) {
+        if (state.isCloudMode && fbDb) {
+          fbDb.collection('ledger_items').doc(id).delete().catch(function (e) {
+            console.warn("Item del err:", e);
+          });
+        }
+      }
+      function cloudSaveDue(due) {
+        if (state.isCloudMode && fbDb && state.activeFamilyId) {
+          due.familyId = state.activeFamilyId;
+          fbDb.collection('ledger_dues').doc(due.id).set(due).catch(function (e) {});
+        }
+      }
+      function cloudDeleteDue(id) {
+        if (state.isCloudMode && fbDb) {
+          fbDb.collection('ledger_dues').doc(id).delete().catch(function (e) {});
+        }
+      }
+      function cloudSaveRecurring(rec) {
+        if (state.isCloudMode && fbDb && state.activeFamilyId) {
+          rec.familyId = state.activeFamilyId;
+          fbDb.collection('ledger_recurring').doc(rec.id).set(rec).catch(function (e) {});
+        }
+      }
+      function cloudDeleteRecurring(id) {
+        if (state.isCloudMode && fbDb) {
+          fbDb.collection('ledger_recurring').doc(id).delete().catch(function (e) {});
+        }
+      }
+      function cloudSaveChecklist(chk) {
+        if (state.isCloudMode && fbDb && state.activeFamilyId) {
+          chk.familyId = state.activeFamilyId;
+          fbDb.collection('ledger_checklist').doc(chk.id).set(chk).catch(function (e) {});
+        }
+      }
+      function cloudDeleteChecklist(id) {
+        if (state.isCloudMode && fbDb) {
+          fbDb.collection('ledger_checklist').doc(id).delete().catch(function (e) {});
+        }
+      }
+      function cloudSaveBudget(budgets) {
+        if (state.isCloudMode && fbDb && state.activeFamilyId) {
+          fbDb.collection('ledger_budgets').doc(state.activeFamilyId).set({ budgets: budgets }).catch(function (e) {});
+        }
+      }
+      function cloudSaveCustomCat(cat) {
+        if (state.isCloudMode && fbDb && state.activeFamilyId) {
+          cat.familyId = state.activeFamilyId;
+          fbDb.collection('ledger_customCats').doc(cat.id).set(cat).catch(function (e) {});
+        }
+      }
+      function cloudDeleteCustomCat(id) {
+        if (state.isCloudMode && fbDb) {
+          fbDb.collection('ledger_customCats').doc(id).delete().catch(function (e) {});
+        }
+      }
+
+      /* Google Auth Triggers */
+      function loginWithGoogle() {
+        if (!fbAuth) { toast('Firebase সংযোগ সক্রিয় নেই'); return; }
+        var provider = new firebase.auth.GoogleAuthProvider();
+        fbAuth.signInWithPopup(provider).catch(function (error) {
+          if (error.code === 'auth/popup-blocked') {
+            fbAuth.signInWithRedirect(provider);
+          } else {
+            toast('লগইন ত্রুটি: ' + error.message);
+          }
+        });
+      }
+
+      if (el.googleLoginBtnDesk) el.googleLoginBtnDesk.addEventListener('click', loginWithGoogle);
+      if (el.googleLoginBtnMob) el.googleLoginBtnMob.addEventListener('click', loginWithGoogle);
+
+      function openFamilyModal() {
+        if (!state.currentUser) { loginWithGoogle(); return; }
+        updateAuthUI();
+        el.familyModal.classList.remove('hidden');
+      }
+      if (el.familyKhataBtnDesk) el.familyKhataBtnDesk.addEventListener('click', openFamilyModal);
+      if (el.familyKhataBtnMob) el.familyKhataBtnMob.addEventListener('click', openFamilyModal);
+      if (el.userAvatarBtnDesk) el.userAvatarBtnDesk.addEventListener('click', openFamilyModal);
+      if (el.closeFamilyModal) el.closeFamilyModal.addEventListener('click', function () { el.familyModal.classList.add('hidden'); });
+      if (el.familyModal) el.familyModal.addEventListener('click', function (ev) { if (ev.target === el.familyModal) el.familyModal.classList.add('hidden'); });
+
+      if (el.copyFamilyCodeBtn) {
+        el.copyFamilyCodeBtn.addEventListener('click', function () {
+          var code = state.activeFamily ? state.activeFamily.code : '';
+          if (!code) return;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(code).then(function () {
+              toast('ইনভাইট কোড কপি হয়েছে: ' + code);
+            });
+          } else {
+            prompt('কোডটি কপি করে নিন:', code);
+          }
+        });
+      }
+
+      if (el.editFamilyNameBtn) {
+        el.editFamilyNameBtn.addEventListener('click', async function () {
+          var cur = state.activeFamily ? state.activeFamily.name : '';
+          var newName = prompt('পরিবার বা খাতার নতুন নাম লিখুন:', cur);
+          if (!newName || !newName.trim()) return;
+          try {
+            await fbDb.collection('families').doc(state.activeFamilyId).update({ name: newName.trim() });
+            toast('খাতার নাম পরিবর্তন হয়েছে');
+          } catch (e) { toast('পরিবর্তন করা যায়নি: ' + e.message); }
+        });
+      }
+
+      if (el.joinFamilyForm) {
+        el.joinFamilyForm.addEventListener('submit', async function (ev) {
+          ev.preventDefault();
+          var code = el.joinCodeInput.value.trim().toUpperCase();
+          if (!code) { toast('ইনভাইট কোড লিখুন'); return; }
+          try {
+            toast('খাতা খোঁজা হচ্ছে...');
+            var qSnap = await fbDb.collection('families').where('code', '==', code).get();
+            if (qSnap.empty) {
+              toast('ভুল কোড! কোনো পরিবার খুঁজে পাওয়া যায়নি');
+              return;
+            }
+            var targetFam = qSnap.docs[0].data();
+            var members = targetFam.members || [];
+            if (!members.some(function (m) { return m.uid === state.currentUser.uid; })) {
+              members.push({
+                uid: state.currentUser.uid,
+                name: state.currentUser.name,
+                email: state.currentUser.email,
+                photoURL: state.currentUser.photoURL || '',
+                role: 'member'
+              });
+              await fbDb.collection('families').doc(targetFam.id).update({ members: members });
+            }
+            await fbDb.collection('users').doc(state.currentUser.uid).update({ activeFamilyId: targetFam.id });
+            state.activeFamilyId = targetFam.id;
+            saveKey(KEYS.activeFam, targetFam.id);
+            state.activeFamily = targetFam;
+            attachFamilyListeners(targetFam.id);
+            updateAuthUI();
+            el.joinCodeInput.value = '';
+            el.familyModal.classList.add('hidden');
+            toast('✓ সফলভাবে "' + targetFam.name + '" খাতায় যুক্ত হয়েছেন!');
+          } catch (e) {
+            toast('যুক্ত হওয়া যায়নি: ' + e.message);
+          }
+        });
+      }
+
+      if (el.createFamilyForm) {
+        el.createFamilyForm.addEventListener('submit', async function (ev) {
+          ev.preventDefault();
+          var name = el.createFamilyInput.value.trim();
+          if (!name) { toast('খাতার নাম লিখুন'); return; }
+          try {
+            var newId = 'fam_' + Date.now().toString(36);
+            var newCode = 'KHK' + Math.floor(100 + Math.random() * 900);
+            var newFam = {
+              id: newId,
+              name: name,
+              code: newCode,
+              createdBy: state.currentUser.uid,
+              createdAt: Date.now(),
+              members: [{
+                uid: state.currentUser.uid,
+                name: state.currentUser.name,
+                email: state.currentUser.email,
+                photoURL: state.currentUser.photoURL || '',
+                role: 'owner'
+              }]
+            };
+            await fbDb.collection('families').doc(newId).set(newFam);
+            await fbDb.collection('users').doc(state.currentUser.uid).update({ activeFamilyId: newId });
+            state.activeFamilyId = newId;
+            saveKey(KEYS.activeFam, newId);
+            state.activeFamily = newFam;
+            attachFamilyListeners(newId);
+            updateAuthUI();
+            el.createFamilyInput.value = '';
+            el.familyModal.classList.add('hidden');
+            toast('নতুন খাতা তৈরি হয়েছে: ' + name);
+          } catch (e) {
+            toast('খাতা তৈরি ব্যর্থ: ' + e.message);
+          }
+        });
+      }
+
+      if (el.logoutBtn) {
+        el.logoutBtn.addEventListener('click', function () {
+          if (confirm('আপনি কি এই ডিভাইস থেকে লগআউট করতে চান?')) {
+            fbAuth.signOut().then(function () {
+              el.familyModal.classList.add('hidden');
+              toast('লগআউট সম্পন্ন হয়েছে');
+            });
+          }
+        });
+      }
+
+      if (el.migrateLocalConfirmBtn) {
+        el.migrateLocalConfirmBtn.addEventListener('click', async function () {
+          var localItems = JSON.parse(localStorage.getItem(KEYS.items) || '[]');
+          if (!localItems.length) { el.cloudMigrateBanner.classList.add('hidden'); return; }
+          try {
+            toast('ক্লাউডে আপলোড হচ্ছে...');
+            var batch = fbDb.batch();
+            localItems.forEach(function (it) {
+              it.familyId = state.activeFamilyId;
+              it.addedBy = { uid: state.currentUser.uid, name: state.currentUser.name };
+              var ref = fbDb.collection('ledger_items').doc(it.id);
+              batch.set(ref, it);
+            });
+            await batch.commit();
+            el.cloudMigrateBanner.classList.add('hidden');
+            toast('সব লোকাল হিসাব সফলভাবে ক্লাউডে সিঙ্ক হয়েছে!');
+          } catch (e) {
+            toast('আপলোড করতে সমস্যা: ' + e.message);
+          }
+        });
+      }
+      if (el.migrateLocalDismissBtn) {
+        el.migrateLocalDismissBtn.addEventListener('click', function () {
+          el.cloudMigrateBanner.classList.add('hidden');
+        });
+      }
+
       /* ================= DEMO DATA ================= */
       function demoItems() {
         var base = new Date();
@@ -1054,7 +1701,7 @@
           };
         });
       }
-      function isDemo() { return state.items.length === 0; }
+      function isDemo() { return state.items.length === 0 && !state.isCloudMode; }
       function allItems() { return isDemo() ? demoItems() : state.items; }
       function monthAllItems(ym) {
         var m = ym || state.viewMonth;
@@ -1246,7 +1893,7 @@
         el.monthBalance.className = 'font-display text-2xl sm:text-3xl font-bold mt-0.5 break-words ' +
           (bal < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-brand-700 dark:text-brand-400');
 
-        // Previous Month Comparison Badge
+        // Comparison Badge
         var prevExp = sumOf(monthAllItems(prevMonthKey(state.viewMonth)).filter(function (i) { return i.type !== 'income'; }));
         if (prevExp > 0 && expTotal > 0) {
           var diff = expTotal - prevExp;
@@ -1304,7 +1951,7 @@
           el.budgetBtn.textContent = 'বাজেট ঠিক করুন';
         }
 
-        // Wallet / Payment Method Summary
+        // Wallet Summary
         el.walletSummary.innerHTML = PAY_METHODS.map(function (pm) {
           var spent = sumOf(mExp.filter(function (i) { return (i.pay || 'cash') === pm.id; }));
           return '<div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80">' +
@@ -1456,6 +2103,10 @@
                 '</ul></details>';
             }
 
+            var memberBadge = (state.isCloudMode && i.addedBy && i.addedBy.name)
+              ? '<span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium shrink-0">👤 ' + esc(i.addedBy.name.split(' ')[0]) + '</span>'
+              : '';
+
             var actHtml = '';
             if (!i.demo) {
               if (state.pendingDelete === i.id) {
@@ -1479,7 +2130,10 @@
               '<div class="flex items-start gap-3 min-w-0 flex-1">' +
                 '<div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0 mt-0.5" style="background:' + (c.color || '#109476') + '1a">' + esc(c.icon) + '</div>' +
                 '<div class="min-w-0 flex-1">' +
-                  '<p class="font-semibold text-sm sm:text-base text-slate-900 dark:text-slate-100 break-words leading-snug">' + esc(i.note || c.name) + '</p>' +
+                  '<div class="flex flex-wrap items-center gap-1.5">' +
+                    '<p class="font-semibold text-sm sm:text-base text-slate-900 dark:text-slate-100 break-words leading-snug">' + esc(i.note || c.name) + '</p>' +
+                    memberBadge +
+                  '</div>' +
                   '<div class="flex flex-wrap items-center gap-x-2 mt-0.5 text-xs text-slate-500 dark:text-slate-400">' +
                     '<span>' + esc(c.name) + '</span><span>•</span><span>' + p.icon + ' ' + esc(p.name) + '</span>' +
                   '</div>' + subHtml +
@@ -1534,7 +2188,6 @@
         el.duesBadge.textContent = nfInt.format(pending.length);
         el.duesBadge.classList.toggle('hidden', pending.length === 0);
 
-        // Update filter pills with live counts
         var counts = { all: state.dues.length, pending: pending.length, settled: settled.length };
         var labels = { all: 'সবগুলো', pending: 'বাকি আছে', settled: 'পরিশোধিত' };
         el.dueFilterTabs.querySelectorAll('button[data-due-tab]').forEach(function (b) {
@@ -1554,7 +2207,7 @@
         }).sort(function (a, b) {
           var ad = isDueSettled(a) ? 1 : 0, bd = isDueSettled(b) ? 1 : 0;
           if (ad !== bd) return ad - bd;
-          return b.date.localeCompare(a.date);
+          return (b.date || '').localeCompare(a.date || '');
         });
 
         if (!list.length) {
@@ -1636,7 +2289,7 @@
         var total = sumOf(state.recurring);
         el.recTotalBadge.textContent = 'মোট ' + money(total) + '/মাস';
         if (!state.recurring.length) {
-          el.recList.innerHTML = '<div class="py-10 text-center text-sm text-slate-400">এখনো কোনো নিয়মিত খরচ সেভ করা হয়নি। বাম পাশ থেকে বাসা ভাড়া, ওয়াইফাই বিল বা কিস্তি যোগ করুন।</div>';
+          el.recList.innerHTML = '<div class="py-10 text-center text-sm text-slate-400">এখনো কোনো নিয়মিত খরচ সেভ করা হয়নি। বাসা ভাড়া বা বিল যোগ করুন।</div>';
           return;
         }
         var mExp = monthAllItems(state.viewMonth).filter(function (i) { return i.type !== 'income'; });
@@ -1739,7 +2392,6 @@
         }
         el.amountErr.classList.add('hidden');
         var date = el.date.value || today;
-        if (date > today) date = today;
 
         var idx = state.items.findIndex(function (x) { return x.id === state.editingId; });
         var isEdit = idx >= 0;
@@ -1759,6 +2411,8 @@
         else state.items.push(item);
 
         saveKey(KEYS.items, state.items);
+        cloudSaveItem(item);
+
         state.viewMonth = item.date.slice(0, 7);
         resetForm(true);
         closeDrawer();
@@ -1778,6 +2432,7 @@
           state.pendingDelete = '';
           state.items = state.items.filter(function (x) { return x.id !== id; });
           saveKey(KEYS.items, state.items);
+          cloudDeleteItem(id);
           if (state.editingId === id) resetForm(false);
           renderAll();
           toast('হিসাবটি মুছে ফেলা হয়েছে');
@@ -1833,6 +2488,7 @@
             existing.date = el.dueDate.value || today;
             existing.settled = dueRemaining(existing) <= 0;
             saveKey(KEYS.dues, state.dues);
+            cloudSaveDue(existing);
             resetDueForm();
             renderDues();
             toast('ধার-দেনার তথ্য আপডেট হয়েছে');
@@ -1840,11 +2496,13 @@
           }
         }
 
-        state.dues.push({
+        var newDue = {
           id: newId(), type: type, person: person, amount: amount,
           note: el.dueNote.value.trim(), date: el.dueDate.value || today, settled: false, payments: []
-        });
+        };
+        state.dues.push(newDue);
         saveKey(KEYS.dues, state.dues);
+        cloudSaveDue(newDue);
         resetDueForm();
         renderDues();
         toast('ধার-দেনার তালিকায় যোগ হয়েছে');
@@ -1911,6 +2569,7 @@
           editPay.note = pNote;
           d.settled = dueRemaining(d) <= 0;
           saveKey(KEYS.dues, state.dues);
+          cloudSaveDue(d);
           renderDues();
           el.duePayModal.classList.add('hidden');
           toast('পরিশোধের ইতিহাস আপডেট হয়েছে');
@@ -1920,10 +2579,11 @@
         d.payments.push({ id: newId(), amount: amt, date: pDate, note: pNote });
         if (dueRemaining(d) <= 0) d.settled = true;
         saveKey(KEYS.dues, state.dues);
+        cloudSaveDue(d);
 
         if (el.duePaySyncLedger.checked) {
           var isGet = d.type === 'get';
-          state.items.push({
+          var ledgerItem = {
             id: newId(),
             type: isGet ? 'income' : 'expense',
             amount: amt,
@@ -1933,8 +2593,10 @@
             date: pDate,
             ts: Date.now(),
             items: []
-          });
+          };
+          state.items.push(ledgerItem);
           saveKey(KEYS.items, state.items);
+          cloudSaveItem(ledgerItem);
           renderAll();
         } else {
           renderDues();
@@ -1942,7 +2604,7 @@
 
         el.duePayModal.classList.add('hidden');
         var newRem = dueRemaining(d);
-        toast(newRem > 0 ? money(amt) + ' জমা হয়েছে · আরও বাকি ' + money(newRem) : 'সম্পূর্ণ পরিশোধ সম্পন্ন হয়েছে ও ইতিহাস সেভ আছে');
+        toast(newRem > 0 ? money(amt) + ' জমা হয়েছে · আরও বাকি ' + money(newRem) : 'সম্পূর্ণ পরিশোধ সম্পন্ন হয়েছে');
       });
 
       el.duesList.addEventListener('click', function (ev) {
@@ -1984,8 +2646,9 @@
             if (rem > 0) d.payments.push({ id: newId(), amount: rem, date: today, note: 'চূড়ান্ত পরিশোধ' });
             d.settled = true;
             saveKey(KEYS.dues, state.dues);
+            cloudSaveDue(d);
             renderDues();
-            toast('সম্পূর্ণ পরিশোধিত হয়েছে (ইতিহাস নিচে সংরক্ষিত আছে)');
+            toast('সম্পূর্ণ পরিশোধিত হয়েছে');
           }
           return;
         }
@@ -1999,6 +2662,7 @@
               rd.payments.pop();
             }
             saveKey(KEYS.dues, state.dues);
+            cloudSaveDue(rd);
             renderDues();
             toast('আবার বাকি তালিকায় নেওয়া হয়েছে');
           }
@@ -2013,8 +2677,9 @@
             targetDue.payments = targetDue.payments.filter(function (p) { return p.id !== parts[1]; });
             targetDue.settled = dueRemaining(targetDue) <= 0;
             saveKey(KEYS.dues, state.dues);
+            cloudSaveDue(targetDue);
             renderDues();
-            toast('কিস্তিটি মুছে ফেলা হয়েছে ও বাকি হিসাব আপডেট হয়েছে');
+            toast('কিস্তিটি মুছে ফেলা হয়েছে');
           }
           return;
         }
@@ -2030,6 +2695,7 @@
           state.dues = state.dues.filter(function (x) { return x.id !== delId; });
           if (state.editingDueId === delId) resetDueForm();
           saveKey(KEYS.dues, state.dues);
+          cloudDeleteDue(delId);
           renderDues();
           toast('ধার-দেনার রেকর্ড মুছে ফেলা হয়েছে');
         }
@@ -2041,10 +2707,12 @@
         var title = el.recTitle.value.trim();
         var amount = parseAmount(el.recAmount.value);
         if (!title || isNaN(amount)) { toast('সঠিক নাম ও পরিমাণ লিখুন'); return; }
-        state.recurring.push({
+        var newRec = {
           id: newId(), title: title, amount: amount, cat: el.recCat.value, pay: el.recPay.value
-        });
+        };
+        state.recurring.push(newRec);
         saveKey(KEYS.recurring, state.recurring);
+        cloudSaveRecurring(newRec);
         el.recTitle.value = ''; el.recAmount.value = '';
         renderRecurring();
         toast('নিয়মিত খরচ সেভ হয়েছে');
@@ -2055,19 +2723,23 @@
           var r = state.recurring.find(function (x) { return x.id === addBtn.getAttribute('data-rec-add'); });
           if (!r) return;
           var targetDate = state.viewMonth === curMonth ? today : state.viewMonth + '-01';
-          state.items.push({
+          var itm = {
             id: newId(), type: 'expense', amount: r.amount, cat: r.cat, pay: r.pay,
             note: r.title, date: targetDate, ts: Date.now(), items: []
-          });
+          };
+          state.items.push(itm);
           saveKey(KEYS.items, state.items);
+          cloudSaveItem(itm);
           renderAll();
           toast('"' + r.title + '" এই মাসের খরচে যোগ হয়েছে');
           return;
         }
         var delBtn = ev.target.closest('button[data-rec-del]');
         if (delBtn) {
-          state.recurring = state.recurring.filter(function (x) { return x.id !== delBtn.getAttribute('data-rec-del'); });
+          var delRecId = delBtn.getAttribute('data-rec-del');
+          state.recurring = state.recurring.filter(function (x) { return x.id !== delRecId; });
           saveKey(KEYS.recurring, state.recurring);
+          cloudDeleteRecurring(delRecId);
           renderRecurring();
           toast('টেমপ্লেট মুছে ফেলা হয়েছে');
         }
@@ -2079,8 +2751,10 @@
         var name = el.checkName.value.trim();
         if (!name) { toast('জিনিসের নাম লিখুন'); return; }
         var p = parseAmount(el.checkPrice.value);
-        state.checklist.push({ id: newId(), name: name, price: isNaN(p) ? 0 : p, done: false });
+        var newChk = { id: newId(), name: name, price: isNaN(p) ? 0 : p, done: false };
+        state.checklist.push(newChk);
         saveKey(KEYS.checklist, state.checklist);
+        cloudSaveChecklist(newChk);
         el.checkName.value = ''; el.checkPrice.value = '';
         el.checkName.focus();
         renderChecklist();
@@ -2089,7 +2763,12 @@
         var chk = ev.target.closest('input[data-chk-toggle]');
         if (chk) {
           var it = state.checklist.find(function (x) { return x.id === chk.getAttribute('data-chk-toggle'); });
-          if (it) { it.done = chk.checked; saveKey(KEYS.checklist, state.checklist); renderChecklist(); }
+          if (it) {
+            it.done = chk.checked;
+            saveKey(KEYS.checklist, state.checklist);
+            cloudSaveChecklist(it);
+            renderChecklist();
+          }
           return;
         }
         var pr = ev.target.closest('input[data-chk-price]');
@@ -2099,6 +2778,7 @@
             var val = parseAmount(pr.value);
             item.price = isNaN(val) ? 0 : val;
             saveKey(KEYS.checklist, state.checklist);
+            cloudSaveChecklist(item);
             renderChecklist();
           }
         }
@@ -2106,12 +2786,17 @@
       el.checkList.addEventListener('click', function (ev) {
         var del = ev.target.closest('button[data-chk-del]');
         if (del) {
-          state.checklist = state.checklist.filter(function (x) { return x.id !== del.getAttribute('data-chk-del'); });
+          var delChkId = del.getAttribute('data-chk-del');
+          state.checklist = state.checklist.filter(function (x) { return x.id !== delChkId; });
           saveKey(KEYS.checklist, state.checklist);
+          cloudDeleteChecklist(delChkId);
           renderChecklist();
         }
       });
       el.clearCheckBtn.addEventListener('click', function () {
+        if (state.isCloudMode) {
+          state.checklist.forEach(function (c) { cloudDeleteChecklist(c.id); });
+        }
         state.checklist = [];
         saveKey(KEYS.checklist, state.checklist);
         renderChecklist();
@@ -2124,13 +2809,18 @@
           toast('খরচে যোগ করতে চেক করা আইটেমগুলোর দাম লিখুন');
           return;
         }
-        state.items.push({
+        var bItem = {
           id: newId(), type: 'expense', amount: Math.round(total * 100) / 100,
           cat: 'bazar', pay: 'cash', note: 'বাজারের ফর্দ (' + nfInt.format(doneList.length) + 'টি জিনিস)',
           date: today, ts: Date.now(),
           items: doneList.map(function (c) { return { name: c.name, price: Number(c.price) || 0 }; })
-        });
+        };
+        state.items.push(bItem);
+        cloudSaveItem(bItem);
+
+        doneList.forEach(function (c) { cloudDeleteChecklist(c.id); });
         state.checklist = state.checklist.filter(function (c) { return !c.done; });
+
         saveKey(KEYS.items, state.items);
         saveKey(KEYS.checklist, state.checklist);
         state.viewMonth = curMonth;
@@ -2172,6 +2862,7 @@
         };
         state.customCats.push(newCat);
         saveKey(KEYS.customCats, state.customCats);
+        cloudSaveCustomCat(newCat);
         el.newCatName.value = '';
         buildDropdowns();
         renderFormCategories(state.formType === type ? newCat.id : null);
@@ -2184,6 +2875,7 @@
         var id = del.getAttribute('data-del-cat');
         state.customCats = state.customCats.filter(function (c) { return c.id !== id; });
         saveKey(KEYS.customCats, state.customCats);
+        cloudDeleteCustomCat(id);
         buildDropdowns();
         renderFormCategories();
         renderCustomCatList();
@@ -2219,6 +2911,7 @@
         if (n > 0) state.budgets[state.viewMonth] = n;
         else delete state.budgets[state.viewMonth];
         saveKey(KEYS.budgets, state.budgets);
+        cloudSaveBudget(state.budgets);
         el.budgetForm.classList.add('hidden');
         renderAll();
         toast(n ? 'মাসের বাজেট সংরক্ষিত হয়েছে' : 'বাজেট সরানো হয়েছে');
@@ -2315,7 +3008,6 @@
         });
         if (!mAll.length) { toast('এই মাসে PDF করার মতো কোনো হিসাব নেই'); return; }
 
-        // Fallback if offline / library failed to load
         if (typeof window.html2pdf === 'undefined') {
           toast('প্রিন্টার অপশন থেকে "Save as PDF" সিলেক্ট করুন');
           setTab('ledger');
@@ -2374,6 +3066,7 @@
             mAll.map(function (i) {
               var isInc = i.type === 'income';
               var c = catOf(i.cat, i.type), p = payOf(i.pay);
+              var who = (i.addedBy && i.addedBy.name) ? ' (' + i.addedBy.name.split(' ')[0] + ')' : '';
               var subTxt = (i.items && i.items.length)
                 ? '<div style="font-size:11px;color:#64748b;margin-top:2px;">' +
                     i.items.map(function (s) { return esc(s.name || 'আইটেম') + (s.price ? ' (' + money(s.price) + ')' : ''); }).join(', ') +
@@ -2381,7 +3074,7 @@
                 : '';
               return '<tr style="page-break-inside:avoid;">' +
                 '<td style="padding:6px 8px;border:1px solid #e2e8f0;white-space:nowrap;">' + esc(i.date) + '</td>' +
-                '<td style="padding:6px 8px;border:1px solid #e2e8f0;"><strong>' + esc(i.note || c.name) + '</strong> <span style="color:#64748b;">(' + esc(c.name) + ')</span>' + subTxt + '</td>' +
+                '<td style="padding:6px 8px;border:1px solid #e2e8f0;"><strong>' + esc(i.note || c.name) + '</strong> <span style="color:#64748b;">(' + esc(c.name) + ')' + who + '</span>' + subTxt + '</td>' +
                 '<td style="padding:6px 8px;border:1px solid #e2e8f0;white-space:nowrap;">' + esc(p.name) + '</td>' +
                 '<td style="padding:6px 8px;border:1px solid #e2e8f0;text-align:right;font-weight:700;color:' + (isInc ? '#059669' : '#0f172a') + ';white-space:nowrap;">' + (isInc ? '+' : '') + money(i.amount) + '</td>' +
               '</tr>';
@@ -2392,7 +3085,7 @@
           '<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0d7a61;padding-bottom:12px;margin-bottom:16px;">' +
             '<div>' +
               '<h1 style="margin:0;font-size:22px;font-weight:700;color:#0d7a61;">খরচের খাতা — মাসিক রিপোর্ট</h1>' +
-              '<p style="margin:2px 0 0;font-size:12px;color:#64748b;">তৈরির তারিখ: ' + esc(today) + '</p>' +
+              '<p style="margin:2px 0 0;font-size:12px;color:#64748b;">তৈরির তারিখ: ' + esc(today) + (state.activeFamily ? ' · খাতা: ' + esc(state.activeFamily.name) : '') + '</p>' +
             '</div>' +
             '<div style="font-size:15px;font-weight:700;color:#0f172a;">' + esc(monthTitle) + '</div>' +
           '</div>' +
@@ -2449,10 +3142,11 @@
         var mi = monthAllItems().slice().sort(function (a, b) { return a.date.localeCompare(b.date); });
         if (!mi.length) { toast('এই মাসে কোনো তথ্য নেই'); return; }
         var cell = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
-        var lines = [['তারিখ', 'ধরন', 'ক্যাটাগরি', 'মাধ্যম', 'বিবরণ', 'বিস্তারিত', 'টাকা'].map(cell).join(',')];
+        var lines = [['তারিখ', 'ধরন', 'ক্যাটাগরি', 'মাধ্যম', 'বিবরণ', 'সদস্য', 'বিস্তারিত', 'টাকা'].map(cell).join(',')];
         mi.forEach(function (i) {
           var sub = (i.items || []).map(function (s) { return s.name + (s.price ? ' (' + s.price + ')' : ''); }).join('; ');
-          lines.push([i.date, i.type === 'income' ? 'আয়' : 'খরচ', catOf(i.cat, i.type).name, payOf(i.pay).name, i.note || '', sub, i.amount].map(cell).join(','));
+          var member = (i.addedBy && i.addedBy.name) ? i.addedBy.name : '';
+          lines.push([i.date, i.type === 'income' ? 'আয়' : 'খরচ', catOf(i.cat, i.type).name, payOf(i.pay).name, i.note || '', member, sub, i.amount].map(cell).join(','));
         });
         downloadFile(new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' }), 'khorocher-khata-' + state.viewMonth + '.csv');
         closeDataModal();
@@ -2461,7 +3155,8 @@
 
       el.exportJsonBtn.addEventListener('click', function () {
         var payload = {
-          app: 'khorocher-khata', version: 3, exportedAt: new Date().toISOString(),
+          app: 'khorocher-khata', version: 4, exportedAt: new Date().toISOString(),
+          family: state.activeFamily || null,
           budgets: state.budgets, items: state.items, dues: state.dues,
           recurring: state.recurring, checklist: state.checklist, customCats: state.customCats
         };
@@ -2473,6 +3168,10 @@
       el.importJsonInput.addEventListener('change', function (ev) {
         var file = ev.target.files && ev.target.files[0];
         if (!file) return;
+        if (!confirm('আপনার বর্তমান তালিকায় এই ব্যাকআপের ডেটা যুক্ত করতে চান?')) {
+          el.importJsonInput.value = '';
+          return;
+        }
         var reader = new FileReader();
         reader.onload = function () {
           try {
@@ -2503,15 +3202,38 @@
         reader.readAsText(file);
       });
 
+      /* ================= FIREBASE AUTH STATE LISTENER ================= */
+      if (fbAuth) {
+        fbAuth.onAuthStateChanged(function (user) {
+          if (user) {
+            state.currentUser = {
+              uid: user.uid,
+              name: user.displayName || user.email.split('@')[0],
+              email: user.email || '',
+              photoURL: user.photoURL || ''
+            };
+            initUserCloud(user);
+          } else {
+            state.currentUser = null;
+            state.isCloudMode = false;
+            state.activeFamilyId = '';
+            state.activeFamily = null;
+            detachListeners();
+            updateAuthUI();
+            renderAll();
+          }
+        });
+      }
+
       /* ================= INIT ================= */
       loadAll();
       el.date.value = today;
-      el.date.max = today;
       el.dueDate.value = today;
       buildDropdowns();
       setFormType('expense');
       setTab('ledger');
       renderAll();
+      updateAuthUI();
       if (state.pin) showLockScreen();
     })();
   </script>
