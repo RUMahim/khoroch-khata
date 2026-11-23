@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="দৈনন্দিন আয়-ব্যয়, মাসিক বাজেট, ধার-দেনা (হালখাতা), নিয়মিত খরচ ও বাজারের ফর্দ হিসাব রাখার সহজ ও প্রফেশনাল বাংলা ওয়েব অ্যাপ।">
+  <meta name="theme-color" content="#0d7a61">
+  <title>খরচের খাতা — পূর্ণাঙ্গ দৈনিক হিসাব</title>
+
+  <!-- Inline SVG Favicon (Prevents 404 on Live Hosting) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230d7a61'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-size='34' font-weight='bold'%3E৳%3C/text%3E%3C/svg%3E">
+
+  <!-- Google Fonts: Anek Bangla (Display) & Hind Siliguri (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Direct PDF Generator Library (Supports Bengali Fonts via Browser Rendering) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Hind Siliguri"', 'system-ui', 'sans-serif'],
+            display: ['"Anek Bangla"', '"Hind Siliguri"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eefaf6',
+              100: '#d5f2e8',
+              200: '#aee5d3',
+              500: '#109476',
+              600: '#0d7a61',
+              700: '#0b614e',
+              900: '#073b30',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Initial Theme Detection (Prevents Flash of Wrong Theme) -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('khoroch-khata:theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    body {
+      padding-bottom: max(5.5rem, env(safe-area-inset-bottom, 0px));
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.7;
+    }
+    .dark input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    /* Clean Print / PDF Report Styling */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding: 0 !important;
+      }
+      .no-print, #fabBtn, #formDrawer, #formBackdrop, #toast, #pinLockScreen, #dataModal, #catModal, #pinModal {
+        display: none !important;
+      }
+      .print-full {
+        grid-column: span 12 / span 12 !important;
+        width: 100% !important;
+      }
+      .print-card {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased transition-colors duration-200 selection:bg-brand-500/20">
+
+  <!-- ================= PIN LOCK SCREEN OVERLAY ================= -->
+  <div id="pinLockScreen" class="hidden fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6">
+    <div class="w-full max-w-xs text-center space-y-6">
+      <div class="w-16 h-16 mx-auto rounded-3xl bg-brand-600 text-white flex items-center justify-center shadow-lg">
+        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="font-display text-2xl font-bold">খরচের খাতা লক করা</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">আনলক করতে আপনার ৪ সংখ্যার পিন দিন</p>
+      </div>
+      <div id="pinDots" class="flex items-center justify-center gap-3.5 py-1">
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-700 transition"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-700 transition"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-700 transition"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 dark:border-slate-700 transition"></span>
+      </div>
+      <p id="pinLockErr" class="text-xs text-rose-500 min-h-[16px] font-medium"></p>
+      <div class="grid grid-cols-3 gap-3 max-w-[240px] mx-auto">
+        <button type="button" data-pin="1" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">১</button>
+        <button type="button" data-pin="2" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">২</button>
+        <button type="button" data-pin="3" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">৩</button>
+        <button type="button" data-pin="4" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">৪</button>
+        <button type="button" data-pin="5" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">৫</button>
+        <button type="button" data-pin="6" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">৬</button>
+        <button type="button" data-pin="7" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">৭</button>
+        <button type="button" data-pin="8" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">৮</button>
+        <button type="button" data-pin="9" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">৯</button>
+        <button type="button" data-pin="clear" class="h-14 rounded-2xl text-xs font-semibold text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition">মুছুন</button>
+        <button type="button" data-pin="0" class="h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-display text-xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition">০</button>
+        <button type="button" data-pin="back" class="h-14 rounded-2xl flex items-center justify-center text-slate-500 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition" aria-label="পেছনে">⌫</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN APP CONTAINER ================= -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-7 space-y-5">
+
+    <!-- Top Header -->
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-brand-600 dark:bg-brand-500 text-white flex items-center justify-center shadow-sm shrink-0">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs font-medium tracking-wide text-slate-500 dark:text-slate-400">ব্যক্তিগত আয়-ব্যয় ও হিসাব</p>
+            <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight leading-tight">খরচের খাতা</h1>
+          </div>
+        </div>
+
+        <!-- Mobile Quick Action Icons -->
+        <div class="flex sm:hidden items-center gap-1.5 no-print">
+          <button type="button" id="pinBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="পিন লক" title="পিন লক">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+          </button>
+          <button type="button" id="dataBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="ব্যাকআপ ও রিপোর্ট" title="ব্যাকআপ ও রিপোর্ট">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+          </button>
+          <button type="button" id="themeBtnMob" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300" aria-label="থিম পরিবর্তন">
+            <span class="theme-icon"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Month Switcher & Desktop Actions -->
+      <div class="flex items-center justify-between sm:justify-end gap-2">
+        <nav class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full p-1 shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start" aria-label="মাস পরিবর্তন">
+          <button type="button" id="prevMonth" class="no-print w-9 h-9 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="আগের মাস">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+          </button>
+          <span id="monthLabel" class="px-3 min-w-[130px] text-center font-semibold text-sm sm:text-base select-none" aria-live="polite"></span>
+          <button type="button" id="nextMonth" class="no-print w-9 h-9 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition disabled:opacity-30 disabled:cursor-not-allowed" aria-label="পরের মাস">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </nav>
+
+        <!-- Desktop Controls -->
+        <div class="hidden sm:flex items-center gap-2 no-print">
+          <button type="button" id="printBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="সরাসরি PDF ডাউনলোড">
+            <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            <span>PDF ডাউনলোড</span>
+          </button>
+          <button type="button" id="dataBtnDesk" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <svg class="w-4 h-4 text-brand-600 dark:text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span>ব্যাকআপ</span>
+          </button>
+          <button type="button" id="pinBtnDesk" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="পিন লক" title="পিন লক সেটিংস">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+          </button>
+          <button type="button" id="themeBtnDesk" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" aria-label="থিম পরিবর্তন">
+            <span class="theme-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Primary Feature Tabs -->
+    <nav id="mainTabs" class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar pb-1" aria-label="মূল মেনু">
+      <button type="button" data-tab="ledger" class="tab-btn px-4 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition flex items-center gap-1.5">
+        <span>📊</span><span>আয় ও খরচ</span>
+      </button>
+      <button type="button" data-tab="dues" class="tab-btn px-4 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition flex items-center gap-1.5">
+        <span>🤝</span><span>ধার-দেনা</span>
+        <span id="duesBadge" class="hidden px-1.5 py-0.5 text-[10px] rounded-full bg-rose-500 text-white leading-none">0</span>
+      </button>
+      <button type="button" data-tab="recurring" class="tab-btn px-4 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition flex items-center gap-1.5">
+        <span>🔁</span><span>নিয়মিত খরচ</span>
+      </button>
+      <button type="button" data-tab="checklist" class="tab-btn px-4 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition flex items-center gap-1.5">
+        <span>🛒</span><span>বাজারের ফর্দ</span>
+        <span id="checkBadge" class="hidden px-1.5 py-0.5 text-[10px] rounded-full bg-brand-600 text-white leading-none">0</span>
+      </button>
+    </nav>
+
+    <!-- ================= TAB 1: LEDGER (INCOME & EXPENSE) ================= -->
+    <div id="tab-ledger" class="tab-panel space-y-6">
+
+      <!-- Demo Mode Banner -->
+      <div id="demoBanner" class="hidden no-print flex items-center gap-2 px-4 py-3 rounded-2xl bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-700/40 text-sm text-brand-900 dark:text-brand-100">
+        <span>✨</span>
+        <span>এগুলো নমুনা হিসাব। আপনার প্রথম আয় বা খরচ যোগ করলেই এগুলো স্বয়ংক্রিয়ভাবে সরে যাবে।</span>
+      </div>
+
+      <!-- Hero Summary Card: Income, Expense, Balance + Budget + Comparison + Wallets -->
+      <section class="print-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5" aria-label="মাসের সারাংশ">
+
+        <!-- Top 3 Financial Pillars: Income, Expense, Remaining Balance -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+          <!-- Total Income -->
+          <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50">
+            <p class="text-xs font-medium text-emerald-700 dark:text-emerald-400">এই মাসের মোট আয়</p>
+            <p id="monthIncome" class="font-display text-2xl sm:text-3xl font-bold text-emerald-700 dark:text-emerald-300 mt-0.5 break-words">৳০</p>
+          </div>
+          <!-- Total Expense + Prev Month Comparison -->
+          <div class="p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/25 border border-rose-100 dark:border-rose-900/50">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-xs font-medium text-rose-700 dark:text-rose-400">এই মাসের মোট খরচ</p>
+              <span id="monthCompare" class="hidden text-[11px] font-semibold px-2 py-0.5 rounded-full"></span>
+            </div>
+            <p id="monthTotal" class="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-0.5 break-words">৳০</p>
+          </div>
+          <!-- Remaining Balance / Savings -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/70 dark:border-slate-800">
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">হাতে অবশিষ্ট (সঞ্চয়)</p>
+            <p id="monthBalance" class="font-display text-2xl sm:text-3xl font-bold text-brand-700 dark:text-brand-400 mt-0.5 break-words">৳০</p>
+          </div>
+        </div>
+
+        <!-- Middle Row: Budget Progress + Quick Stats -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center pt-1 border-t border-slate-100 dark:border-slate-800/80">
+          <!-- Budget Bar -->
+          <div class="lg:col-span-6 space-y-2">
+            <div class="flex items-center justify-between">
+              <p id="budgetText" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium"></p>
+              <button type="button" id="budgetBtn" class="no-print text-xs sm:text-sm font-semibold text-brand-600 dark:text-brand-500 hover:underline underline-offset-4 shrink-0 ml-2">
+                বাজেট ঠিক করুন
+              </button>
+            </div>
+            <div class="h-2.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+              <div id="budgetFill" class="h-full w-0 rounded-full bg-brand-600 dark:bg-brand-500 transition-all duration-300"></div>
+            </div>
+            <!-- Inline Budget Form -->
+            <form id="budgetForm" class="hidden no-print pt-1 flex flex-wrap items-center gap-2">
+              <input type="text" id="budgetInput" inputmode="decimal" autocomplete="off" placeholder="মাসের খরচের বাজেট (যেমন ২৫০০০)"
+                class="flex-1 min-w-[160px] h-9 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <button type="submit" class="h-9 px-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold">সংরক্ষণ</button>
+              <button type="button" id="budgetCancel" class="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">বাতিল</button>
+            </form>
+          </div>
+
+          <!-- 3 Quick Stats -->
+          <dl class="lg:col-span-6 grid grid-cols-3 gap-2.5">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80">
+              <dt class="text-[11px] text-slate-500 dark:text-slate-400">আজকের খরচ</dt>
+              <dd id="todayTotal" class="font-display font-bold text-base sm:text-lg text-slate-900 dark:text-white mt-0.5 break-words">৳০</dd>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80">
+              <dt class="text-[11px] text-slate-500 dark:text-slate-400">দৈনিক গড়</dt>
+              <dd id="avgDay" class="font-display font-bold text-base sm:text-lg text-slate-900 dark:text-white mt-0.5 break-words">—</dd>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80">
+              <dt class="text-[11px] text-slate-500 dark:text-slate-400">সর্বোচ্চ খরচ</dt>
+              <dd id="maxExp" class="font-display font-bold text-base sm:text-lg text-slate-900 dark:text-white mt-0.5 break-words">—</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Wallet / Payment Method Summary Strip -->
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80">
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">পেমেন্ট মাধ্যম অনুযায়ী এই মাসের খরচ</p>
+          <div id="walletSummary" class="grid grid-cols-3 gap-2.5"></div>
+        </div>
+      </section>
+
+      <!-- Main 2-Column Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left Column: Entry Form (Sticky on Desktop, Slide-over Drawer on Mobile) -->
+        <div id="formBackdrop" class="hidden lg:hidden fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm"></div>
+        <aside id="formDrawer" class="hidden lg:block lg:col-span-4 lg:sticky lg:top-6 fixed inset-x-0 bottom-0 z-50 lg:static lg:z-auto max-h-[92vh] lg:max-h-none overflow-y-auto bg-white dark:bg-slate-900 border-t lg:border border-slate-200 dark:border-slate-800 rounded-t-3xl lg:rounded-3xl p-5 pb-8 sm:p-6 shadow-2xl lg:shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h2 id="formTitle" class="font-display text-xl font-bold">নতুন হিসাব যোগ করুন</h2>
+            <button type="button" id="closeDrawerBtn" class="lg:hidden p-2 -mr-2 rounded-xl text-slate-400 hover:text-slate-600" aria-label="বন্ধ করুন">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+
+          <form id="expForm" class="space-y-4" novalidate>
+            <!-- Type Switcher: Expense vs Income -->
+            <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800">
+              <button type="button" id="typeExpenseBtn" class="py-2 rounded-xl text-sm font-semibold transition">➖ খরচ</button>
+              <button type="button" id="typeIncomeBtn" class="py-2 rounded-xl text-sm font-semibold transition">➕ আয়</button>
+            </div>
+
+            <!-- Amount -->
+            <div>
+              <label for="amount" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">পরিমাণ (টাকা)</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-display text-xl font-bold text-slate-400">৳</span>
+                <input type="text" id="amount" inputmode="decimal" autocomplete="off" placeholder="০"
+                  class="w-full h-[52px] pl-9 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 font-display text-2xl font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 read-only:bg-slate-100 dark:read-only:bg-slate-800/80 transition">
+              </div>
+              <p id="amountErr" class="text-xs text-rose-600 dark:text-rose-400 mt-1 hidden" role="alert"></p>
+            </div>
+
+            <!-- Category Chips + Custom Category Button -->
+            <fieldset>
+              <div class="flex items-center justify-between mb-2">
+                <legend class="text-sm font-medium text-slate-700 dark:text-slate-300">ক্যাটাগরি</legend>
+                <button type="button" id="openCatModalBtn" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">+ নতুন ক্যাটাগরি</button>
+              </div>
+              <div id="chips" class="flex flex-wrap gap-2"></div>
+            </fieldset>
+
+            <!-- Collapsible Sub-items Section (Shown for Expenses) -->
+            <div id="itemsSectionWrap" class="pt-0.5">
+              <button type="button" id="toggleItemsBtn" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-950/40 hover:border-brand-500 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 transition">
+                <span class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-md bg-brand-50 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+                    <svg id="toggleItemsIcon" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                  </span>
+                  <span id="toggleItemsLabel">খরচ ভেঙে লিখুন (ঐচ্ছিক)</span>
+                </span>
+                <span class="text-[11px] text-slate-400">চাল, ডাল, বিল…</span>
+              </button>
+              <div id="itemsBox" class="hidden mt-2.5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">একটি খরচের ভেতর একাধিক জিনিস থাকলে আলাদা করে লিখুন:</p>
+                <div id="itemRows" class="space-y-2"></div>
+                <div class="flex items-center justify-between pt-1">
+                  <button type="button" id="addItem" class="text-xs font-semibold text-brand-600 dark:text-brand-500 hover:underline">+ আরও যোগ করুন</button>
+                  <button type="button" id="clearItemsBtn" class="text-xs text-slate-400 hover:text-rose-500">সব মুছুন</button>
+                </div>
+                <p id="itemsHint" class="text-xs text-brand-700 dark:text-brand-400 font-medium hidden"></p>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <fieldset>
+              <legend class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">মাধ্যম</legend>
+              <div id="payChips" class="grid grid-cols-3 gap-2"></div>
+            </fieldset>
+
+            <!-- Note & Date -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+              <div>
+                <label for="note" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">কীসের জন্য (ঐচ্ছিক)</label>
+                <input type="text" id="note" maxlength="80" autocomplete="off" placeholder="যেমন: চাল, ডাল ও কাঁচাবাজার"
+                  class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+              <div>
+                <label for="date" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">তারিখ</label>
+                <input type="date" id="date"
+                  class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+            </div>
+
+            <!-- Submit Actions -->
+            <div class="flex items-center gap-2 pt-2">
+              <button type="submit" id="saveBtn" class="flex-1 h-12 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-semibold text-base shadow-sm transition">
+                খরচ যোগ করুন
+              </button>
+              <button type="button" id="cancelEdit" class="hidden h-12 px-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                বাতিল
+              </button>
+            </div>
+          </form>
+        </aside>
+
+        <!-- Right Column: Analytics & Ledger List -->
+        <main class="print-full lg:col-span-8 space-y-6 min-w-0">
+
+          <!-- Insights Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Category Breakdown + Mini Donut -->
+            <section class="print-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-sm flex flex-col">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="font-display text-lg font-bold">ক্যাটাগরি অনুযায়ী খরচ</h2>
+                <span id="catCountSub" class="text-xs text-slate-500 dark:text-slate-400"></span>
+              </div>
+              <div id="breakdownWrap" class="flex-1 flex flex-col gap-4"></div>
+            </section>
+
+            <!-- Last 7 Days Bar Chart -->
+            <section class="print-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-sm flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <h2 class="font-display text-lg font-bold">গত ৭ দিনের খরচ</h2>
+                  <p id="weekSelectedInfo" class="text-xs text-slate-500 dark:text-slate-400 min-h-[16px]">বিস্তারিত দেখতে বারে ট্যাপ করুন</p>
+                </div>
+                <span id="weekTotal" class="font-display font-bold text-base text-brand-600 dark:text-brand-500">৳০</span>
+              </div>
+              <div id="week" class="grid grid-cols-7 gap-2 items-end pt-4"></div>
+            </section>
+          </div>
+
+          <!-- Ledger List Card -->
+          <section class="print-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <h2 class="font-display text-xl font-bold">আয় ও খরচের তালিকা</h2>
+              <span id="listCount" class="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"></span>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="no-print grid grid-cols-2 sm:grid-cols-12 gap-2.5 mb-5">
+              <div class="col-span-2 sm:col-span-5 relative">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="search" id="search" placeholder="নোট, ক্যাটাগরি বা আইটেম খুঁজুন..." autocomplete="off"
+                  class="w-full h-10 pl-9 pr-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+              <select id="filterType" aria-label="ধরন ফিল্টার" class="col-span-1 sm:col-span-2 h-10 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <option value="all">সব ধরন</option>
+                <option value="expense">শুধু খরচ</option>
+                <option value="income">শুধু আয়</option>
+              </select>
+              <select id="filterCat" aria-label="ক্যাটাগরি ফিল্টার" class="col-span-1 sm:col-span-3 h-10 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
+              <select id="filterPay" aria-label="মাধ্যম ফিল্টার" class="col-span-2 sm:col-span-2 h-10 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
+            </div>
+
+            <!-- Grouped Rows -->
+            <div id="list" class="space-y-5"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- ================= TAB 2: DUES (ধার-দেনা / হালখাতা) ================= -->
+    <div id="tab-dues" class="tab-panel hidden space-y-6">
+      <!-- Dues Summary -->
+      <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+          <p class="text-xs font-medium text-emerald-600 dark:text-emerald-400">মোট পাওনা (আমি পাবো)</p>
+          <p id="dueGetTotal" class="font-display text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">৳০</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+          <p class="text-xs font-medium text-rose-600 dark:text-rose-400">মোট দেনা (আমাকে দিতে হবে)</p>
+          <p id="dueGiveTotal" class="font-display text-3xl font-bold text-rose-600 dark:text-rose-400 mt-1">৳০</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400">নিট পাওনা/দেনা</p>
+          <p id="dueNetTotal" class="font-display text-3xl font-bold mt-1">৳০</p>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Add / Edit Due Form -->
+        <section class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <h2 id="dueFormTitle" class="font-display text-xl font-bold mb-4">নতুন ধার-দেনা যোগ করুন</h2>
+          <form id="dueForm" class="space-y-3.5" novalidate>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="cursor-pointer">
+                <input type="radio" name="dueType" value="get" class="peer sr-only" checked>
+                <span class="block text-center py-2.5 rounded-xl text-xs sm:text-sm font-semibold border border-slate-200 dark:border-slate-700 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/30 peer-checked:text-emerald-700 dark:peer-checked:text-emerald-300 transition">আমি পাবো (পাওনা)</span>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="dueType" value="give" class="peer sr-only">
+                <span class="block text-center py-2.5 rounded-xl text-xs sm:text-sm font-semibold border border-slate-200 dark:border-slate-700 peer-checked:border-rose-600 peer-checked:bg-rose-50 dark:peer-checked:bg-rose-900/30 peer-checked:text-rose-700 dark:peer-checked:text-rose-300 transition">দিতে হবে (দেনা)</span>
+              </label>
+            </div>
+            <div>
+              <label for="duePerson" class="block text-sm font-medium mb-1">ব্যক্তি বা দোকানের নাম</label>
+              <input type="text" id="duePerson" maxlength="50" placeholder="যেমন: ব্যক্তির নাম / মুদির দোকান" required
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div>
+              <label for="dueAmount" class="block text-sm font-medium mb-1">পরিমাণ (টাকা)</label>
+              <input type="text" id="dueAmount" inputmode="decimal" placeholder="যেমন: ১৫০০" required
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div>
+              <label for="dueNote" class="block text-sm font-medium mb-1">বিবরণ (ঐচ্ছিক)</label>
+              <input type="text" id="dueNote" maxlength="60" placeholder="যেমন: জরুরি প্রয়োজনে ধার"
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div>
+              <label for="dueDate" class="block text-sm font-medium mb-1">তারিখ</label>
+              <input type="date" id="dueDate"
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+              <button type="submit" id="dueSaveBtn" class="flex-1 h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition">তালিকায় যোগ করুন</button>
+              <button type="button" id="dueCancelEdit" class="hidden h-11 px-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition">বাতিল</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Dues List -->
+        <section class="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h2 class="font-display text-xl font-bold">পাওনা ও দেনার তালিকা</h2>
+            <div id="dueFilterTabs" class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800">
+              <button type="button" data-due-tab="all" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">সবগুলো</button>
+              <button type="button" data-due-tab="pending" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">বাকি আছে</button>
+              <button type="button" data-due-tab="settled" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition">পরিশোধিত</button>
+            </div>
+          </div>
+          <div id="duesList" class="space-y-3"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ================= TAB 3: RECURRING EXPENSES (নিয়মিত খরচ) ================= -->
+    <div id="tab-recurring" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Add Recurring Template -->
+        <section class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <h2 class="font-display text-xl font-bold mb-1">নিয়মিত খরচ সেভ করুন</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">বাসা ভাড়া, ওয়াইফাই বিল বা কিস্তির মতো মাসিক খরচ এখানে রাখলে প্রতি মাসে এক ক্লিকেই যোগ করতে পারবেন।</p>
+          <form id="recForm" class="space-y-3.5" novalidate>
+            <div>
+              <label for="recTitle" class="block text-sm font-medium mb-1">খরচের নাম</label>
+              <input type="text" id="recTitle" maxlength="50" placeholder="যেমন: বাসা ভাড়া / ওয়াইফাই বিল" required
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div>
+              <label for="recAmount" class="block text-sm font-medium mb-1">পরিমাণ (টাকা)</label>
+              <input type="text" id="recAmount" inputmode="decimal" placeholder="যেমন: ১২০০০" required
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label for="recCat" class="block text-sm font-medium mb-1">ক্যাটাগরি</label>
+                <select id="recCat" class="w-full h-11 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm"></select>
+              </div>
+              <div>
+                <label for="recPay" class="block text-sm font-medium mb-1">মাধ্যম</label>
+                <select id="recPay" class="w-full h-11 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm"></select>
+              </div>
+            </div>
+            <button type="submit" class="w-full h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition">টেমপ্লেট সংরক্ষণ করুন</button>
+          </form>
+        </section>
+
+        <!-- Saved Recurring List -->
+        <section class="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="font-display text-xl font-bold">মাসিক নিয়মিত খরচের তালিকা</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">এক ক্লিকেই চলতি মাসের খাতায় যোগ হয়ে যাবে</p>
+            </div>
+            <span id="recTotalBadge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300"></span>
+          </div>
+          <div id="recList" class="space-y-3"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ================= TAB 4: SHOPPING CHECKLIST (বাজারের ফর্দ) ================= -->
+    <div id="tab-checklist" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Add Shopping Item -->
+        <section class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <h2 class="font-display text-xl font-bold mb-1">বাজারের ফর্দ তৈরি করুন</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">বাজারে যাওয়ার আগে তালিকা বানান, কেনার পর টিক চিহ্ন দিয়ে সরাসরি খরচে যোগ করে দিন।</p>
+          <form id="checkForm" class="space-y-3.5" novalidate>
+            <div>
+              <label for="checkName" class="block text-sm font-medium mb-1">জিনিসের নাম ও পরিমাণ</label>
+              <input type="text" id="checkName" maxlength="50" placeholder="যেমন: চাল ৫ কেজি / পেঁয়াজ ২ কেজি" required
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div>
+              <label for="checkPrice" class="block text-sm font-medium mb-1">দাম (ঐচ্ছিক, পরেও লিখতে পারবেন)</label>
+              <input type="text" id="checkPrice" inputmode="decimal" placeholder="যেমন: ৪০০"
+                class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <button type="submit" class="w-full h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition">+ ফর্দে যোগ করুন</button>
+          </form>
+        </section>
+
+        <!-- Checklist Items & Convert to Expense -->
+        <section class="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-display text-xl font-bold">কেনাকাটার তালিকা</h2>
+              <p id="checkSummary" class="text-xs text-slate-500 dark:text-slate-400"></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" id="convertCheckBtn" class="hidden px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+                চেক করাগুলো খরচে যোগ করুন
+              </button>
+              <button type="button" id="clearCheckBtn" class="hidden px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-500 hover:text-rose-600 transition">
+                সব মুছুন
+              </button>
+            </div>
+          </div>
+          <div id="checkList" class="space-y-2.5"></div>
+        </section>
+      </div>
+    </div>
+
+    <p class="no-print text-xs text-center text-slate-400 dark:text-slate-500 pb-4">
+      আপনার সব তথ্য নিরাপদে এই ব্রাউজারে সংরক্ষিত আছে। নিয়মিত <strong>ব্যাকআপ</strong> নিয়ে রাখুন।
+    </p>
+  </div>
+
+  <!-- Mobile Floating Action Button (FAB - visible on Ledger tab) -->
+  <button type="button" id="fabBtn"
+    class="lg:hidden fixed right-5 bottom-6 z-30 inline-flex items-center gap-2 px-5 h-14 rounded-full bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold shadow-lg shadow-brand-600/30 transition"
+    aria-label="নতুন হিসাব যোগ করুন">
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+    </svg>
+    <span>নতুন হিসাব</span>
+  </button>
+
+  <!-- ================= MODAL: CUSTOM CATEGORY ================= -->
+  <div id="catModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-lg font-bold">নিজের ক্যাটাগরি তৈরি করুন</h3>
+        <button type="button" id="closeCatModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <form id="customCatForm" class="space-y-3">
+        <div>
+          <label for="newCatName" class="block text-xs font-medium mb-1">ক্যাটাগরির নাম</label>
+          <input type="text" id="newCatName" maxlength="25" placeholder="যেমন: বাইকের তেল / দান-সদকা" required
+            class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label for="newCatIcon" class="block text-xs font-medium mb-1">আইকন (ইমোজি)</label>
+            <input type="text" id="newCatIcon" maxlength="4" value="🏷️"
+              class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-center text-lg">
+          </div>
+          <div>
+            <label for="newCatType" class="block text-xs font-medium mb-1">ধরন</label>
+            <select id="newCatType" class="w-full h-10 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm">
+              <option value="expense">খরচ</option>
+              <option value="income">আয়</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="w-full h-10 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold">ক্যাটাগরি যোগ করুন</button>
+      </form>
+      <div id="customCatListWrap" class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2 hidden">
+        <p class="text-xs font-medium text-slate-500">আপনার তৈরি ক্যাটাগরি:</p>
+        <div id="customCatList" class="flex flex-wrap gap-1.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: PIN LOCK SETTINGS ================= -->
+  <div id="pinModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-lg font-bold">পিন লক (নিরাপত্তা)</h3>
+        <button type="button" id="closePinModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <p id="pinStatusText" class="text-xs text-slate-500 dark:text-slate-400"></p>
+      <form id="pinSetupForm" class="space-y-3">
+        <input type="password" id="pinSetupInput" inputmode="numeric" maxlength="4" placeholder="নতুন ৪ সংখ্যার পিন লিখুন (যেমন ১২৩৪)"
+          class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-center tracking-[0.4em] font-bold text-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+        <button type="submit" class="w-full h-10 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold">পিন সংরক্ষণ করুন</button>
+      </form>
+      <div id="pinActiveActions" class="hidden flex gap-2 pt-1">
+        <button type="button" id="lockNowBtn" class="flex-1 h-10 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs font-semibold">এখনই লক করুন</button>
+        <button type="button" id="removePinBtn" class="flex-1 h-10 rounded-xl border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-semibold">পিন বন্ধ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DUE PARTIAL PAYMENT ================= -->
+  <div id="duePayModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 id="duePayTitle" class="font-display text-lg font-bold">আংশিক পরিশোধ</h3>
+        <button type="button" id="closeDuePayModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <div id="duePayInfo" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs space-y-1"></div>
+      <form id="duePayForm" class="space-y-3" novalidate>
+        <div>
+          <label for="duePayAmount" class="block text-xs font-medium mb-1">কত টাকা পরিশোধ/আদায় হলো?</label>
+          <input type="text" id="duePayAmount" inputmode="decimal" placeholder="যেমন: ২০০০" required
+            class="w-full h-11 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <div>
+          <label for="duePayNote" class="block text-xs font-medium mb-1">নোট (ঐচ্ছিক)</label>
+          <input type="text" id="duePayNote" maxlength="50" placeholder="যেমন: প্রথম কিস্তি / বিকাশে দেওয়া হয়েছে"
+            class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <div>
+          <label for="duePayDate" class="block text-xs font-medium mb-1">তারিখ</label>
+          <input type="date" id="duePayDate"
+            class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <label id="duePaySyncWrap" class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 cursor-pointer pt-0.5">
+          <input type="checkbox" id="duePaySyncLedger" class="w-4 h-4 rounded accent-brand-600">
+          <span>এটি মূল আয়-ব্যয়ের খাতায়ও যোগ করুন</span>
+        </label>
+        <button type="submit" id="duePaySaveBtn" class="w-full h-11 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition">পরিশোধ সংরক্ষণ করুন</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DATA BACKUP & EXPORT ================= -->
+  <div id="dataModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-lg font-bold">ব্যাকআপ ও রিপোর্ট</h3>
+        <button type="button" id="closeDataModal" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <div class="space-y-2.5">
+        <button type="button" id="printBtnModal" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500 text-sm font-semibold transition">
+          <span>📄 মাসের PDF ডাউনলোড</span>
+          <span class="text-xs text-rose-500 font-bold">.pdf</span>
+        </button>
+        <button type="button" id="exportCsvBtn" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500 text-sm font-semibold transition">
+          <span>📊 Excel (CSV) ডাউনলোড</span>
+          <span class="text-xs text-slate-400">.csv</span>
+        </button>
+        <button type="button" id="exportJsonBtn" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-brand-500 text-sm font-semibold transition">
+          <span>💾 সম্পূর্ণ ব্যাকআপ সেভ করুন</span>
+          <span class="text-xs text-slate-400">.json</span>
+        </button>
+        <label class="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-brand-50/70 dark:bg-brand-900/20 border border-dashed border-brand-400 dark:border-brand-700 text-sm font-semibold text-brand-700 dark:text-brand-300 cursor-pointer hover:bg-brand-50 transition">
+          <span>📂 ব্যাকআপ ফাইল রিস্টোর করুন</span>
+          <span class="text-xs">আপলোড</span>
+          <input type="file" id="importJsonInput" accept="application/json,.json" class="hidden">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" role="status" aria-live="polite"
+    class="hidden fixed left-1/2 -translate-x-1/2 bottom-6 z-[60] px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-medium shadow-xl max-w-[90vw] text-center">
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ================= DEFAULT CATEGORIES & METHODS ================= */
+      var DEFAULT_EXP_CATS = [
+        { id: 'bazar', name: 'বাজার', icon: '🛒', color: '#16a34a', type: 'expense', notePh: 'যেমন: চাল, ডাল ও কাঁচাবাজার', subPh: 'যেমন: চাল / ডাল / তেল' },
+        { id: 'food', name: 'বাইরের খাবার', icon: '🍽️', color: '#ea580c', type: 'expense', notePh: 'যেমন: রেস্টুরেন্ট বা নাস্তা', subPh: 'যেমন: ফলমূল / মিষ্টি' },
+        { id: 'transport', name: 'যাতায়াত', icon: '🚌', color: '#2563eb', type: 'expense', notePh: 'যেমন: রিকশা বা সিএনজি ভাড়া', subPh: 'যেমন: বাস / রিকশা' },
+        { id: 'bill', name: 'বিল', icon: '💡', color: '#ca8a04', type: 'expense', notePh: 'যেমন: বিদ্যুৎ বা ইন্টারনেট বিল', subPh: 'যেমন: গ্যাস / ওয়াইফাই' },
+        { id: 'rent', name: 'বাসা ভাড়া', icon: '🏠', color: '#9333ea', type: 'expense', notePh: 'যেমন: চলতি মাসের বাসা ভাড়া', subPh: 'যেমন: মূল ভাড়া / সার্ভিস চার্জ' },
+        { id: 'loan', name: 'লোন/কিস্তি', icon: '🏦', color: '#0891b2', type: 'expense', notePh: 'যেমন: ব্যাংক কিস্তি বা লোন পরিশোধ', subPh: 'যেমন: আসল / চার্জ' },
+        { id: 'fun', name: 'বিনোদন', icon: '🎬', color: '#db2777', type: 'expense', notePh: 'যেমন: সিনেমা বা ঘুরতে যাওয়া', subPh: 'যেমন: টিকিট / ঘুরাঘুরি' },
+        { id: 'health', name: 'স্বাস্থ্য', icon: '💊', color: '#dc2626', type: 'expense', notePh: 'যেমন: ওষুধ বা ডাক্তার ভিজিট', subPh: 'যেমন: ওষুধের নাম / টেস্ট' },
+        { id: 'edu', name: 'শিক্ষা', icon: '📚', color: '#4f46e5', type: 'expense', notePh: 'যেমন: বই বা কোর্স ফি', subPh: 'যেমন: বই / খাতা' },
+        { id: 'other', name: 'অন্যান্য', icon: '📦', color: '#64748b', type: 'expense', notePh: 'যেমন: উপহার বা অন্যান্য খরচ', subPh: 'বিবরণ লিখুন' }
+      ];
+
+      var DEFAULT_INC_CATS = [
+        { id: 'salary', name: 'বেতন', icon: '💼', color: '#059669', type: 'income', notePh: 'যেমন: এই মাসের বেতন' },
+        { id: 'business', name: 'ব্যবসা', icon: '🏪', color: '#0d9488', type: 'income', notePh: 'যেমন: ব্যবসায়িক আয়' },
+        { id: 'freelance', name: 'ফ্রিল্যান্সিং/টিউশনি', icon: '💻', color: '#2563eb', type: 'income', notePh: 'যেমন: প্রজেক্ট বা টিউশনি' },
+        { id: 'gift_in', name: 'বোনাস/উপহার', icon: '🎁', color: '#7c3aed', type: 'income', notePh: 'যেমন: বোনাস বা পাওনা ফেরত' },
+        { id: 'other_in', name: 'অন্যান্য আয়', icon: '💰', color: '#64748b', type: 'income', notePh: 'আয়ের বিবরণ লিখুন' }
+      ];
+
+      var PAY_METHODS = [
+        { id: 'cash', name: 'ক্যাশ', icon: '💵' },
+        { id: 'mfs', name: 'বিকাশ/নগদ', icon: '📱' },
+        { id: 'bank', name: 'ব্যাংক', icon: '💳' }
+      ];
+
+      var KEYS = {
+        items: 'khoroch-khata:items',
+        budgets: 'khoroch-khata:budgets',
+        legacyBudget: 'khoroch-khata:budget',
+        dues: 'khoroch-khata:dues',
+        recurring: 'khoroch-khata:recurring',
+        checklist: 'khoroch-khata:checklist',
+        customCats: 'khoroch-khata:customCats',
+        pin: 'khoroch-khata:pin',
+        theme: 'khoroch-khata:theme'
+      };
+
+      /* ================= FORMATTERS & HELPERS ================= */
+      function mkFmt(opts) {
+        try { return new Intl.NumberFormat('bn-BD', opts); }
+        catch (e) { return new Intl.NumberFormat('en', opts); }
+      }
+      function mkDate(opts) {
+        try { return new Intl.DateTimeFormat('bn-BD', opts); }
+        catch (e) { return new Intl.DateTimeFormat('en', opts); }
+      }
+      var nf = mkFmt({ maximumFractionDigits: 2 });
+      var nfInt = mkFmt({ maximumFractionDigits: 0 });
+      var nfOne = mkFmt({ maximumFractionDigits: 1 });
+      var dfDay = mkDate({ weekday: 'long', day: 'numeric', month: 'long' });
+      var dfMonth = mkDate({ month: 'long', year: 'numeric' });
+      var dfShort = mkDate({ weekday: 'short' });
+
+      function money(n) {
+        var neg = n < 0;
+        return (neg ? '−৳' : '৳') + nf.format(Math.abs(n || 0));
+      }
+      function compact(n) {
+        if (!n) return '–';
+        if (n >= 100000) return nfOne.format(n / 100000) + ' লা';
+        if (n >= 1000) return nfOne.format(n / 1000) + ' হা';
+        return nfInt.format(n);
+      }
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+      function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+      function parseYmd(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+      function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+      function prevMonthKey(ym) {
+        var p = ym.split('-');
+        var d = new Date(+p[0], +p[1] - 2, 1);
+        return d.getFullYear() + '-' + pad(d.getMonth() + 1);
+      }
+      function newId() {
+        try { if (crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+        return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      }
+      function toEngDigits(s) {
+        return String(s || '').replace(/[০-৯]/g, function (d) { return '০১২৩৪৫৬৭৮৯'.indexOf(d); });
+      }
+      function parseAmount(s) {
+        var t = toEngDigits(s).replace(/[,\s৳]/g, '');
+        if (!t) return NaN;
+        var n = Number(t);
+        return isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : NaN;
+      }
+
+      /* ================= APP STATE ================= */
+      var today = ymd(new Date());
+      var curMonth = today.slice(0, 7);
+
+      var state = {
+        activeTab: 'ledger',
+        formType: 'expense',
+        items: [],
+        budgets: {},
+        dues: [],
+        recurring: [],
+        checklist: [],
+        customCats: [],
+        pin: '',
+        viewMonth: curMonth,
+        editingId: '',
+        pendingDelete: '',
+        dueFilter: 'all',
+        editingDueId: '',
+        pendingDueDelete: '',
+        itemsExpanded: false,
+        selectedWeekDay: today
+      };
+
+      function getAllCats(type) {
+        var base = type === 'income' ? DEFAULT_INC_CATS : DEFAULT_EXP_CATS;
+        var custom = state.customCats.filter(function (c) { return c.type === type; });
+        return base.concat(custom);
+      }
+      function catOf(id, type) {
+        var all = DEFAULT_EXP_CATS.concat(DEFAULT_INC_CATS, state.customCats);
+        var found = all.find(function (c) { return c.id === id; });
+        if (found) return found;
+        return type === 'income' ? DEFAULT_INC_CATS[DEFAULT_INC_CATS.length - 1] : DEFAULT_EXP_CATS[DEFAULT_EXP_CATS.length - 1];
+      }
+      function payOf(id) {
+        return PAY_METHODS.find(function (p) { return p.id === id; }) || PAY_METHODS[0];
+      }
+
+      /* ================= DOM SHORTCUTS ================= */
+      function $(id) { return document.getElementById(id); }
+      var el = {
+        monthLabel: $('monthLabel'), prev: $('prevMonth'), next: $('nextMonth'),
+        demoBanner: $('demoBanner'),
+        monthIncome: $('monthIncome'), monthTotal: $('monthTotal'), monthBalance: $('monthBalance'), monthCompare: $('monthCompare'),
+        fill: $('budgetFill'), budgetText: $('budgetText'), budgetBtn: $('budgetBtn'),
+        budgetForm: $('budgetForm'), budgetInput: $('budgetInput'), budgetCancel: $('budgetCancel'),
+        todayTotal: $('todayTotal'), avgDay: $('avgDay'), maxExp: $('maxExp'), walletSummary: $('walletSummary'),
+        formDrawer: $('formDrawer'), formBackdrop: $('formBackdrop'), closeDrawerBtn: $('closeDrawerBtn'), fabBtn: $('fabBtn'),
+        form: $('expForm'), formTitle: $('formTitle'), typeExpenseBtn: $('typeExpenseBtn'), typeIncomeBtn: $('typeIncomeBtn'),
+        amount: $('amount'), amountErr: $('amountErr'), chips: $('chips'), payChips: $('payChips'),
+        note: $('note'), date: $('date'), save: $('saveBtn'), cancelEdit: $('cancelEdit'),
+        itemsSectionWrap: $('itemsSectionWrap'), toggleItemsBtn: $('toggleItemsBtn'), toggleItemsIcon: $('toggleItemsIcon'),
+        toggleItemsLabel: $('toggleItemsLabel'), itemsBox: $('itemsBox'), itemRows: $('itemRows'),
+        addItem: $('addItem'), clearItemsBtn: $('clearItemsBtn'), itemsHint: $('itemsHint'),
+        breakdownWrap: $('breakdownWrap'), catCountSub: $('catCountSub'),
+        week: $('week'), weekTotal: $('weekTotal'), weekSelectedInfo: $('weekSelectedInfo'),
+        filterType: $('filterType'), filterCat: $('filterCat'), filterPay: $('filterPay'), search: $('search'),
+        list: $('list'), listCount: $('listCount'),
+        // Dues
+        dueGetTotal: $('dueGetTotal'), dueGiveTotal: $('dueGiveTotal'), dueNetTotal: $('dueNetTotal'),
+        dueFormTitle: $('dueFormTitle'), dueForm: $('dueForm'), duePerson: $('duePerson'), dueAmount: $('dueAmount'),
+        dueNote: $('dueNote'), dueDate: $('dueDate'), dueSaveBtn: $('dueSaveBtn'), dueCancelEdit: $('dueCancelEdit'),
+        dueFilterTabs: $('dueFilterTabs'), duesList: $('duesList'), duesBadge: $('duesBadge'),
+        duePayModal: $('duePayModal'), closeDuePayModal: $('closeDuePayModal'), duePayTitle: $('duePayTitle'),
+        duePayInfo: $('duePayInfo'), duePayForm: $('duePayForm'), duePayAmount: $('duePayAmount'),
+        duePayNote: $('duePayNote'), duePayDate: $('duePayDate'), duePaySyncWrap: $('duePaySyncWrap'),
+        duePaySyncLedger: $('duePaySyncLedger'), duePaySaveBtn: $('duePaySaveBtn'),
+        // Recurring
+        recForm: $('recForm'), recTitle: $('recTitle'), recAmount: $('recAmount'), recCat: $('recCat'), recPay: $('recPay'),
+        recList: $('recList'), recTotalBadge: $('recTotalBadge'),
+        // Checklist
+        checkForm: $('checkForm'), checkName: $('checkName'), checkPrice: $('checkPrice'),
+        checkList: $('checkList'), checkSummary: $('checkSummary'), convertCheckBtn: $('convertCheckBtn'), clearCheckBtn: $('clearCheckBtn'), checkBadge: $('checkBadge'),
+        // Modals
+        catModal: $('catModal'), closeCatModal: $('closeCatModal'), openCatModalBtn: $('openCatModalBtn'),
+        customCatForm: $('customCatForm'), newCatName: $('newCatName'), newCatIcon: $('newCatIcon'), newCatType: $('newCatType'),
+        customCatListWrap: $('customCatListWrap'), customCatList: $('customCatList'),
+        pinLockScreen: $('pinLockScreen'), pinDots: $('pinDots'), pinLockErr: $('pinLockErr'),
+        pinModal: $('pinModal'), closePinModal: $('closePinModal'), pinStatusText: $('pinStatusText'),
+        pinSetupForm: $('pinSetupForm'), pinSetupInput: $('pinSetupInput'), pinActiveActions: $('pinActiveActions'),
+        lockNowBtn: $('lockNowBtn'), removePinBtn: $('removePinBtn'),
+        dataModal: $('dataModal'), closeDataModal: $('closeDataModal'),
+        exportCsvBtn: $('exportCsvBtn'), exportJsonBtn: $('exportJsonBtn'), importJsonInput: $('importJsonInput'),
+        toast: $('toast')
+      };
+
+      /* ================= TOAST ================= */
+      var toastTimer;
+      function toast(msg) {
+        el.toast.textContent = msg;
+        el.toast.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { el.toast.classList.add('hidden'); }, 2600);
+      }
+
+      /* ================= THEME ================= */
+      var sunSvg = '<svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>';
+      var moonSvg = '<svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>';
+      function updateThemeIcons() {
+        var isDark = document.documentElement.classList.contains('dark');
+        document.querySelectorAll('.theme-icon').forEach(function (s) { s.innerHTML = isDark ? sunSvg : moonSvg; });
+      }
+      function toggleTheme() {
+        var isDark = document.documentElement.classList.toggle('dark');
+        try { localStorage.setItem(KEYS.theme, isDark ? 'dark' : 'light'); } catch (e) {}
+        updateThemeIcons();
+      }
+      $('themeBtnDesk').addEventListener('click', toggleTheme);
+      $('themeBtnMob').addEventListener('click', toggleTheme);
+      updateThemeIcons();
+
+      /* ================= TABS ================= */
+      function setTab(tab) {
+        state.activeTab = tab;
+        document.querySelectorAll('.tab-panel').forEach(function (p) {
+          p.classList.toggle('hidden', p.id !== 'tab-' + tab);
+        });
+        document.querySelectorAll('.tab-btn').forEach(function (b) {
+          var active = b.getAttribute('data-tab') === tab;
+          b.className = 'tab-btn px-4 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition flex items-center gap-1.5 ' +
+            (active
+              ? 'bg-brand-600 text-white shadow-sm'
+              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800');
+        });
+        el.fabBtn.classList.toggle('hidden', tab !== 'ledger');
+      }
+      $('mainTabs').addEventListener('click', function (ev) {
+        var btn = ev.target.closest('button[data-tab]');
+        if (btn) setTab(btn.getAttribute('data-tab'));
+      });
+
+      /* ================= STORAGE LOAD / SAVE ================= */
+      function cleanItem(raw) {
+        if (!raw || typeof raw !== 'object') return null;
+        var amount = Number(raw.amount);
+        var date = typeof raw.date === 'string' ? raw.date : '';
+        if (!isFinite(amount) || amount <= 0 || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+        var items = Array.isArray(raw.items)
+          ? raw.items.map(function (x) { return { name: String((x && x.name) || '').trim(), price: Number(x && x.price) || 0 }; })
+              .filter(function (x) { return x.name || x.price; })
+          : [];
+        return {
+          id: raw.id ? String(raw.id) : newId(),
+          type: raw.type === 'income' ? 'income' : 'expense',
+          amount: Math.round(amount * 100) / 100,
+          cat: raw.cat || (raw.type === 'income' ? 'other_in' : 'other'),
+          pay: raw.pay || 'cash',
+          note: String(raw.note || '').trim(),
+          date: date,
+          ts: Number(raw.ts) || Date.now(),
+          items: items
+        };
+      }
+
+      function saveKey(key, val) {
+        try { localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val)); }
+        catch (e) { toast('ব্রাউজারে তথ্য সংরক্ষণ করা যাচ্ছে না'); }
+      }
+
+      function loadAll() {
+        try {
+          var rItems = JSON.parse(localStorage.getItem(KEYS.items) || '[]');
+          if (Array.isArray(rItems)) state.items = rItems.map(cleanItem).filter(Boolean);
+
+          var rBudgets = JSON.parse(localStorage.getItem(KEYS.budgets) || '{}');
+          if (rBudgets && typeof rBudgets === 'object' && !Array.isArray(rBudgets)) state.budgets = rBudgets;
+          var leg = Number(localStorage.getItem(KEYS.legacyBudget)) || 0;
+          if (leg > 0 && !state.budgets[curMonth]) state.budgets[curMonth] = leg;
+
+          var rDues = JSON.parse(localStorage.getItem(KEYS.dues) || '[]');
+          if (Array.isArray(rDues)) state.dues = rDues;
+
+          var rRec = JSON.parse(localStorage.getItem(KEYS.recurring) || '[]');
+          if (Array.isArray(rRec)) state.recurring = rRec;
+
+          var rCheck = JSON.parse(localStorage.getItem(KEYS.checklist) || '[]');
+          if (Array.isArray(rCheck)) state.checklist = rCheck;
+
+          var rCats = JSON.parse(localStorage.getItem(KEYS.customCats) || '[]');
+          if (Array.isArray(rCats)) state.customCats = rCats;
+
+          state.pin = localStorage.getItem(KEYS.pin) || '';
+        } catch (e) {}
+      }
+
+      /* ================= DEMO DATA ================= */
+      function demoItems() {
+        var base = new Date();
+        var rows = [
+          [0, 'income', 'salary', 'bank', 35000, 'মাসিক বেতন'],
+          [0, 'expense', 'bazar', 'cash', 650, 'চাল ও ডাল', [{ name: 'চাল', price: 400 }, { name: 'ডাল', price: 250 }]],
+          [0, 'expense', 'transport', 'cash', 60, 'রিকশা ভাড়া'],
+          [1, 'expense', 'bazar', 'mfs', 1250, 'সপ্তাহের বাজার', [{ name: 'চাল', price: 400 }, { name: 'ডাল', price: 250 }, { name: 'সয়াবিন তেল', price: 350 }, { name: 'সবজি', price: 250 }]],
+          [2, 'expense', 'bill', 'mfs', 850, 'ইন্টারনেট বিল'],
+          [3, 'expense', 'rent', 'bank', 12000, 'বাসা ভাড়া'],
+          [4, 'expense', 'health', 'cash', 500, 'ওষুধ']
+        ];
+        return rows.map(function (r, i) {
+          return {
+            id: 'demo-' + i, type: r[1], cat: r[2], pay: r[3], amount: r[4], note: r[5],
+            date: ymd(addDays(base, -r[0])), ts: 1000 - i, demo: true, items: r[6] || []
+          };
+        });
+      }
+      function isDemo() { return state.items.length === 0; }
+      function allItems() { return isDemo() ? demoItems() : state.items; }
+      function monthAllItems(ym) {
+        var m = ym || state.viewMonth;
+        return allItems().filter(function (i) { return i.date.slice(0, 7) === m; });
+      }
+      function sumOf(list) { return list.reduce(function (a, i) { return a + i.amount; }, 0); }
+
+      /* ================= MOBILE DRAWER ================= */
+      function openDrawer() {
+        if (window.innerWidth >= 1024) return;
+        el.formBackdrop.classList.remove('hidden');
+        el.formDrawer.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeDrawer() {
+        el.formBackdrop.classList.add('hidden');
+        el.formDrawer.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+      el.fabBtn.addEventListener('click', function () {
+        resetForm(false);
+        openDrawer();
+        setTimeout(function () { el.amount.focus(); }, 150);
+      });
+      el.closeDrawerBtn.addEventListener('click', closeDrawer);
+      el.formBackdrop.addEventListener('click', closeDrawer);
+
+      /* ================= FORM TYPE & CATEGORIES ================= */
+      function renderFormCategories(selectId) {
+        var cats = getAllCats(state.formType);
+        el.chips.innerHTML = cats.map(function (c, idx) {
+          var checked = selectId ? c.id === selectId : idx === 0;
+          return '<label class="cursor-pointer">' +
+            '<input type="radio" name="cat" value="' + esc(c.id) + '" class="peer sr-only"' + (checked ? ' checked' : '') + '>' +
+            '<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50 dark:peer-checked:bg-brand-900/40 peer-checked:text-brand-700 dark:peer-checked:text-brand-200 transition select-none">' +
+              '<span>' + esc(c.icon) + '</span><span>' + esc(c.name) + '</span>' +
+            '</span>' +
+          '</label>';
+        }).join('');
+        updatePlaceholders();
+      }
+
+      function setFormType(type, keepCatId) {
+        state.formType = type;
+        var isInc = type === 'income';
+        el.typeExpenseBtn.className = 'py-2 rounded-xl text-sm font-semibold transition ' +
+          (!isInc ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300');
+        el.typeIncomeBtn.className = 'py-2 rounded-xl text-sm font-semibold transition ' +
+          (isInc ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300');
+        el.itemsSectionWrap.classList.toggle('hidden', isInc);
+        if (isInc) setItemsVisibility(false);
+        renderFormCategories(keepCatId);
+        if (!state.editingId) {
+          el.save.textContent = isInc ? 'আয় যোগ করুন' : 'খরচ যোগ করুন';
+        }
+      }
+      el.typeExpenseBtn.addEventListener('click', function () { setFormType('expense'); });
+      el.typeIncomeBtn.addEventListener('click', function () { setFormType('income'); });
+
+      function buildDropdowns() {
+        el.payChips.innerHTML = PAY_METHODS.map(function (p, idx) {
+          return '<label class="cursor-pointer">' +
+            '<input type="radio" name="pay" value="' + p.id + '" class="peer sr-only"' + (idx === 0 ? ' checked' : '') + '>' +
+            '<span class="flex items-center justify-center gap-1 py-2 px-1.5 rounded-xl text-[11px] sm:text-xs font-medium border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50 dark:peer-checked:bg-brand-900/40 peer-checked:text-brand-700 dark:peer-checked:text-brand-200 transition select-none whitespace-nowrap">' +
+              '<span>' + p.icon + '</span><span>' + esc(p.name) + '</span>' +
+            '</span>' +
+          '</label>';
+        }).join('');
+
+        var allCats = getAllCats('expense').concat(getAllCats('income'));
+        el.filterCat.innerHTML = '<option value="all">সব ক্যাটাগরি</option>' + allCats.map(function (c) {
+          return '<option value="' + esc(c.id) + '">' + esc(c.icon) + ' ' + esc(c.name) + '</option>';
+        }).join('');
+
+        el.filterPay.innerHTML = '<option value="all">সব মাধ্যম</option>' + PAY_METHODS.map(function (p) {
+          return '<option value="' + p.id + '">' + p.icon + ' ' + esc(p.name) + '</option>';
+        }).join('');
+
+        el.recCat.innerHTML = getAllCats('expense').map(function (c) {
+          return '<option value="' + esc(c.id) + '">' + esc(c.icon) + ' ' + esc(c.name) + '</option>';
+        }).join('');
+        el.recPay.innerHTML = PAY_METHODS.map(function (p) {
+          return '<option value="' + p.id + '">' + p.icon + ' ' + esc(p.name) + '</option>';
+        }).join('');
+      }
+
+      function selectedCat() {
+        var r = el.form.querySelector('input[name="cat"]:checked');
+        return r ? r.value : (state.formType === 'income' ? 'other_in' : 'other');
+      }
+      function selectedPay() {
+        var r = el.form.querySelector('input[name="pay"]:checked');
+        return r ? r.value : 'cash';
+      }
+      function updatePlaceholders() {
+        var c = catOf(selectedCat(), state.formType);
+        el.note.placeholder = c.notePh || (state.formType === 'income' ? 'আয়ের বিবরণ লিখুন' : 'খরচের বিবরণ লিখুন');
+        el.itemRows.querySelectorAll('.it-name').forEach(function (inp) {
+          inp.placeholder = c.subPh || 'বিবরণ লিখুন';
+        });
+      }
+
+      /* ================= SUB-ITEMS LOGIC ================= */
+      function setItemsVisibility(open) {
+        state.itemsExpanded = open;
+        el.itemsBox.classList.toggle('hidden', !open);
+        el.toggleItemsLabel.textContent = open ? 'বিস্তারিত অংশ লুকান' : 'খরচ ভেঙে লিখুন (ঐচ্ছিক)';
+        el.toggleItemsIcon.innerHTML = open
+          ? '<path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />'
+          : '<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />';
+        if (open && !el.itemRows.children.length) addItemRow('', '');
+        refreshItemsSum();
+      }
+      function addItemRow(name, price) {
+        var c = catOf(selectedCat(), 'expense');
+        var row = document.createElement('div');
+        row.className = 'grid grid-cols-12 gap-1.5 items-center';
+        row.innerHTML =
+          '<input type="text" class="it-name col-span-7 h-9 px-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="' + esc(c.subPh || 'বিবরণ লিখুন') + '" maxlength="40" autocomplete="off">' +
+          '<input type="text" class="it-price col-span-4 h-9 px-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500" inputmode="decimal" placeholder="টাকা" autocomplete="off">' +
+          '<button type="button" class="it-del col-span-1 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 text-lg leading-none" aria-label="সরান">×</button>';
+        row.querySelector('.it-name').value = name || '';
+        row.querySelector('.it-price').value = price || '';
+        el.itemRows.appendChild(row);
+      }
+      function setItemRows(list) {
+        el.itemRows.innerHTML = '';
+        if (list && list.length) {
+          list.forEach(function (x) { addItemRow(x.name, x.price ? String(x.price) : ''); });
+          setItemsVisibility(true);
+        } else {
+          setItemsVisibility(false);
+        }
+      }
+      function readItems() {
+        var out = [], bad = false;
+        if (!state.itemsExpanded || state.formType === 'income') return { items: [], bad: false };
+        Array.prototype.forEach.call(el.itemRows.children, function (row) {
+          var name = row.querySelector('.it-name').value.trim();
+          var raw = row.querySelector('.it-price').value.trim();
+          var price = 0;
+          if (raw) { price = parseAmount(raw); if (isNaN(price)) { bad = true; return; } }
+          if (name || price) out.push({ name: name.slice(0, 40), price: price });
+        });
+        return { items: out, bad: bad };
+      }
+      function refreshItemsSum() {
+        var sum = 0;
+        if (state.itemsExpanded && state.formType === 'expense') {
+          Array.prototype.forEach.call(el.itemRows.children, function (row) {
+            var p = parseAmount(row.querySelector('.it-price').value);
+            if (!isNaN(p)) sum += p;
+          });
+        }
+        sum = Math.round(sum * 100) / 100;
+        if (state.itemsExpanded && sum > 0) {
+          el.amount.value = String(sum);
+          el.amount.readOnly = true;
+          el.itemsHint.textContent = 'মোট যোগফল: ' + money(sum);
+          el.itemsHint.classList.remove('hidden');
+        } else {
+          el.amount.readOnly = false;
+          el.itemsHint.classList.add('hidden');
+        }
+      }
+      el.toggleItemsBtn.addEventListener('click', function () { setItemsVisibility(!state.itemsExpanded); });
+      el.addItem.addEventListener('click', function () { addItemRow('', ''); el.itemRows.lastChild.querySelector('.it-name').focus(); });
+      el.clearItemsBtn.addEventListener('click', function () { el.itemRows.innerHTML = ''; addItemRow('', ''); refreshItemsSum(); });
+      el.itemRows.addEventListener('input', refreshItemsSum);
+      el.itemRows.addEventListener('click', function (ev) {
+        var del = ev.target.closest('.it-del');
+        if (!del) return;
+        del.parentNode.remove();
+        if (!el.itemRows.children.length) addItemRow('', '');
+        refreshItemsSum();
+      });
+      el.chips.addEventListener('change', updatePlaceholders);
+
+      /* ================= RENDER LEDGER ================= */
+      function renderSummary(mAll, mExp, mInc, expTotal, incTotal) {
+        el.monthLabel.textContent = dfMonth.format(parseYmd(state.viewMonth + '-01'));
+        el.next.disabled = state.viewMonth >= curMonth;
+        el.demoBanner.classList.toggle('hidden', !isDemo());
+
+        el.monthIncome.textContent = money(incTotal);
+        el.monthTotal.textContent = money(expTotal);
+        var bal = incTotal - expTotal;
+        el.monthBalance.textContent = money(bal);
+        el.monthBalance.className = 'font-display text-2xl sm:text-3xl font-bold mt-0.5 break-words ' +
+          (bal < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-brand-700 dark:text-brand-400');
+
+        // Previous Month Comparison Badge
+        var prevExp = sumOf(monthAllItems(prevMonthKey(state.viewMonth)).filter(function (i) { return i.type !== 'income'; }));
+        if (prevExp > 0 && expTotal > 0) {
+          var diff = expTotal - prevExp;
+          var pct = Math.round(Math.abs(diff) / prevExp * 100);
+          el.monthCompare.classList.remove('hidden');
+          if (diff > 0) {
+            el.monthCompare.className = 'text-[11px] font-semibold px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300';
+            el.monthCompare.textContent = '↑ গত মাসের চেয়ে ' + nfInt.format(pct) + '% বেশি';
+          } else if (diff < 0) {
+            el.monthCompare.className = 'text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300';
+            el.monthCompare.textContent = '↓ গত মাসের চেয়ে ' + nfInt.format(pct) + '% কম';
+          } else {
+            el.monthCompare.classList.add('hidden');
+          }
+        } else {
+          el.monthCompare.classList.add('hidden');
+        }
+
+        // Quick Stats
+        var tToday = sumOf(allItems().filter(function (i) { return i.type !== 'income' && i.date === today; }));
+        el.todayTotal.textContent = money(tToday);
+
+        var days = 0;
+        if (state.viewMonth === curMonth) days = +today.slice(8);
+        else if (state.viewMonth < curMonth) {
+          var p = state.viewMonth.split('-');
+          days = new Date(+p[0], +p[1], 0).getDate();
+        }
+        el.avgDay.textContent = days && expTotal ? money(Math.round(expTotal / days)) : '—';
+
+        var mx = null;
+        mExp.forEach(function (i) { if (!mx || i.amount > mx.amount) mx = i; });
+        el.maxExp.innerHTML = mx
+          ? money(mx.amount) + '<span class="block text-[11px] font-sans font-normal text-slate-500 dark:text-slate-400 truncate">' + esc(mx.note || catOf(mx.cat, 'expense').name) + '</span>'
+          : '—';
+
+        // Budget Bar
+        var budget = Number(state.budgets[state.viewMonth]) || 0;
+        if (budget > 0) {
+          var bPct = expTotal / budget;
+          el.fill.style.width = Math.min(100, Math.round(bPct * 100)) + '%';
+          el.fill.className = 'h-full rounded-full transition-all duration-300 ' +
+            (bPct >= 1 ? 'bg-rose-500' : bPct >= 0.8 ? 'bg-amber-500' : 'bg-brand-600 dark:bg-brand-500');
+          el.budgetText.className = 'text-xs sm:text-sm font-medium ' +
+            (bPct >= 1 ? 'text-rose-600 dark:text-rose-400' : bPct >= 0.8 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-600 dark:text-slate-400');
+          el.budgetText.textContent = bPct >= 1
+            ? 'বাজেট (' + money(budget) + ') ছাড়িয়ে গেছে ' + money(expTotal - budget)
+            : nfInt.format(Math.round(bPct * 100)) + '% খরচ · বাকি ' + money(budget - expTotal) + ' (সীমা ' + money(budget) + ')';
+          el.budgetBtn.textContent = 'বাজেট বদলান';
+        } else {
+          el.fill.style.width = '0%';
+          el.fill.className = 'h-full rounded-full bg-brand-600 transition-all duration-300';
+          el.budgetText.className = 'text-xs sm:text-sm text-slate-500 dark:text-slate-400';
+          el.budgetText.textContent = 'মাসের খরচের বাজেট ঠিক করলে এখানে অগ্রগতি দেখাবে';
+          el.budgetBtn.textContent = 'বাজেট ঠিক করুন';
+        }
+
+        // Wallet / Payment Method Summary
+        el.walletSummary.innerHTML = PAY_METHODS.map(function (pm) {
+          var spent = sumOf(mExp.filter(function (i) { return (i.pay || 'cash') === pm.id; }));
+          return '<div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80">' +
+            '<span class="text-xs font-medium text-slate-600 dark:text-slate-300 truncate">' + pm.icon + ' ' + esc(pm.name) + '</span>' +
+            '<span class="font-display font-bold text-xs sm:text-sm text-slate-900 dark:text-white shrink-0">' + money(spent) + '</span>' +
+          '</div>';
+        }).join('');
+      }
+
+      function renderBreakdown(mExp, expTotal) {
+        var sums = {};
+        mExp.forEach(function (i) {
+          var id = catOf(i.cat, 'expense').id;
+          sums[id] = (sums[id] || 0) + i.amount;
+        });
+        var rows = getAllCats('expense').map(function (c) { return { c: c, sum: sums[c.id] || 0 }; })
+          .filter(function (x) { return x.sum > 0; })
+          .sort(function (a, b) { return b.sum - a.sum; });
+
+        el.catCountSub.textContent = rows.length ? nfInt.format(rows.length) + 'টি খাত' : '';
+        if (!rows.length) {
+          el.breakdownWrap.innerHTML = '<div class="py-8 text-center text-sm text-slate-400">এই মাসে এখনো কোনো খরচ নেই।</div>';
+          return;
+        }
+
+        var radius = 38, circ = 2 * Math.PI * radius, offset = 0;
+        var segments = rows.map(function (x) {
+          var dash = (x.sum / expTotal) * circ;
+          var seg = '<circle cx="50" cy="50" r="' + radius + '" fill="transparent" stroke="' + (x.c.color || '#109476') + '" stroke-width="14" stroke-dasharray="' + dash.toFixed(2) + ' ' + circ.toFixed(2) + '" stroke-dashoffset="' + (-offset).toFixed(2) + '" />';
+          offset += dash;
+          return seg;
+        }).join('');
+
+        var donutHtml =
+          '<div class="flex items-center gap-4 pb-2">' +
+            '<div class="relative w-24 h-24 shrink-0">' +
+              '<svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">' + segments + '</svg>' +
+              '<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">' +
+                '<span class="text-[10px] text-slate-400">সর্বোচ্চ</span>' +
+                '<span class="text-sm font-bold leading-none mt-0.5">' + esc(rows[0].c.icon) + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="min-w-0 flex-1 space-y-0.5">' +
+              '<p class="text-xs text-slate-500 dark:text-slate-400">সবচেয়ে বেশি খরচ</p>' +
+              '<p class="font-display font-bold text-base truncate">' + esc(rows[0].c.name) + ' (' + nfInt.format(Math.round(rows[0].sum / expTotal * 100)) + '%)</p>' +
+              '<p class="text-sm font-semibold text-brand-600 dark:text-brand-500">' + money(rows[0].sum) + '</p>' +
+            '</div>' +
+          '</div>';
+
+        var max = rows[0].sum;
+        var barsHtml = '<ul class="space-y-2.5">' + rows.slice(0, 5).map(function (x) {
+          var pct = Math.round(x.sum / expTotal * 100);
+          var w = Math.max(4, Math.round(x.sum / max * 100));
+          return '<li>' +
+            '<div class="flex items-center justify-between text-sm gap-2">' +
+              '<span class="flex items-center gap-1.5 min-w-0 truncate"><span>' + esc(x.c.icon) + '</span><span class="font-medium truncate">' + esc(x.c.name) + '</span></span>' +
+              '<span class="flex items-center gap-2 shrink-0"><span class="text-xs text-slate-400">' + nfInt.format(pct) + '%</span><span class="font-semibold">' + money(x.sum) + '</span></span>' +
+            '</div>' +
+            '<div class="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 mt-1 overflow-hidden">' +
+              '<div class="h-full rounded-full" style="width:' + w + '%;background:' + (x.c.color || '#109476') + '"></div>' +
+            '</div>' +
+          '</li>';
+        }).join('') + '</ul>';
+
+        el.breakdownWrap.innerHTML = donutHtml + barsHtml;
+      }
+
+      function renderWeek() {
+        var items = allItems().filter(function (i) { return i.type !== 'income'; });
+        var base = new Date(), cols = [], max = 1, tot = 0;
+        for (var k = 6; k >= 0; k--) {
+          var d = addDays(base, -k), key = ymd(d);
+          var s = sumOf(items.filter(function (i) { return i.date === key; }));
+          tot += s;
+          if (s > max) max = s;
+          cols.push({ d: d, key: key, s: s });
+        }
+        el.weekTotal.textContent = money(tot);
+        var sel = cols.find(function (c) { return c.key === state.selectedWeekDay; }) || cols[cols.length - 1];
+        el.weekSelectedInfo.textContent = dfDay.format(sel.d) + ': ' + money(sel.s);
+
+        el.week.innerHTML = cols.map(function (c) {
+          var h = c.s ? Math.max(8, Math.round(c.s / max * 100)) : 4;
+          var isToday = c.key === today, isSel = c.key === state.selectedWeekDay;
+          var barCls = isToday ? 'bg-brand-600 dark:bg-brand-500' : isSel ? 'bg-brand-500/70' : 'bg-slate-200 dark:bg-slate-700 hover:bg-brand-500/50';
+          return '<button type="button" data-wday="' + c.key + '" class="group flex flex-col items-center gap-1.5 focus:outline-none">' +
+            '<span class="text-[11px] font-medium ' + (isToday || isSel ? 'text-slate-900 dark:text-white' : 'text-slate-400') + '">' + compact(c.s) + '</span>' +
+            '<span class="w-full h-28 flex items-end justify-center px-0.5 border-b border-slate-200 dark:border-slate-800">' +
+              '<span class="w-full max-w-[28px] rounded-t-lg transition-all duration-300 ' + barCls + '" style="height:' + h + '%"></span>' +
+            '</span>' +
+            '<span class="text-xs ' + (isToday ? 'font-bold text-brand-600 dark:text-brand-500' : isSel ? 'font-semibold text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400') + '">' + esc(dfShort.format(c.d)) + '</span>' +
+          '</button>';
+        }).join('');
+      }
+      el.week.addEventListener('click', function (ev) {
+        var b = ev.target.closest('button[data-wday]');
+        if (b) { state.selectedWeekDay = b.getAttribute('data-wday'); renderWeek(); }
+      });
+
+      function dayLabel(key) {
+        if (key === today) return 'আজ';
+        if (key === ymd(addDays(new Date(), -1))) return 'গতকাল';
+        return dfDay.format(parseYmd(key));
+      }
+
+      function renderList(mAll) {
+        var q = el.search.value.trim().toLowerCase();
+        var fType = el.filterType.value, fCat = el.filterCat.value, fPay = el.filterPay.value;
+
+        var rows = mAll.filter(function (i) {
+          var type = i.type === 'income' ? 'income' : 'expense';
+          var cat = catOf(i.cat, type), pay = payOf(i.pay);
+          if (fType !== 'all' && type !== fType) return false;
+          if (fCat !== 'all' && cat.id !== fCat) return false;
+          if (fPay !== 'all' && pay.id !== fPay) return false;
+          if (!q) return true;
+          return (i.note || '').toLowerCase().indexOf(q) >= 0 ||
+            cat.name.toLowerCase().indexOf(q) >= 0 ||
+            pay.name.toLowerCase().indexOf(q) >= 0 ||
+            (i.items || []).some(function (s) { return (s.name || '').toLowerCase().indexOf(q) >= 0; });
+        }).sort(function (a, b) { return b.date.localeCompare(a.date) || (b.ts || 0) - (a.ts || 0); });
+
+        el.listCount.textContent = nfInt.format(rows.length) + 'টি হিসাব';
+        if (!rows.length) {
+          el.list.innerHTML = '<div class="py-10 text-center space-y-1"><p class="text-2xl">📝</p><p class="text-sm text-slate-500">কোনো হিসাব খুঁজে পাওয়া যায়নি।</p></div>';
+          return;
+        }
+
+        var groups = [], map = {};
+        rows.forEach(function (i) {
+          if (!map[i.date]) { map[i.date] = { date: i.date, items: [] }; groups.push(map[i.date]); }
+          map[i.date].items.push(i);
+        });
+
+        el.list.innerHTML = groups.map(function (g) {
+          var dayExp = sumOf(g.items.filter(function (x) { return x.type !== 'income'; }));
+          var dayInc = sumOf(g.items.filter(function (x) { return x.type === 'income'; }));
+          var daySummary = (dayInc ? '+' + money(dayInc) + (dayExp ? ' · ' : '') : '') + (dayExp ? '−' + money(dayExp) : '');
+
+          var rowsHtml = g.items.map(function (i) {
+            var isInc = i.type === 'income';
+            var c = catOf(i.cat, i.type), p = payOf(i.pay);
+            var subHtml = '';
+            if (i.items && i.items.length) {
+              subHtml = '<details class="mt-1.5 text-xs text-slate-500 dark:text-slate-400">' +
+                '<summary class="cursor-pointer font-medium hover:text-brand-600 select-none">' + nfInt.format(i.items.length) + 'টি বিস্তারিত আইটেম</summary>' +
+                '<ul class="mt-1.5 pl-3 border-l-2 border-slate-200 dark:border-slate-700 space-y-1">' +
+                i.items.map(function (s) { return '<li class="flex justify-between gap-4"><span>' + esc(s.name || 'নামহীন') + '</span><span class="font-medium">' + (s.price ? money(s.price) : '—') + '</span></li>'; }).join('') +
+                '</ul></details>';
+            }
+
+            var actHtml = '';
+            if (!i.demo) {
+              if (state.pendingDelete === i.id) {
+                actHtml = '<div class="no-print flex items-center gap-1.5 shrink-0">' +
+                  '<button type="button" data-act="confirm" data-id="' + esc(i.id) + '" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white text-xs font-semibold">মুছুন</button>' +
+                  '<button type="button" data-act="cancel" data-id="' + esc(i.id) + '" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs">না</button>' +
+                '</div>';
+              } else {
+                actHtml = '<div class="no-print flex items-center gap-1 shrink-0">' +
+                  '<button type="button" data-act="edit" data-id="' + esc(i.id) + '" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition" title="সম্পাদনা">' +
+                    '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>' +
+                  '</button>' +
+                  '<button type="button" data-act="delete" data-id="' + esc(i.id) + '" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition" title="মুছুন">' +
+                    '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>' +
+                  '</button>' +
+                '</div>';
+              }
+            }
+
+            return '<div class="flex items-start justify-between gap-3 py-3 border-b border-dashed border-slate-200 dark:border-slate-800 last:border-b-0">' +
+              '<div class="flex items-start gap-3 min-w-0 flex-1">' +
+                '<div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0 mt-0.5" style="background:' + (c.color || '#109476') + '1a">' + esc(c.icon) + '</div>' +
+                '<div class="min-w-0 flex-1">' +
+                  '<p class="font-semibold text-sm sm:text-base text-slate-900 dark:text-slate-100 break-words leading-snug">' + esc(i.note || c.name) + '</p>' +
+                  '<div class="flex flex-wrap items-center gap-x-2 mt-0.5 text-xs text-slate-500 dark:text-slate-400">' +
+                    '<span>' + esc(c.name) + '</span><span>•</span><span>' + p.icon + ' ' + esc(p.name) + '</span>' +
+                  '</div>' + subHtml +
+                '</div>' +
+              '</div>' +
+              '<div class="flex flex-col sm:flex-row sm:items-center items-end gap-1 sm:gap-2 shrink-0">' +
+                '<span class="font-display font-bold text-base sm:text-lg ' + (isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white') + '">' + (isInc ? '+' : '') + money(i.amount) + '</span>' +
+                actHtml +
+              '</div>' +
+            '</div>';
+          }).join('');
+
+          return '<div>' +
+            '<div class="flex items-center justify-between pb-2 mb-1 border-b border-slate-200 dark:border-slate-800">' +
+              '<h3 class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">' + esc(dayLabel(g.date)) + '</h3>' +
+              '<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">' + daySummary + '</span>' +
+            '</div><div>' + rowsHtml + '</div></div>';
+        }).join('');
+      }
+
+      /* ================= RENDER DUES (ধার-দেনা) ================= */
+      var activeDuePayId = '';
+      var editingDuePayId = '';
+
+      function duePaid(d) {
+        if (Array.isArray(d.payments) && d.payments.length) {
+          return Math.round(d.payments.reduce(function (a, p) { return a + (Number(p.amount) || 0); }, 0) * 100) / 100;
+        }
+        return d.settled ? Number(d.amount) || 0 : 0;
+      }
+
+      function dueRemaining(d) {
+        var rem = (Number(d.amount) || 0) - duePaid(d);
+        return rem > 0 ? Math.round(rem * 100) / 100 : 0;
+      }
+
+      function isDueSettled(d) {
+        return !!d.settled || dueRemaining(d) <= 0;
+      }
+
+      function renderDues() {
+        var pending = state.dues.filter(function (d) { return !isDueSettled(d); });
+        var settled = state.dues.filter(function (d) { return isDueSettled(d); });
+        var getSum = pending.filter(function (d) { return d.type === 'get'; }).reduce(function (a, d) { return a + dueRemaining(d); }, 0);
+        var giveSum = pending.filter(function (d) { return d.type === 'give'; }).reduce(function (a, d) { return a + dueRemaining(d); }, 0);
+        el.dueGetTotal.textContent = money(getSum);
+        el.dueGiveTotal.textContent = money(giveSum);
+        var net = getSum - giveSum;
+        el.dueNetTotal.textContent = money(net);
+        el.dueNetTotal.className = 'font-display text-3xl font-bold mt-1 ' + (net >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+
+        el.duesBadge.textContent = nfInt.format(pending.length);
+        el.duesBadge.classList.toggle('hidden', pending.length === 0);
+
+        // Update filter pills with live counts
+        var counts = { all: state.dues.length, pending: pending.length, settled: settled.length };
+        var labels = { all: 'সবগুলো', pending: 'বাকি আছে', settled: 'পরিশোধিত' };
+        el.dueFilterTabs.querySelectorAll('button[data-due-tab]').forEach(function (b) {
+          var key = b.getAttribute('data-due-tab');
+          var active = state.dueFilter === key;
+          b.textContent = labels[key] + ' (' + nfInt.format(counts[key]) + ')';
+          b.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition ' +
+            (active
+              ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-sm'
+              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300');
+        });
+
+        var f = state.dueFilter;
+        var list = state.dues.filter(function (d) {
+          var done = isDueSettled(d);
+          return f === 'all' ? true : f === 'settled' ? done : !done;
+        }).sort(function (a, b) {
+          var ad = isDueSettled(a) ? 1 : 0, bd = isDueSettled(b) ? 1 : 0;
+          if (ad !== bd) return ad - bd;
+          return b.date.localeCompare(a.date);
+        });
+
+        if (!list.length) {
+          el.duesList.innerHTML = '<div class="py-10 text-center text-sm text-slate-400">এই তালিকায় কোনো ধার-দেনা নেই।</div>';
+          return;
+        }
+        el.duesList.innerHTML = list.map(function (d) {
+          var isGet = d.type === 'get';
+          var paid = duePaid(d);
+          var rem = dueRemaining(d);
+          var done = isDueSettled(d);
+          var pct = d.amount > 0 ? Math.min(100, Math.round(paid / d.amount * 100)) : 0;
+
+          var histHtml = '';
+          if (Array.isArray(d.payments) && d.payments.length) {
+            histHtml = '<details class="mt-2.5 pt-2 border-t border-dashed border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400"' + (done ? ' open' : '') + '>' +
+              '<summary class="cursor-pointer font-medium hover:text-brand-600 select-none">পরিশোধের ইতিহাস (' + nfInt.format(d.payments.length) + ' বার)</summary>' +
+              '<ul class="mt-2 space-y-1.5">' +
+              d.payments.map(function (p) {
+                return '<li class="flex items-center justify-between gap-2 pl-2.5 border-l-2 border-brand-500/50">' +
+                  '<span class="min-w-0 truncate">' + esc(p.date) + (p.note ? ' · ' + esc(p.note) : '') + '</span>' +
+                  '<span class="flex items-center gap-1.5 shrink-0">' +
+                    '<strong class="text-slate-700 dark:text-slate-200">' + money(p.amount) + '</strong>' +
+                    '<button type="button" data-due-pay-edit="' + esc(d.id) + ':' + esc(p.id) + '" class="p-1 rounded text-slate-400 hover:text-brand-600" title="কিস্তি সম্পাদনা করুন">✎</button>' +
+                    '<button type="button" data-due-pay-del="' + esc(d.id) + ':' + esc(p.id) + '" class="p-1 rounded text-slate-400 hover:text-rose-500" title="এই কিস্তি মুছুন">✕</button>' +
+                  '</span>' +
+                '</li>';
+              }).join('') +
+              '</ul></details>';
+          }
+
+          var delArea = state.pendingDueDelete === d.id
+            ? '<span class="text-xs text-rose-500 font-medium">মুছবেন?</span>' +
+              '<button type="button" data-due-del-confirm="' + esc(d.id) + '" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white text-xs font-semibold">হ্যাঁ</button>' +
+              '<button type="button" data-due-del-cancel="' + esc(d.id) + '" class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs">না</button>'
+            : '<button type="button" data-due-edit="' + esc(d.id) + '" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:text-brand-600 text-slate-600 dark:text-slate-300 text-xs font-semibold transition">✎ সম্পাদনা</button>' +
+              '<button type="button" data-due-del="' + esc(d.id) + '" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600" title="মুছুন">✕</button>';
+
+          return '<div class="p-4 rounded-2xl border ' +
+            (done ? 'bg-emerald-50/30 dark:bg-emerald-950/15 border-emerald-200/70 dark:border-emerald-900/40' : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800') + '">' +
+            '<div class="flex flex-wrap items-start justify-between gap-3">' +
+              '<div class="min-w-0 flex-1">' +
+                '<div class="flex flex-wrap items-center gap-1.5">' +
+                  '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold ' + (isGet ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300') + '">' +
+                    (isGet ? 'পাবো' : 'দিতে হবে') + '</span>' +
+                  (done ? '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300">✓ পরিশোধিত</span>' : '') +
+                  '<p class="font-bold text-sm sm:text-base truncate">' + esc(d.person) + '</p>' +
+                '</div>' +
+                '<p class="text-xs text-slate-500 mt-1">' + esc(d.note || 'কোনো বিবরণ নেই') + ' · ' + esc(d.date) + '</p>' +
+              '</div>' +
+              '<div class="text-right shrink-0">' +
+                '<p class="text-[11px] text-slate-400">' + (done ? 'মোট পরিশোধিত' : 'বাকি আছে') + '</p>' +
+                '<p class="font-display font-bold text-xl leading-tight ' + (done ? 'text-brand-600 dark:text-brand-400' : isGet ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400') + '">' + money(done ? paid : rem) + '</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="mt-3 space-y-1.5">' +
+              '<div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">' +
+                '<span>মোট: <strong>' + money(d.amount) + '</strong></span>' +
+                '<span>পরিশোধ: <strong class="text-brand-600 dark:text-brand-400">' + money(paid) + '</strong> (' + nfInt.format(pct) + '%)</span>' +
+              '</div>' +
+              '<div class="h-1.5 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">' +
+                '<div class="h-full rounded-full bg-brand-600 dark:bg-brand-500 transition-all" style="width:' + pct + '%"></div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="mt-3 flex flex-wrap items-center justify-end gap-2">' +
+              (!done
+                ? '<button type="button" data-due-pay="' + esc(d.id) + '" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold transition">+ আংশিক পরিশোধ</button>' +
+                  '<button type="button" data-due-settle="' + esc(d.id) + '" class="px-3 py-1.5 rounded-xl bg-slate-200/80 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-semibold transition">✓ সম্পূর্ণ শোধ</button>'
+                : '<button type="button" data-due-reopen="' + esc(d.id) + '" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold">↺ আবার বাকি করুন</button>') +
+              delArea +
+            '</div>' +
+            histHtml +
+          '</div>';
+        }).join('');
+      }
+
+      /* ================= RENDER RECURRING (নিয়মিত খরচ) ================= */
+      function renderRecurring() {
+        var total = sumOf(state.recurring);
+        el.recTotalBadge.textContent = 'মোট ' + money(total) + '/মাস';
+        if (!state.recurring.length) {
+          el.recList.innerHTML = '<div class="py-10 text-center text-sm text-slate-400">এখনো কোনো নিয়মিত খরচ সেভ করা হয়নি। বাম পাশ থেকে বাসা ভাড়া, ওয়াইফাই বিল বা কিস্তি যোগ করুন।</div>';
+          return;
+        }
+        var mExp = monthAllItems(state.viewMonth).filter(function (i) { return i.type !== 'income'; });
+        el.recList.innerHTML = state.recurring.map(function (r) {
+          var c = catOf(r.cat, 'expense'), p = payOf(r.pay);
+          var addedThisMonth = mExp.some(function (i) { return i.note === r.title && i.amount === r.amount; });
+          return '<div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">' +
+            '<div class="flex items-center gap-3 min-w-0 flex-1">' +
+              '<div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0" style="background:' + (c.color || '#109476') + '1a">' + esc(c.icon) + '</div>' +
+              '<div class="min-w-0">' +
+                '<p class="font-bold text-sm sm:text-base truncate">' + esc(r.title) + '</p>' +
+                '<p class="text-xs text-slate-500">' + esc(c.name) + ' • ' + p.icon + ' ' + esc(p.name) + '</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="font-display font-bold text-base sm:text-lg mr-1">' + money(r.amount) + '</span>' +
+              '<button type="button" data-rec-add="' + esc(r.id) + '" class="px-3 py-2 rounded-xl text-xs font-semibold transition ' +
+                (addedThisMonth ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-brand-600 hover:bg-brand-700 text-white') + '">' +
+                (addedThisMonth ? '✓ যোগ হয়েছে (+আবার)' : '+ এই মাসে যোগ') + '</button>' +
+              '<button type="button" data-rec-del="' + esc(r.id) + '" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600" title="মুছুন">✕</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      /* ================= RENDER CHECKLIST (বাজারের ফর্দ) ================= */
+      function renderChecklist() {
+        var unchecked = state.checklist.filter(function (c) { return !c.done; }).length;
+        var checkedItems = state.checklist.filter(function (c) { return c.done; });
+        var checkedSum = checkedItems.reduce(function (a, c) { return a + (Number(c.price) || 0); }, 0);
+
+        el.checkBadge.textContent = nfInt.format(unchecked);
+        el.checkBadge.classList.toggle('hidden', unchecked === 0);
+
+        el.checkSummary.textContent = state.checklist.length
+          ? 'মোট ' + nfInt.format(state.checklist.length) + 'টি · কেনা হয়েছে ' + nfInt.format(checkedItems.length) + 'টি' + (checkedSum ? ' (' + money(checkedSum) + ')' : '')
+          : 'ফর্দটি এখনো খালি';
+        el.convertCheckBtn.classList.toggle('hidden', checkedItems.length === 0);
+        el.clearCheckBtn.classList.toggle('hidden', state.checklist.length === 0);
+
+        if (!state.checklist.length) {
+          el.checkList.innerHTML = '<div class="py-10 text-center text-sm text-slate-400">বাজারে যাওয়ার আগে এখানে জিনিসের তালিকা লিখে রাখুন।</div>';
+          return;
+        }
+        el.checkList.innerHTML = state.checklist.map(function (c) {
+          return '<div class="flex items-center justify-between gap-2.5 p-3 rounded-2xl border ' +
+            (c.done ? 'bg-brand-50/40 dark:bg-brand-900/20 border-brand-200 dark:border-brand-800/50' : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800') + '">' +
+            '<label class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer">' +
+              '<input type="checkbox" data-chk-toggle="' + esc(c.id) + '" ' + (c.done ? 'checked' : '') + ' class="w-5 h-5 rounded-md accent-brand-600 shrink-0">' +
+              '<span class="text-sm font-medium truncate ' + (c.done ? 'line-through text-slate-400' : '') + '">' + esc(c.name) + '</span>' +
+            '</label>' +
+            '<div class="flex items-center gap-2 shrink-0">' +
+              '<input type="text" data-chk-price="' + esc(c.id) + '" inputmode="decimal" value="' + (c.price ? esc(c.price) : '') + '" placeholder="দাম" class="w-20 h-8 px-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-right font-semibold">' +
+              '<button type="button" data-chk-del="' + esc(c.id) + '" class="p-1 text-slate-400 hover:text-rose-600">✕</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      /* ================= MASTER RENDER ================= */
+      function renderAll() {
+        var mAll = monthAllItems(state.viewMonth);
+        var mExp = mAll.filter(function (i) { return i.type !== 'income'; });
+        var mInc = mAll.filter(function (i) { return i.type === 'income'; });
+        var expTotal = sumOf(mExp), incTotal = sumOf(mInc);
+
+        renderSummary(mAll, mExp, mInc, expTotal, incTotal);
+        renderBreakdown(mExp, expTotal);
+        renderWeek();
+        renderList(mAll);
+        renderDues();
+        renderRecurring();
+        renderChecklist();
+      }
+
+      /* ================= LEDGER FORM EVENTS ================= */
+      function resetForm(keepDate) {
+        state.editingId = '';
+        el.amount.value = '';
+        el.amount.readOnly = false;
+        el.note.value = '';
+        el.amountErr.classList.add('hidden');
+        if (!keepDate) el.date.value = today;
+        setItemRows([]);
+        el.formTitle.textContent = 'নতুন হিসাব যোগ করুন';
+        el.save.textContent = state.formType === 'income' ? 'আয় যোগ করুন' : 'খরচ যোগ করুন';
+        el.cancelEdit.classList.add('hidden');
+      }
+
+      el.form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var sub = readItems();
+        if (sub.bad) { toast('আইটেমের দাম সঠিক সংখ্যায় লিখুন'); return; }
+        var amount = parseAmount(el.amount.value);
+        if (isNaN(amount)) {
+          el.amountErr.textContent = 'দয়া করে সঠিক পরিমাণ লিখুন (যেমন: ২৫০)';
+          el.amountErr.classList.remove('hidden');
+          el.amount.focus();
+          return;
+        }
+        el.amountErr.classList.add('hidden');
+        var date = el.date.value || today;
+        if (date > today) date = today;
+
+        var idx = state.items.findIndex(function (x) { return x.id === state.editingId; });
+        var isEdit = idx >= 0;
+        var item = {
+          id: isEdit ? state.items[idx].id : newId(),
+          type: state.formType,
+          amount: amount,
+          cat: selectedCat(),
+          pay: selectedPay(),
+          note: el.note.value.trim(),
+          date: date,
+          ts: isEdit ? state.items[idx].ts : Date.now(),
+          items: sub.items
+        };
+
+        if (isEdit) state.items[idx] = item;
+        else state.items.push(item);
+
+        saveKey(KEYS.items, state.items);
+        state.viewMonth = item.date.slice(0, 7);
+        resetForm(true);
+        closeDrawer();
+        renderAll();
+        toast(isEdit ? 'হিসাব আপডেট হয়েছে' : (item.type === 'income' ? 'আয় যোগ হয়েছে' : 'খরচ যোগ হয়েছে'));
+      });
+
+      el.cancelEdit.addEventListener('click', function () { resetForm(false); closeDrawer(); });
+
+      el.list.addEventListener('click', function (ev) {
+        var btn = ev.target.closest('button[data-act]');
+        if (!btn) return;
+        var id = btn.getAttribute('data-id'), act = btn.getAttribute('data-act');
+        if (act === 'delete') { state.pendingDelete = id; renderList(monthAllItems()); return; }
+        if (act === 'cancel') { state.pendingDelete = ''; renderList(monthAllItems()); return; }
+        if (act === 'confirm') {
+          state.pendingDelete = '';
+          state.items = state.items.filter(function (x) { return x.id !== id; });
+          saveKey(KEYS.items, state.items);
+          if (state.editingId === id) resetForm(false);
+          renderAll();
+          toast('হিসাবটি মুছে ফেলা হয়েছে');
+          return;
+        }
+        if (act === 'edit') {
+          var it = state.items.find(function (x) { return x.id === id; });
+          if (!it) return;
+          state.editingId = id;
+          setFormType(it.type === 'income' ? 'income' : 'expense', it.cat);
+          el.amount.value = String(it.amount);
+          el.note.value = it.note || '';
+          el.date.value = it.date;
+          var pRad = el.form.querySelector('input[name="pay"][value="' + payOf(it.pay).id + '"]');
+          if (pRad) pRad.checked = true;
+          setItemRows(it.items || []);
+          el.formTitle.textContent = 'হিসাব সম্পাদনা করুন';
+          el.save.textContent = 'পরিবর্তন সংরক্ষণ';
+          el.cancelEdit.classList.remove('hidden');
+          openDrawer();
+          el.amount.focus();
+        }
+      });
+
+      /* ================= DUES EVENTS ================= */
+      function resetDueForm() {
+        state.editingDueId = '';
+        el.dueFormTitle.textContent = 'নতুন ধার-দেনা যোগ করুন';
+        el.dueSaveBtn.textContent = 'তালিকায় যোগ করুন';
+        el.dueCancelEdit.classList.add('hidden');
+        el.duePerson.value = '';
+        el.dueAmount.value = '';
+        el.dueNote.value = '';
+        el.dueDate.value = today;
+      }
+
+      el.dueCancelEdit.addEventListener('click', resetDueForm);
+
+      el.dueForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var person = el.duePerson.value.trim();
+        var amount = parseAmount(el.dueAmount.value);
+        if (!person || isNaN(amount)) { toast('সঠিক নাম ও টাকার পরিমাণ লিখুন'); return; }
+        var type = el.dueForm.querySelector('input[name="dueType"]:checked').value;
+
+        if (state.editingDueId) {
+          var existing = state.dues.find(function (x) { return x.id === state.editingDueId; });
+          if (existing) {
+            existing.type = type;
+            existing.person = person;
+            existing.amount = amount;
+            existing.note = el.dueNote.value.trim();
+            existing.date = el.dueDate.value || today;
+            existing.settled = dueRemaining(existing) <= 0;
+            saveKey(KEYS.dues, state.dues);
+            resetDueForm();
+            renderDues();
+            toast('ধার-দেনার তথ্য আপডেট হয়েছে');
+            return;
+          }
+        }
+
+        state.dues.push({
+          id: newId(), type: type, person: person, amount: amount,
+          note: el.dueNote.value.trim(), date: el.dueDate.value || today, settled: false, payments: []
+        });
+        saveKey(KEYS.dues, state.dues);
+        resetDueForm();
+        renderDues();
+        toast('ধার-দেনার তালিকায় যোগ হয়েছে');
+      });
+
+      el.dueFilterTabs.addEventListener('click', function (ev) {
+        var b = ev.target.closest('button[data-due-tab]');
+        if (!b) return;
+        state.dueFilter = b.getAttribute('data-due-tab');
+        renderDues();
+      });
+
+      function openDuePayModal(dueId, payId) {
+        var d = state.dues.find(function (x) { return x.id === dueId; });
+        if (!d) return;
+        activeDuePayId = dueId;
+        editingDuePayId = payId || '';
+
+        var editPay = editingDuePayId && Array.isArray(d.payments)
+          ? d.payments.find(function (p) { return p.id === editingDuePayId; })
+          : null;
+
+        var rem = dueRemaining(d) + (editPay ? (Number(editPay.amount) || 0) : 0);
+        el.duePayTitle.textContent = editPay
+          ? 'পরিশোধের ইতিহাস সম্পাদনা'
+          : (d.type === 'get' ? 'পাওনা আদায় (আংশিক)' : 'দেনা পরিশোধ (আংশিক)');
+        el.duePaySaveBtn.textContent = editPay ? 'পরিবর্তন সংরক্ষণ করুন' : 'পরিশোধ সংরক্ষণ করুন';
+        el.duePayInfo.innerHTML =
+          '<p class="font-bold text-sm text-slate-900 dark:text-white">' + esc(d.person) + '</p>' +
+          '<p class="text-slate-500">মোট: <strong>' + money(d.amount) + '</strong> · পরিশোধিত: <strong>' + money(duePaid(d)) + '</strong> · সর্বোচ্চ দেওয়া যাবে: <strong class="text-brand-600 dark:text-brand-400">' + money(rem) + '</strong></p>';
+
+        el.duePayAmount.value = editPay ? String(editPay.amount) : '';
+        el.duePayAmount.placeholder = 'সর্বোচ্চ ' + rem;
+        el.duePayNote.value = editPay ? (editPay.note || '') : '';
+        el.duePayDate.value = editPay ? (editPay.date || today) : today;
+        el.duePaySyncLedger.checked = false;
+        el.duePaySyncWrap.classList.toggle('hidden', !!editPay);
+        el.duePayModal.classList.remove('hidden');
+        setTimeout(function () { el.duePayAmount.focus(); }, 100);
+      }
+
+      el.closeDuePayModal.addEventListener('click', function () { el.duePayModal.classList.add('hidden'); });
+      el.duePayModal.addEventListener('click', function (ev) { if (ev.target === el.duePayModal) el.duePayModal.classList.add('hidden'); });
+
+      el.duePayForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var d = state.dues.find(function (x) { return x.id === activeDuePayId; });
+        if (!d) return;
+        var amt = parseAmount(el.duePayAmount.value);
+        if (isNaN(amt)) { toast('সঠিক টাকার পরিমাণ লিখুন'); return; }
+
+        if (!Array.isArray(d.payments)) d.payments = [];
+        var editPay = editingDuePayId ? d.payments.find(function (p) { return p.id === editingDuePayId; }) : null;
+        var maxAllowed = dueRemaining(d) + (editPay ? (Number(editPay.amount) || 0) : 0);
+
+        if (amt > maxAllowed) { toast('সর্বোচ্চ ' + money(maxAllowed) + ' পর্যন্ত লেখা যাবে'); return; }
+
+        var pDate = el.duePayDate.value || today;
+        var pNote = el.duePayNote.value.trim();
+
+        if (editPay) {
+          editPay.amount = amt;
+          editPay.date = pDate;
+          editPay.note = pNote;
+          d.settled = dueRemaining(d) <= 0;
+          saveKey(KEYS.dues, state.dues);
+          renderDues();
+          el.duePayModal.classList.add('hidden');
+          toast('পরিশোধের ইতিহাস আপডেট হয়েছে');
+          return;
+        }
+
+        d.payments.push({ id: newId(), amount: amt, date: pDate, note: pNote });
+        if (dueRemaining(d) <= 0) d.settled = true;
+        saveKey(KEYS.dues, state.dues);
+
+        if (el.duePaySyncLedger.checked) {
+          var isGet = d.type === 'get';
+          state.items.push({
+            id: newId(),
+            type: isGet ? 'income' : 'expense',
+            amount: amt,
+            cat: isGet ? 'gift_in' : 'loan',
+            pay: 'cash',
+            note: (isGet ? 'পাওনা আদায়: ' : 'ধার পরিশোধ: ') + d.person + (pNote ? ' (' + pNote + ')' : ''),
+            date: pDate,
+            ts: Date.now(),
+            items: []
+          });
+          saveKey(KEYS.items, state.items);
+          renderAll();
+        } else {
+          renderDues();
+        }
+
+        el.duePayModal.classList.add('hidden');
+        var newRem = dueRemaining(d);
+        toast(newRem > 0 ? money(amt) + ' জমা হয়েছে · আরও বাকি ' + money(newRem) : 'সম্পূর্ণ পরিশোধ সম্পন্ন হয়েছে ও ইতিহাস সেভ আছে');
+      });
+
+      el.duesList.addEventListener('click', function (ev) {
+        var payBtn = ev.target.closest('button[data-due-pay]');
+        if (payBtn) { openDuePayModal(payBtn.getAttribute('data-due-pay'), ''); return; }
+
+        var editPayBtn = ev.target.closest('button[data-due-pay-edit]');
+        if (editPayBtn) {
+          var eParts = editPayBtn.getAttribute('data-due-pay-edit').split(':');
+          openDuePayModal(eParts[0], eParts[1]);
+          return;
+        }
+
+        var editDueBtn = ev.target.closest('button[data-due-edit]');
+        if (editDueBtn) {
+          var ed = state.dues.find(function (x) { return x.id === editDueBtn.getAttribute('data-due-edit'); });
+          if (!ed) return;
+          state.editingDueId = ed.id;
+          var r = el.dueForm.querySelector('input[name="dueType"][value="' + ed.type + '"]');
+          if (r) r.checked = true;
+          el.duePerson.value = ed.person || '';
+          el.dueAmount.value = String(ed.amount);
+          el.dueNote.value = ed.note || '';
+          el.dueDate.value = ed.date || today;
+          el.dueFormTitle.textContent = 'ধার-দেনা সম্পাদনা করুন';
+          el.dueSaveBtn.textContent = 'পরিবর্তন সংরক্ষণ';
+          el.dueCancelEdit.classList.remove('hidden');
+          el.dueForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.duePerson.focus();
+          return;
+        }
+
+        var settleBtn = ev.target.closest('button[data-due-settle]');
+        if (settleBtn) {
+          var d = state.dues.find(function (x) { return x.id === settleBtn.getAttribute('data-due-settle'); });
+          if (d) {
+            var rem = dueRemaining(d);
+            if (!Array.isArray(d.payments)) d.payments = [];
+            if (rem > 0) d.payments.push({ id: newId(), amount: rem, date: today, note: 'চূড়ান্ত পরিশোধ' });
+            d.settled = true;
+            saveKey(KEYS.dues, state.dues);
+            renderDues();
+            toast('সম্পূর্ণ পরিশোধিত হয়েছে (ইতিহাস নিচে সংরক্ষিত আছে)');
+          }
+          return;
+        }
+
+        var reopenBtn = ev.target.closest('button[data-due-reopen]');
+        if (reopenBtn) {
+          var rd = state.dues.find(function (x) { return x.id === reopenBtn.getAttribute('data-due-reopen'); });
+          if (rd) {
+            rd.settled = false;
+            if (Array.isArray(rd.payments) && rd.payments.length && dueRemaining(rd) <= 0) {
+              rd.payments.pop();
+            }
+            saveKey(KEYS.dues, state.dues);
+            renderDues();
+            toast('আবার বাকি তালিকায় নেওয়া হয়েছে');
+          }
+          return;
+        }
+
+        var delPayBtn = ev.target.closest('button[data-due-pay-del]');
+        if (delPayBtn) {
+          var parts = delPayBtn.getAttribute('data-due-pay-del').split(':');
+          var targetDue = state.dues.find(function (x) { return x.id === parts[0]; });
+          if (targetDue && Array.isArray(targetDue.payments)) {
+            targetDue.payments = targetDue.payments.filter(function (p) { return p.id !== parts[1]; });
+            targetDue.settled = dueRemaining(targetDue) <= 0;
+            saveKey(KEYS.dues, state.dues);
+            renderDues();
+            toast('কিস্তিটি মুছে ফেলা হয়েছে ও বাকি হিসাব আপডেট হয়েছে');
+          }
+          return;
+        }
+
+        var del = ev.target.closest('button[data-due-del]');
+        if (del) { state.pendingDueDelete = del.getAttribute('data-due-del'); renderDues(); return; }
+        var delCancel = ev.target.closest('button[data-due-del-cancel]');
+        if (delCancel) { state.pendingDueDelete = ''; renderDues(); return; }
+        var delConfirm = ev.target.closest('button[data-due-del-confirm]');
+        if (delConfirm) {
+          var delId = delConfirm.getAttribute('data-due-del-confirm');
+          state.pendingDueDelete = '';
+          state.dues = state.dues.filter(function (x) { return x.id !== delId; });
+          if (state.editingDueId === delId) resetDueForm();
+          saveKey(KEYS.dues, state.dues);
+          renderDues();
+          toast('ধার-দেনার রেকর্ড মুছে ফেলা হয়েছে');
+        }
+      });
+
+      /* ================= RECURRING EVENTS ================= */
+      el.recForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var title = el.recTitle.value.trim();
+        var amount = parseAmount(el.recAmount.value);
+        if (!title || isNaN(amount)) { toast('সঠিক নাম ও পরিমাণ লিখুন'); return; }
+        state.recurring.push({
+          id: newId(), title: title, amount: amount, cat: el.recCat.value, pay: el.recPay.value
+        });
+        saveKey(KEYS.recurring, state.recurring);
+        el.recTitle.value = ''; el.recAmount.value = '';
+        renderRecurring();
+        toast('নিয়মিত খরচ সেভ হয়েছে');
+      });
+      el.recList.addEventListener('click', function (ev) {
+        var addBtn = ev.target.closest('button[data-rec-add]');
+        if (addBtn) {
+          var r = state.recurring.find(function (x) { return x.id === addBtn.getAttribute('data-rec-add'); });
+          if (!r) return;
+          var targetDate = state.viewMonth === curMonth ? today : state.viewMonth + '-01';
+          state.items.push({
+            id: newId(), type: 'expense', amount: r.amount, cat: r.cat, pay: r.pay,
+            note: r.title, date: targetDate, ts: Date.now(), items: []
+          });
+          saveKey(KEYS.items, state.items);
+          renderAll();
+          toast('"' + r.title + '" এই মাসের খরচে যোগ হয়েছে');
+          return;
+        }
+        var delBtn = ev.target.closest('button[data-rec-del]');
+        if (delBtn) {
+          state.recurring = state.recurring.filter(function (x) { return x.id !== delBtn.getAttribute('data-rec-del'); });
+          saveKey(KEYS.recurring, state.recurring);
+          renderRecurring();
+          toast('টেমপ্লেট মুছে ফেলা হয়েছে');
+        }
+      });
+
+      /* ================= CHECKLIST EVENTS ================= */
+      el.checkForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var name = el.checkName.value.trim();
+        if (!name) { toast('জিনিসের নাম লিখুন'); return; }
+        var p = parseAmount(el.checkPrice.value);
+        state.checklist.push({ id: newId(), name: name, price: isNaN(p) ? 0 : p, done: false });
+        saveKey(KEYS.checklist, state.checklist);
+        el.checkName.value = ''; el.checkPrice.value = '';
+        el.checkName.focus();
+        renderChecklist();
+      });
+      el.checkList.addEventListener('change', function (ev) {
+        var chk = ev.target.closest('input[data-chk-toggle]');
+        if (chk) {
+          var it = state.checklist.find(function (x) { return x.id === chk.getAttribute('data-chk-toggle'); });
+          if (it) { it.done = chk.checked; saveKey(KEYS.checklist, state.checklist); renderChecklist(); }
+          return;
+        }
+        var pr = ev.target.closest('input[data-chk-price]');
+        if (pr) {
+          var item = state.checklist.find(function (x) { return x.id === pr.getAttribute('data-chk-price'); });
+          if (item) {
+            var val = parseAmount(pr.value);
+            item.price = isNaN(val) ? 0 : val;
+            saveKey(KEYS.checklist, state.checklist);
+            renderChecklist();
+          }
+        }
+      });
+      el.checkList.addEventListener('click', function (ev) {
+        var del = ev.target.closest('button[data-chk-del]');
+        if (del) {
+          state.checklist = state.checklist.filter(function (x) { return x.id !== del.getAttribute('data-chk-del'); });
+          saveKey(KEYS.checklist, state.checklist);
+          renderChecklist();
+        }
+      });
+      el.clearCheckBtn.addEventListener('click', function () {
+        state.checklist = [];
+        saveKey(KEYS.checklist, state.checklist);
+        renderChecklist();
+        toast('ফর্দ পরিষ্কার করা হয়েছে');
+      });
+      el.convertCheckBtn.addEventListener('click', function () {
+        var doneList = state.checklist.filter(function (c) { return c.done; });
+        var total = doneList.reduce(function (a, c) { return a + (Number(c.price) || 0); }, 0);
+        if (total <= 0) {
+          toast('খরচে যোগ করতে চেক করা আইটেমগুলোর দাম লিখুন');
+          return;
+        }
+        state.items.push({
+          id: newId(), type: 'expense', amount: Math.round(total * 100) / 100,
+          cat: 'bazar', pay: 'cash', note: 'বাজারের ফর্দ (' + nfInt.format(doneList.length) + 'টি জিনিস)',
+          date: today, ts: Date.now(),
+          items: doneList.map(function (c) { return { name: c.name, price: Number(c.price) || 0 }; })
+        });
+        state.checklist = state.checklist.filter(function (c) { return !c.done; });
+        saveKey(KEYS.items, state.items);
+        saveKey(KEYS.checklist, state.checklist);
+        state.viewMonth = curMonth;
+        renderAll();
+        setTab('ledger');
+        toast('বাজারের খরচ সফলভাবে খাতায় যোগ হয়েছে');
+      });
+
+      /* ================= CUSTOM CATEGORY MODAL ================= */
+      function renderCustomCatList() {
+        el.customCatListWrap.classList.toggle('hidden', state.customCats.length === 0);
+        el.customCatList.innerHTML = state.customCats.map(function (c) {
+          return '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-xs">' +
+            esc(c.icon) + ' ' + esc(c.name) +
+            '<button type="button" data-del-cat="' + esc(c.id) + '" class="ml-1 text-slate-400 hover:text-rose-500">✕</button></span>';
+        }).join('');
+      }
+      el.openCatModalBtn.addEventListener('click', function () {
+        el.newCatType.value = state.formType;
+        renderCustomCatList();
+        el.catModal.classList.remove('hidden');
+        el.newCatName.focus();
+      });
+      el.closeCatModal.addEventListener('click', function () { el.catModal.classList.add('hidden'); });
+      el.catModal.addEventListener('click', function (ev) { if (ev.target === el.catModal) el.catModal.classList.add('hidden'); });
+
+      el.customCatForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var name = el.newCatName.value.trim();
+        var icon = el.newCatIcon.value.trim() || '🏷️';
+        var type = el.newCatType.value === 'income' ? 'income' : 'expense';
+        if (!name) return;
+        var colors = ['#0d9488', '#7c3aed', '#e11d48', '#d97706', '#2563eb', '#059669'];
+        var newCat = {
+          id: 'c-' + Date.now().toString(36),
+          name: name, icon: icon, type: type,
+          color: colors[state.customCats.length % colors.length],
+          notePh: 'যেমন: ' + name
+        };
+        state.customCats.push(newCat);
+        saveKey(KEYS.customCats, state.customCats);
+        el.newCatName.value = '';
+        buildDropdowns();
+        renderFormCategories(state.formType === type ? newCat.id : null);
+        renderCustomCatList();
+        toast('নতুন ক্যাটাগরি যোগ হয়েছে');
+      });
+      el.customCatList.addEventListener('click', function (ev) {
+        var del = ev.target.closest('button[data-del-cat]');
+        if (!del) return;
+        var id = del.getAttribute('data-del-cat');
+        state.customCats = state.customCats.filter(function (c) { return c.id !== id; });
+        saveKey(KEYS.customCats, state.customCats);
+        buildDropdowns();
+        renderFormCategories();
+        renderCustomCatList();
+        renderAll();
+        toast('ক্যাটাগরি মুছে ফেলা হয়েছে');
+      });
+
+      /* ================= MONTH NAV, BUDGET & FILTERS ================= */
+      function shiftMonth(n) {
+        var p = state.viewMonth.split('-');
+        var d = new Date(+p[0], +p[1] - 1 + n, 1);
+        var key = d.getFullYear() + '-' + pad(d.getMonth() + 1);
+        if (key > curMonth) return;
+        state.viewMonth = key;
+        state.pendingDelete = '';
+        renderAll();
+      }
+      el.prev.addEventListener('click', function () { shiftMonth(-1); });
+      el.next.addEventListener('click', function () { shiftMonth(1); });
+
+      el.budgetBtn.addEventListener('click', function () {
+        el.budgetForm.classList.remove('hidden');
+        var curB = Number(state.budgets[state.viewMonth]) || 0;
+        el.budgetInput.value = curB > 0 ? String(curB) : '';
+        el.budgetInput.focus();
+      });
+      el.budgetCancel.addEventListener('click', function () { el.budgetForm.classList.add('hidden'); });
+      el.budgetForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var raw = el.budgetInput.value.trim();
+        var n = raw === '' ? 0 : parseAmount(raw);
+        if (isNaN(n)) { toast('সঠিক সংখ্যা লিখুন (যেমন: ২৫০০০)'); return; }
+        if (n > 0) state.budgets[state.viewMonth] = n;
+        else delete state.budgets[state.viewMonth];
+        saveKey(KEYS.budgets, state.budgets);
+        el.budgetForm.classList.add('hidden');
+        renderAll();
+        toast(n ? 'মাসের বাজেট সংরক্ষিত হয়েছে' : 'বাজেট সরানো হয়েছে');
+      });
+
+      function onFilterChange() { renderList(monthAllItems()); }
+      el.filterType.addEventListener('change', onFilterChange);
+      el.filterCat.addEventListener('change', onFilterChange);
+      el.filterPay.addEventListener('change', onFilterChange);
+      el.search.addEventListener('input', onFilterChange);
+
+      /* ================= PIN LOCK SYSTEM ================= */
+      var pinBuf = '';
+      function updatePinDots() {
+        var dots = el.pinDots.children;
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].className = 'w-3.5 h-3.5 rounded-full border-2 transition ' +
+            (i < pinBuf.length
+              ? 'bg-brand-600 border-brand-600 dark:bg-brand-500 dark:border-brand-500'
+              : 'border-slate-300 dark:border-slate-700');
+        }
+      }
+      function showLockScreen() {
+        pinBuf = '';
+        el.pinLockErr.textContent = '';
+        updatePinDots();
+        el.pinLockScreen.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      function hideLockScreen() {
+        el.pinLockScreen.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+      el.pinLockScreen.addEventListener('click', function (ev) {
+        var b = ev.target.closest('button[data-pin]');
+        if (!b) return;
+        var v = b.getAttribute('data-pin');
+        el.pinLockErr.textContent = '';
+        if (v === 'clear') { pinBuf = ''; updatePinDots(); return; }
+        if (v === 'back') { pinBuf = pinBuf.slice(0, -1); updatePinDots(); return; }
+        if (pinBuf.length < 4) {
+          pinBuf += v;
+          updatePinDots();
+          if (pinBuf.length === 4) {
+            if (pinBuf === state.pin) {
+              hideLockScreen();
+              toast('খাতা আনলক হয়েছে');
+            } else {
+              el.pinLockErr.textContent = 'ভুল পিন! আবার চেষ্টা করুন';
+              setTimeout(function () { pinBuf = ''; updatePinDots(); }, 350);
+            }
+          }
+        }
+      });
+
+      function openPinModal() {
+        el.pinStatusText.textContent = state.pin
+          ? 'পিন লক চালু আছে। আপনি চাইলে নতুন পিন সেট করতে বা পিন বন্ধ করতে পারেন।'
+          : 'ব্যক্তিগত হিসাব সুরক্ষিত রাখতে ৪ সংখ্যার পিন সেট করুন।';
+        el.pinActiveActions.classList.toggle('hidden', !state.pin);
+        el.pinSetupInput.value = '';
+        el.pinModal.classList.remove('hidden');
+      }
+      $('pinBtnDesk').addEventListener('click', openPinModal);
+      $('pinBtnMob').addEventListener('click', openPinModal);
+      el.closePinModal.addEventListener('click', function () { el.pinModal.classList.add('hidden'); });
+      el.pinModal.addEventListener('click', function (ev) { if (ev.target === el.pinModal) el.pinModal.classList.add('hidden'); });
+
+      el.pinSetupForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var val = toEngDigits(el.pinSetupInput.value.trim()).replace(/\D/g, '');
+        if (val.length !== 4) { toast('ঠিক ৪ সংখ্যার পিন লিখুন (যেমন ১২৩৪)'); return; }
+        state.pin = val;
+        saveKey(KEYS.pin, val);
+        el.pinModal.classList.add('hidden');
+        toast('৪ সংখ্যার পিন লক চালু হয়েছে');
+      });
+      el.lockNowBtn.addEventListener('click', function () {
+        el.pinModal.classList.add('hidden');
+        if (state.pin) showLockScreen();
+      });
+      el.removePinBtn.addEventListener('click', function () {
+        state.pin = '';
+        try { localStorage.removeItem(KEYS.pin); } catch (e) {}
+        el.pinModal.classList.add('hidden');
+        toast('পিন লক বন্ধ করা হয়েছে');
+      });
+
+      /* ================= DIRECT PDF, BACKUP & EXPORT ================= */
+      function downloadPdfReport() {
+        el.dataModal.classList.add('hidden');
+        var mAll = monthAllItems(state.viewMonth).slice().sort(function (a, b) {
+          return a.date.localeCompare(b.date) || (a.ts || 0) - (b.ts || 0);
+        });
+        if (!mAll.length) { toast('এই মাসে PDF করার মতো কোনো হিসাব নেই'); return; }
+
+        // Fallback if offline / library failed to load
+        if (typeof window.html2pdf === 'undefined') {
+          toast('প্রিন্টার অপশন থেকে "Save as PDF" সিলেক্ট করুন');
+          setTab('ledger');
+          setTimeout(function () { window.print(); }, 250);
+          return;
+        }
+
+        toast('PDF তৈরি হচ্ছে, একটু অপেক্ষা করুন...');
+
+        var mExp = mAll.filter(function (i) { return i.type !== 'income'; });
+        var mInc = mAll.filter(function (i) { return i.type === 'income'; });
+        var expTotal = sumOf(mExp), incTotal = sumOf(mInc), bal = incTotal - expTotal;
+        var monthTitle = dfMonth.format(parseYmd(state.viewMonth + '-01'));
+
+        var catSums = {};
+        mExp.forEach(function (i) {
+          var c = catOf(i.cat, 'expense');
+          catSums[c.id] = (catSums[c.id] || 0) + i.amount;
+        });
+        var catRows = getAllCats('expense')
+          .map(function (c) { return { c: c, sum: catSums[c.id] || 0 }; })
+          .filter(function (x) { return x.sum > 0; })
+          .sort(function (a, b) { return b.sum - a.sum; });
+
+        var report = document.createElement('div');
+        report.style.cssText = 'width:720px;padding:28px;background:#ffffff;color:#0f172a;font-family:"Hind Siliguri",sans-serif;font-size:13px;line-height:1.5;';
+
+        var catHtml = catRows.length ? (
+          '<h3 style="margin:18px 0 8px;font-size:15px;font-weight:700;color:#0f172a;">ক্যাটাগরি অনুযায়ী খরচ</h3>' +
+          '<table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12px;">' +
+            '<thead><tr style="background:#f1f5f9;text-align:left;">' +
+              '<th style="padding:7px 10px;border:1px solid #e2e8f0;">ক্যাটাগরি</th>' +
+              '<th style="padding:7px 10px;border:1px solid #e2e8f0;text-align:right;">শতকরা</th>' +
+              '<th style="padding:7px 10px;border:1px solid #e2e8f0;text-align:right;">পরিমাণ</th>' +
+            '</tr></thead><tbody>' +
+            catRows.map(function (x) {
+              var pct = expTotal ? Math.round(x.sum / expTotal * 100) : 0;
+              return '<tr>' +
+                '<td style="padding:6px 10px;border:1px solid #e2e8f0;">' + esc(x.c.name) + '</td>' +
+                '<td style="padding:6px 10px;border:1px solid #e2e8f0;text-align:right;">' + nfInt.format(pct) + '%</td>' +
+                '<td style="padding:6px 10px;border:1px solid #e2e8f0;text-align:right;font-weight:600;">' + money(x.sum) + '</td>' +
+              '</tr>';
+            }).join('') +
+          '</tbody></table>'
+        ) : '';
+
+        var listHtml =
+          '<h3 style="margin:18px 0 8px;font-size:15px;font-weight:700;color:#0f172a;">বিস্তারিত লেনদেনের তালিকা (' + nfInt.format(mAll.length) + 'টি)</h3>' +
+          '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
+            '<thead><tr style="background:#f1f5f9;text-align:left;">' +
+              '<th style="padding:7px 8px;border:1px solid #e2e8f0;">তারিখ</th>' +
+              '<th style="padding:7px 8px;border:1px solid #e2e8f0;">ক্যাটাগরি ও বিবরণ</th>' +
+              '<th style="padding:7px 8px;border:1px solid #e2e8f0;">মাধ্যম</th>' +
+              '<th style="padding:7px 8px;border:1px solid #e2e8f0;text-align:right;">টাকা</th>' +
+            '</tr></thead><tbody>' +
+            mAll.map(function (i) {
+              var isInc = i.type === 'income';
+              var c = catOf(i.cat, i.type), p = payOf(i.pay);
+              var subTxt = (i.items && i.items.length)
+                ? '<div style="font-size:11px;color:#64748b;margin-top:2px;">' +
+                    i.items.map(function (s) { return esc(s.name || 'আইটেম') + (s.price ? ' (' + money(s.price) + ')' : ''); }).join(', ') +
+                  '</div>'
+                : '';
+              return '<tr style="page-break-inside:avoid;">' +
+                '<td style="padding:6px 8px;border:1px solid #e2e8f0;white-space:nowrap;">' + esc(i.date) + '</td>' +
+                '<td style="padding:6px 8px;border:1px solid #e2e8f0;"><strong>' + esc(i.note || c.name) + '</strong> <span style="color:#64748b;">(' + esc(c.name) + ')</span>' + subTxt + '</td>' +
+                '<td style="padding:6px 8px;border:1px solid #e2e8f0;white-space:nowrap;">' + esc(p.name) + '</td>' +
+                '<td style="padding:6px 8px;border:1px solid #e2e8f0;text-align:right;font-weight:700;color:' + (isInc ? '#059669' : '#0f172a') + ';white-space:nowrap;">' + (isInc ? '+' : '') + money(i.amount) + '</td>' +
+              '</tr>';
+            }).join('') +
+          '</tbody></table>';
+
+        report.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0d7a61;padding-bottom:12px;margin-bottom:16px;">' +
+            '<div>' +
+              '<h1 style="margin:0;font-size:22px;font-weight:700;color:#0d7a61;">খরচের খাতা — মাসিক রিপোর্ট</h1>' +
+              '<p style="margin:2px 0 0;font-size:12px;color:#64748b;">তৈরির তারিখ: ' + esc(today) + '</p>' +
+            '</div>' +
+            '<div style="font-size:15px;font-weight:700;color:#0f172a;">' + esc(monthTitle) + '</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:12px;margin-bottom:16px;">' +
+            '<div style="flex:1;padding:12px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;">' +
+              '<div style="font-size:11px;color:#047857;">মোট আয়</div>' +
+              '<div style="font-size:18px;font-weight:700;color:#065f46;margin-top:2px;">' + money(incTotal) + '</div>' +
+            '</div>' +
+            '<div style="flex:1;padding:12px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;">' +
+              '<div style="font-size:11px;color:#be123c;">মোট খরচ</div>' +
+              '<div style="font-size:18px;font-weight:700;color:#881337;margin-top:2px;">' + money(expTotal) + '</div>' +
+            '</div>' +
+            '<div style="flex:1;padding:12px;border-radius:10px;background:#f8fafc;border:1px solid #cbd5e1;">' +
+              '<div style="font-size:11px;color:#475569;">অবশিষ্ট (সঞ্চয়)</div>' +
+              '<div style="font-size:18px;font-weight:700;color:' + (bal < 0 ? '#be123c' : '#0d7a61') + ';margin-top:2px;">' + money(bal) + '</div>' +
+            '</div>' +
+          '</div>' +
+          catHtml + listHtml;
+
+        var opt = {
+          margin: [10, 10, 10, 10],
+          filename: 'khorocher-khata-' + state.viewMonth + '.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        window.html2pdf().set(opt).from(report).save().then(function () {
+          toast('PDF রিপোর্ট ডাউনলোড হয়েছে');
+        }).catch(function () {
+          toast('PDF ডাউনলোড করা যায়নি, প্রিন্ট থেকে Save as PDF করুন');
+          window.print();
+        });
+      }
+      $('printBtnDesk').addEventListener('click', downloadPdfReport);
+      $('printBtnModal').addEventListener('click', downloadPdfReport);
+
+      function openDataModal() { el.dataModal.classList.remove('hidden'); }
+      function closeDataModal() { el.dataModal.classList.add('hidden'); }
+      $('dataBtnDesk').addEventListener('click', openDataModal);
+      $('dataBtnMob').addEventListener('click', openDataModal);
+      el.closeDataModal.addEventListener('click', closeDataModal);
+      el.dataModal.addEventListener('click', function (ev) { if (ev.target === el.dataModal) closeDataModal(); });
+
+      function downloadFile(blob, name) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+
+      el.exportCsvBtn.addEventListener('click', function () {
+        var mi = monthAllItems().slice().sort(function (a, b) { return a.date.localeCompare(b.date); });
+        if (!mi.length) { toast('এই মাসে কোনো তথ্য নেই'); return; }
+        var cell = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+        var lines = [['তারিখ', 'ধরন', 'ক্যাটাগরি', 'মাধ্যম', 'বিবরণ', 'বিস্তারিত', 'টাকা'].map(cell).join(',')];
+        mi.forEach(function (i) {
+          var sub = (i.items || []).map(function (s) { return s.name + (s.price ? ' (' + s.price + ')' : ''); }).join('; ');
+          lines.push([i.date, i.type === 'income' ? 'আয়' : 'খরচ', catOf(i.cat, i.type).name, payOf(i.pay).name, i.note || '', sub, i.amount].map(cell).join(','));
+        });
+        downloadFile(new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' }), 'khorocher-khata-' + state.viewMonth + '.csv');
+        closeDataModal();
+        toast('Excel (CSV) ডাউনলোড হয়েছে');
+      });
+
+      el.exportJsonBtn.addEventListener('click', function () {
+        var payload = {
+          app: 'khorocher-khata', version: 3, exportedAt: new Date().toISOString(),
+          budgets: state.budgets, items: state.items, dues: state.dues,
+          recurring: state.recurring, checklist: state.checklist, customCats: state.customCats
+        };
+        downloadFile(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), 'khorocher-khata-backup-' + today + '.json');
+        closeDataModal();
+        toast('সম্পূর্ণ ব্যাকআপ ডাউনলোড হয়েছে');
+      });
+
+      el.importJsonInput.addEventListener('change', function (ev) {
+        var file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var d = JSON.parse(String(reader.result || '{}'));
+            if (!Array.isArray(d.items)) throw new Error('invalid');
+            state.items = d.items.map(cleanItem).filter(Boolean);
+            if (d.budgets && typeof d.budgets === 'object') state.budgets = d.budgets;
+            if (Array.isArray(d.dues)) state.dues = d.dues;
+            if (Array.isArray(d.recurring)) state.recurring = d.recurring;
+            if (Array.isArray(d.checklist)) state.checklist = d.checklist;
+            if (Array.isArray(d.customCats)) state.customCats = d.customCats;
+
+            saveKey(KEYS.items, state.items);
+            saveKey(KEYS.budgets, state.budgets);
+            saveKey(KEYS.dues, state.dues);
+            saveKey(KEYS.recurring, state.recurring);
+            saveKey(KEYS.checklist, state.checklist);
+            saveKey(KEYS.customCats, state.customCats);
+
+            buildDropdowns();
+            renderFormCategories();
+            renderAll();
+            closeDataModal();
+            toast('সব তথ্য সফলভাবে রিস্টোর হয়েছে');
+          } catch (e) { toast('সঠিক ব্যাকআপ ফাইল নির্বাচন করুন'); }
+          el.importJsonInput.value = '';
+        };
+        reader.readAsText(file);
+      });
+
+      /* ================= INIT ================= */
+      loadAll();
+      el.date.value = today;
+      el.date.max = today;
+      el.dueDate.value = today;
+      buildDropdowns();
+      setFormType('expense');
+      setTab('ledger');
+      renderAll();
+      if (state.pin) showLockScreen();
+    })();
+  </script>
+</body>
+</html>
