@@ -238,7 +238,7 @@
             ৳
           </div>
           <div>
-            <h4 class="font-display font-bold text-base text-slate-900 dark:text-white leading-tight">খরচের খাতা প্রোফাইল</h4>
+            <h4 class="font-display font-bold text-base text-slate-900 dark:text-white leading-tight">Get more from খরচ খাতা</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">সব সুবিধা পেতে অ্যাকাউন্টে প্রবেশ করুন</p>
           </div>
         </div>
@@ -246,32 +246,39 @@
         <!-- Primary Sign In Button (Like Blue Button in Sofascore) -->
         <button type="button" id="dropdownSignInBtn" class="w-full h-12 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 transition">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
-          <span>লগইন / সাইন-আপ (SIGN IN)</span>
+          <span class="tracking-wide">SIGN IN (লগইন বা সাইন-আপ)</span>
         </button>
 
         <!-- Feature Benefit List (Like Sofascore Screenshot Features) -->
         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800 space-y-3.5 text-xs">
           <div class="flex items-start gap-3 text-slate-700 dark:text-slate-300">
-            <span class="text-base shrink-0">⭐</span>
+            <span class="text-base shrink-0">🔄</span>
             <div>
-              <p class="font-bold text-slate-900 dark:text-white">সব ডিভাইসে লাইভ সিঙ্ক</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">মোবাইল বা কম্পিউটার পরিবর্তন করলেও ডাটা নিরাপদ</p>
+              <p class="font-bold text-slate-900 dark:text-white">মোবাইল ও পিসিতে লাইভ সিঙ্ক</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">একই ইমেইল দিয়ে যেকোনো ডিভাইসে লগইন করলেই একই হিসাব</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 text-slate-700 dark:text-slate-300">
+            <span class="text-base shrink-0">☁️</span>
+            <div>
+              <p class="font-bold text-slate-900 dark:text-white">স্বয়ংক্রিয় ক্লাউড ব্যাকআপ</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">ফোন হারিয়ে গেলেও আপনার খরচের প্রতিটি হিসাব আজীবন নিরাপদ</p>
             </div>
           </div>
           <div class="flex items-start gap-3 text-slate-700 dark:text-slate-300">
             <span class="text-base shrink-0">👨‍👩‍👧</span>
             <div>
               <p class="font-bold text-slate-900 dark:text-white">ফ্যামিলি ও মেস খাতা</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">পরিবার বা মেসের সদস্যদের সাথে যৌথ হিসাব</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">পরিবার বা বন্ধুদের সাথে সহজে যৌথ হিসাব পরিচালনা</p>
             </div>
           </div>
           <div class="flex items-start gap-3 text-slate-700 dark:text-slate-300">
             <span class="text-base shrink-0">🔒</span>
             <div>
-              <p class="font-bold text-slate-900 dark:text-white">ব্যক্তিগত হিসাবের শতভাগ গোপনীয়তা</p>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">আপনার ব্যক্তিগত হিসাব কেবল আপনিই দেখতে পাবেন</p>
+              <p class="font-bold text-slate-900 dark:text-white">ব্যক্তিগত পিন সিকিউরিটি</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">চার সংখ্যার পিন কোড দিয়ে হিসাবের শতভাগ গোপনীয়তা</p>
             </div>
           </div>
         </div>
@@ -293,12 +300,32 @@
             <span id="dropdownAvatarInitials">U</span>
             <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" title="অনলাইন"></span>
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
             <h4 id="dropdownUserName" class="font-bold text-sm text-slate-900 dark:text-white truncate">ব্যবহারকারী</h4>
             <p id="dropdownUserEmail" class="text-xs text-slate-600 dark:text-slate-300 font-mono font-medium truncate mt-0.5">user@example.com</p>
             <span id="dropdownKhataBadge" class="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-700">
               👤 ব্যক্তিগত খাতা
             </span>
+          </div>
+        </div>
+
+        <!-- Live Sync & Khata Switcher Card -->
+        <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 space-y-2">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="flex items-center gap-1.5 font-bold text-emerald-600 dark:text-emerald-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              সব ডিভাইসে লাইভ সিঙ্ক সক্রিয়
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">Realtime</span>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 dark:border-slate-800/80">
+            <div>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase">চলতি খাতা:</p>
+              <p id="dropdownKhataTitle" class="text-xs font-bold text-slate-900 dark:text-white">👨‍👩‍👧 ফ্যামিলি খাতা</p>
+            </div>
+            <button type="button" id="dropdownSwitchKhataBtn" class="px-2.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-[11px] font-bold shadow-sm transition active:scale-95 flex items-center gap-1">
+              <span>খাতা বদলান ⇄</span>
+            </button>
           </div>
         </div>
 
@@ -338,6 +365,12 @@
         <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
           <button type="button" id="dropdownLogoutBtn" class="w-full h-11 rounded-2xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center justify-center gap-2 transition active:scale-95">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>লগআউট করুন (SIGN OUT)</span>
+          </button>
+        </div>
+      </div>
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             <span>লগআউট করুন (SIGN OUT)</span>
@@ -1026,6 +1059,18 @@
         <button type="button" id="closeFamilyModal" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="বন্ধ করুন"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
       </div>
 
+      <!-- Khata Switcher Pills in Modal -->
+      <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-slate-100 dark:bg-slate-850 text-xs font-bold border border-slate-200/60 dark:border-slate-800">
+        <button type="button" id="modalKhataPersonalBtn" class="py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-300">
+          <span>👤</span>
+          <span>ব্যক্তিগত খাতা</span>
+        </button>
+        <button type="button" id="modalKhataFamilyBtn" class="py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-300">
+          <span>👨‍👩‍👧</span>
+          <span>ফ্যামিলি খাতা</span>
+        </button>
+      </div>
+
       <!-- Current Family Share Card -->
       <div class="p-4 rounded-2xl bg-brand-50/70 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800/60 space-y-3">
         <div class="flex items-center justify-between">
@@ -1317,6 +1362,8 @@
         dropdownAvatarImg: $('dropdownAvatarImg'), dropdownAvatarInitials: $('dropdownAvatarInitials'),
         dropdownUserName: $('dropdownUserName'), dropdownUserEmail: $('dropdownUserEmail'),
         dropdownKhataBadge: $('dropdownKhataBadge'), dropdownKhataBtn: $('dropdownKhataBtn'),
+        dropdownKhataTitle: $('dropdownKhataTitle'), dropdownSwitchKhataBtn: $('dropdownSwitchKhataBtn'),
+        modalKhataPersonalBtn: $('modalKhataPersonalBtn'), modalKhataFamilyBtn: $('modalKhataFamilyBtn'),
         dropdownPdfBtn: $('dropdownPdfBtn'), dropdownBackupBtn: $('dropdownBackupBtn'),
         dropdownPinBtn: $('dropdownPinBtn'), dropdownDataBtnGuest: $('dropdownDataBtnGuest'),
         dropdownPdfBtnGuest: $('dropdownPdfBtnGuest'), dropdownPinBtnGuest: $('dropdownPinBtnGuest'),
@@ -1578,6 +1625,19 @@
           var isPersonal = state.khataMode === 'personal';
           var khataText = isPersonal ? '👤 ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || '👨‍👩‍👧 ফ্যামিলি খাতা');
           if (el.dropdownKhataBadge) el.dropdownKhataBadge.textContent = khataText;
+          if (el.dropdownKhataTitle) el.dropdownKhataTitle.textContent = khataText;
+          if (el.dropdownSwitchKhataBtn) {
+            el.dropdownSwitchKhataBtn.textContent = isPersonal ? 'ফ্যামিলিতে যান ⇄' : 'ব্যক্তিগতে যান ⇄';
+          }
+          if (el.modalKhataPersonalBtn && el.modalKhataFamilyBtn) {
+            if (isPersonal) {
+              el.modalKhataPersonalBtn.className = 'py-2.5 rounded-xl bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm flex items-center justify-center gap-1.5 font-bold transition';
+              el.modalKhataFamilyBtn.className = 'py-2.5 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center gap-1.5 font-bold transition';
+            } else {
+              el.modalKhataFamilyBtn.className = 'py-2.5 rounded-xl bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm flex items-center justify-center gap-1.5 font-bold transition';
+              el.modalKhataPersonalBtn.className = 'py-2.5 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center gap-1.5 font-bold transition';
+            }
+          }
           if (el.navKhataDesk) el.navKhataDesk.textContent = isPersonal ? 'ব্যক্তিগত' : 'ফ্যামিলি';
 
           if (state.familyData) {
@@ -1818,66 +1878,156 @@
         state.unsubListeners.push(uBud);
       }
 
+      /* Realtime User Profile & Cross-Device Active Khata Listener */
+      function listenToUserDoc(uid) {
+        if (!fbDb || !uid) return;
+        var uSub = fbDb.collection('users').doc(uid).onSnapshot(function (doc) {
+          if (!doc.exists) return;
+          var uData = doc.data();
+          if (!uData) return;
+
+          if (uData.familyId && state.currentUser && state.currentUser.familyId !== uData.familyId) {
+            state.currentUser.familyId = uData.familyId;
+          }
+
+          // If another device (mobile or desktop) changed the active mode, switch this device in real time!
+          if (uData.activeKhataMode && uData.activeKhataMode !== state.khataMode) {
+            state.khataMode = uData.activeKhataMode;
+            saveKey(KEYS.khataMode, state.khataMode);
+            var famId = uData.familyId || (state.currentUser && state.currentUser.familyId) || ('fam_' + uid);
+            var targetLedgerId = (state.khataMode === 'personal') ? ('user_' + uid) : famId;
+            if (targetLedgerId !== state.activeLedgerId) {
+              state.activeLedgerId = targetLedgerId;
+              attachLedgerListeners(state.activeLedgerId);
+              updateAuthUI();
+              toast(state.khataMode === 'personal' ? '👤 ব্যক্তিগত খাতা লোড হয়েছে' : '👨‍👩‍👧 ফ্যামিলি খাতা লোড হয়েছে');
+            }
+          }
+        }, function (err) {
+          console.warn('User doc realtime sync error:', err);
+        });
+        state.unsubListeners.push(uSub);
+      }
+
       /* Switch Khata between Personal and Family */
       function setKhataMode(mode) {
         state.khataMode = mode;
         saveKey(KEYS.khataMode, mode);
         if (!state.currentUser) return;
 
+        var famId = state.currentUser.familyId || ('fam_' + state.currentUser.uid);
+        state.activeLedgerId = (mode === 'personal') ? ('user_' + state.currentUser.uid) : famId;
+        attachLedgerListeners(state.activeLedgerId);
+
         if (mode === 'personal') {
-          state.activeLedgerId = 'user_' + state.currentUser.uid;
-          attachLedgerListeners(state.activeLedgerId);
           toast('👤 ব্যক্তিগত খাতা লোড হয়েছে (শুধুমাত্র আপনার হিসাব)');
         } else {
-          var famId = state.currentUser.familyId || ('fam_' + state.currentUser.uid);
-          state.activeLedgerId = famId;
-          attachLedgerListeners(famId);
           toast('👨‍👩‍👧 ফ্যামিলি যৌথ খাতা লোড হয়েছে');
         }
+
+        // Persist mode to Firestore so all connected devices (mobile, pc) switch together!
+        if (fbDb && state.currentUser.uid) {
+          fbDb.collection('users').doc(state.currentUser.uid).set({
+            activeKhataMode: mode,
+            activeLedgerId: state.activeLedgerId,
+            familyId: famId,
+            updatedAt: Date.now()
+          }, { merge: true }).catch(function (e) {
+            console.warn('Firestore khataMode sync err:', e);
+          });
+        }
+
         updateAuthUI();
       }
 
       async function initUserCloud(user) {
         if (!fbDb) return;
         setSyncStatus('syncing');
-
-        // Immediately set cloud mode & active personal ledger
         state.isCloudMode = true;
-        var mode = state.khataMode || 'personal';
-        var familyId = (state.currentUser && state.currentUser.familyId) ? state.currentUser.familyId : ('fam_' + user.uid);
-        if (state.currentUser) state.currentUser.familyId = familyId;
-        state.activeLedgerId = mode === 'personal' ? ('user_' + user.uid) : familyId;
+
+        var defaultFamId = 'fam_' + user.uid;
+        var userRef = fbDb.collection('users').doc(user.uid);
+
+        try {
+          // 1. Fetch user doc from Firestore
+          var userDoc = await userRef.get().catch(function () { return null; });
+          var uData = (userDoc && userDoc.exists) ? userDoc.data() : null;
+          var famId = (uData && uData.familyId) ? uData.familyId : defaultFamId;
+
+          if (state.currentUser) {
+            state.currentUser.familyId = famId;
+          }
+
+          // 2. Determine khataMode:
+          // Check if user has an explicit activeKhataMode saved in cloud profile
+          var chosenMode = uData ? uData.activeKhataMode : null;
+
+          // If no cloud mode saved yet (e.g. existing user before this update):
+          if (!chosenMode) {
+            // Check if user has ledger items in family ledger
+            var fSnap = await fbDb.collection('ledger_items')
+              .where('familyId', '==', famId)
+              .limit(1).get().catch(function () { return null; });
+            var hasFamilyItems = fSnap && !fSnap.empty;
+
+            // Check if user has ledger items in personal ledger
+            var pSnap = await fbDb.collection('ledger_items')
+              .where('familyId', '==', 'user_' + user.uid)
+              .limit(1).get().catch(function () { return null; });
+            var hasPersonalItems = pSnap && !pSnap.empty;
+
+            if (hasFamilyItems && !hasPersonalItems) {
+              chosenMode = 'family';
+            } else if (hasPersonalItems && !hasFamilyItems) {
+              chosenMode = 'personal';
+            } else {
+              // If user has family doc created, default to family
+              var famDoc = await fbDb.collection('families').doc(famId).get().catch(function () { return null; });
+              chosenMode = (famDoc && famDoc.exists) ? 'family' : (state.khataMode || 'personal');
+            }
+          }
+
+          state.khataMode = chosenMode || 'family';
+          saveKey(KEYS.khataMode, state.khataMode);
+          state.activeLedgerId = (state.khataMode === 'personal') ? ('user_' + user.uid) : famId;
+
+          // 3. Save profile with activeKhataMode and activeLedgerId so all other devices sync
+          await userRef.set({
+            uid: user.uid,
+            name: user.displayName || (user.email ? user.email.split('@')[0] : 'ব্যবহারকারী'),
+            email: user.email || '',
+            photoURL: user.photoURL || '',
+            familyId: famId,
+            activeKhataMode: state.khataMode,
+            activeLedgerId: state.activeLedgerId,
+            updatedAt: Date.now()
+          }, { merge: true }).catch(function (e) { console.warn('User profile update error:', e); });
+
+          // 4. Migrate any orphaned items from user_<uid> if user is active in family mode
+          if (state.khataMode === 'family') {
+            fbDb.collection('ledger_items')
+              .where('familyId', '==', 'user_' + user.uid)
+              .get().then(function (snap) {
+                if (snap && !snap.empty) {
+                  snap.forEach(function (d) {
+                    d.ref.update({ familyId: famId }).catch(function () {});
+                  });
+                }
+              }).catch(function () {});
+          }
+
+          // 5. Attach realtime listener to user document so switching khata on one device switches all devices!
+          listenToUserDoc(user.uid);
+
+        } catch (err) {
+          console.warn('initUserCloud error:', err);
+          var fallbackFam = (state.currentUser && state.currentUser.familyId) || defaultFamId;
+          state.activeLedgerId = (state.khataMode === 'family') ? fallbackFam : ('user_' + user.uid);
+        }
 
         updateAuthUI();
         attachLedgerListeners(state.activeLedgerId);
         toast('লগইন সম্পন্ন: ' + (user.displayName || user.email));
-
-        // Background metadata sync for user profile
-        try {
-          var userRef = fbDb.collection('users').doc(user.uid);
-          var userDoc = await userRef.get().catch(function () { return null; });
-          if (userDoc && userDoc.exists) {
-            var uData = userDoc.data();
-            if (uData && uData.familyId) {
-              state.currentUser.familyId = uData.familyId;
-              if (state.khataMode === 'family') {
-                state.activeLedgerId = uData.familyId;
-                attachLedgerListeners(state.activeLedgerId);
-              }
-            }
-          } else {
-            await userRef.set({
-              uid: user.uid,
-              name: user.displayName || 'ব্যবহারকারী',
-              email: user.email || '',
-              photoURL: user.photoURL || '',
-              familyId: familyId,
-              updatedAt: Date.now()
-            }).catch(function (e) { console.warn('User doc save err:', e); });
-          }
-        } catch (err) {
-          console.warn("User profile background sync:", err);
-        }
       }
 
       /* Unified Cloud & Local Save (Strictly Sanitized for Firestore Rules) */
@@ -2201,6 +2351,23 @@
       if (el.userBadgeMob) el.userBadgeMob.addEventListener('click', openKhataModal);
       if (el.closeFamilyModal) el.closeFamilyModal.addEventListener('click', function () { el.familyModal.classList.add('hidden'); });
       if (el.familyModal) el.familyModal.addEventListener('click', function (ev) { if (ev.target === el.familyModal) el.familyModal.classList.add('hidden'); });
+
+      if (el.dropdownSwitchKhataBtn) {
+        el.dropdownSwitchKhataBtn.addEventListener('click', function () {
+          var nextMode = state.khataMode === 'personal' ? 'family' : 'personal';
+          setKhataMode(nextMode);
+        });
+      }
+      if (el.modalKhataPersonalBtn) {
+        el.modalKhataPersonalBtn.addEventListener('click', function () {
+          setKhataMode('personal');
+        });
+      }
+      if (el.modalKhataFamilyBtn) {
+        el.modalKhataFamilyBtn.addEventListener('click', function () {
+          setKhataMode('family');
+        });
+      }
 
       // Direct Quick Logout
       function performLogout() {
