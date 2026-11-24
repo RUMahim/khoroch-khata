@@ -1839,77 +1839,44 @@
 
       async function initUserCloud(user) {
         if (!fbDb) return;
+        setSyncStatus('syncing');
+
+        // Immediately set cloud mode & active personal ledger
+        state.isCloudMode = true;
+        var mode = state.khataMode || 'personal';
+        var familyId = (state.currentUser && state.currentUser.familyId) ? state.currentUser.familyId : ('fam_' + user.uid);
+        if (state.currentUser) state.currentUser.familyId = familyId;
+        state.activeLedgerId = mode === 'personal' ? ('user_' + user.uid) : familyId;
+
+        updateAuthUI();
+        attachLedgerListeners(state.activeLedgerId);
+        toast('লগইন সম্পন্ন: ' + (user.displayName || user.email));
+
+        // Background metadata sync for user profile
         try {
-          setSyncStatus('syncing');
           var userRef = fbDb.collection('users').doc(user.uid);
-          var userDoc = await userRef.get();
-          var userData = userDoc.exists ? userDoc.data() : null;
-
-          var familyId = (userData && userData.familyId) ? userData.familyId : ('fam_' + user.uid);
-          state.currentUser.familyId = familyId;
-
-          // Fetch family metadata
-          var familyRef = fbDb.collection('families').doc(familyId);
-          var famDoc = await familyRef.get();
-
-          if (!famDoc.exists) {
-            var famName = (user.displayName ? user.displayName.split(' ')[0] : 'আমার') + '-এর পরিবার';
-            var newCode = 'KHK' + Math.floor(100 + Math.random() * 900);
-            var newFam = {
-              id: familyId,
-              name: famName,
-              code: newCode,
-              createdBy: user.uid,
-              createdAt: Date.now(),
-              members: [{
-                uid: user.uid,
-                name: user.displayName || 'ব্যবহারকারী',
-                email: user.email || '',
-                photoURL: user.photoURL || '',
-                role: 'owner'
-              }]
-            };
-            await familyRef.set(newFam);
-            state.familyData = newFam;
-          } else {
-            state.familyData = famDoc.data();
-            var members = state.familyData.members || [];
-            if (!members.some(function (m) { return m.uid === user.uid; })) {
-              members.push({
-                uid: user.uid,
-                name: user.displayName || 'ব্যবহারকারী',
-                email: user.email || '',
-                photoURL: user.photoURL || '',
-                role: 'member'
-              });
-              await familyRef.update({ members: members });
+          var userDoc = await userRef.get().catch(function () { return null; });
+          if (userDoc && userDoc.exists) {
+            var uData = userDoc.data();
+            if (uData && uData.familyId) {
+              state.currentUser.familyId = uData.familyId;
+              if (state.khataMode === 'family') {
+                state.activeLedgerId = uData.familyId;
+                attachLedgerListeners(state.activeLedgerId);
+              }
             }
-          }
-
-          if (!userDoc.exists) {
+          } else {
             await userRef.set({
               uid: user.uid,
-              name: user.displayName || '',
+              name: user.displayName || 'ব্যবহারকারী',
               email: user.email || '',
               photoURL: user.photoURL || '',
               familyId: familyId,
               updatedAt: Date.now()
-            });
+            }).catch(function (e) { console.warn('User doc save err:', e); });
           }
-
-          state.isCloudMode = true;
-
-          // Default to personal ledger or saved preference
-          var mode = state.khataMode || 'personal';
-          state.activeLedgerId = mode === 'personal' ? ('user_' + user.uid) : familyId;
-
-          updateAuthUI();
-          attachLedgerListeners(state.activeLedgerId);
-          toast('লগইন সম্পন্ন: ' + (user.displayName || user.email));
         } catch (err) {
-          console.error("Cloud init error:", err);
-          updateAuthUI();
-          toast("ক্লাউড সিঙ্ক সতর্কতা: " + err.message);
+          console.warn("User profile background sync:", err);
         }
       }
 
@@ -2423,7 +2390,7 @@
           };
         });
       }
-      function isDemo() { return state.items.length === 0 && !state.isCloudMode; }
+      function isDemo() { return state.items.length === 0 && !state.currentUser; }
       function allItems() { return isDemo() ? demoItems() : state.items; }
       function monthAllItems(ym) {
         var m = ym || state.viewMonth;
