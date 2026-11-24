@@ -1103,6 +1103,7 @@
         <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
           💡 পরিবারের অন্য সদস্যরা তাদের ফোনে গুগল লগইন করে এই কোডটি লিখলেই সবাই একই খাতা একসাথে ব্যবহার করতে পারবেন।
         </p>
+        <p id="modalSyncDiag" class="text-[10px] font-mono text-slate-400 dark:text-slate-500 pt-1 border-t border-brand-200/40 dark:border-brand-800/40 truncate"></p>
       </div>
 
       <!-- Connected Members List -->
@@ -1655,6 +1656,9 @@
           var khataText = isPersonal ? '👤 ব্যক্তিগত খাতা' : ((state.familyData && state.familyData.name) || '👨‍👩‍👧 ফ্যামিলি খাতা');
           if (el.dropdownKhataBadge) el.dropdownKhataBadge.textContent = khataText;
           if (el.dropdownKhataTitle) el.dropdownKhataTitle.textContent = khataText;
+          if ($('modalSyncDiag')) {
+            $('modalSyncDiag').textContent = 'UID: ' + String(state.currentUser.uid).slice(0, 8) + '... | Khata: ' + (state.activeLedgerId || 'none');
+          }
           if (el.dropdownSwitchKhataBtn) {
             el.dropdownSwitchKhataBtn.textContent = isPersonal ? 'ফ্যামিলিতে যান ⇄' : 'ব্যক্তিগতে যান ⇄';
           }
@@ -1768,7 +1772,7 @@
           state.dues = cloudDues;
           saveKey(KEYS.dues, state.dues);
           renderDues();
-        }, function (err) { console.warn('Dues sync err:', err); });
+        }, function (err) { handleCloudErr(err, 'Dues sync'); });
         state.unsubListeners.push(uDues);
 
         // 4. Listen to Recurring (Strict Isolation & Cloud Authority)
@@ -1784,7 +1788,7 @@
           state.recurring = cloudRec;
           saveKey(KEYS.recurring, state.recurring);
           renderRecurring();
-        }, function (err) { console.warn('Recurring sync err:', err); });
+        }, function (err) { handleCloudErr(err, 'Recurring sync'); });
         state.unsubListeners.push(uRec);
 
         // 5. Listen to Checklist (Strict Isolation & Cloud Authority)
@@ -1800,7 +1804,7 @@
           state.checklist = cloudChk;
           saveKey(KEYS.checklist, state.checklist);
           renderChecklist();
-        }, function (err) { console.warn('Checklist sync err:', err); });
+        }, function (err) { handleCloudErr(err, 'Checklist sync'); });
         state.unsubListeners.push(uChk);
 
         // 6. Listen to Custom Categories (Strict Isolation & Cloud Authority)
@@ -1818,7 +1822,7 @@
           buildDropdowns();
           renderFormCategories();
           renderAll();
-        }, function (err) { console.warn('Cats sync err:', err); });
+        }, function (err) { handleCloudErr(err, 'Cats sync'); });
         state.unsubListeners.push(uCats);
 
         // 7. Listen to Budgets (Strict Isolation)
@@ -1832,7 +1836,7 @@
             saveKey(KEYS.budgets, state.budgets);
             renderAll();
           }
-        }, function (err) { console.warn('Budget sync err:', err); });
+        }, function (err) { handleCloudErr(err, 'Budget sync'); });
         state.unsubListeners.push(uBud);
       }
 
