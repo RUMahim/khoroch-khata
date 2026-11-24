@@ -326,7 +326,7 @@
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               সব ডিভাইসে লাইভ সিঙ্ক সক্রিয়
             </span>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">লাইভ</span>
+            <button type="button" id="forceSyncNowBtn" class="px-2 py-0.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold transition active:scale-95">↻ এখনই সিঙ্ক</button>
           </div>
           <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/70 dark:border-slate-800">
             <div class="min-w-0">
@@ -2354,6 +2354,39 @@
         el.dropdownSwitchKhataBtn.addEventListener('click', function () {
           var nextMode = state.khataMode === 'personal' ? 'family' : 'personal';
           setKhataMode(nextMode);
+        });
+      }
+      if ($('forceSyncNowBtn')) {
+        $('forceSyncNowBtn').addEventListener('click', async function () {
+          if (!state.currentUser || !fbDb) { toast('আগে লগইন করুন'); return; }
+          setSyncStatus('syncing');
+          toast('ক্লাউডের সাথে সিঙ্ক হচ্ছে...');
+          try {
+            // Upload current in-memory items/dues/recurring/checklist/customCats to activeLedgerId if any were local-only
+            if (state.isCloudMode && state.activeLedgerId) {
+              state.items.filter(function (x) { return !x.demo; }).forEach(function (itm) { cloudSaveItem(itm); });
+              state.dues.forEach(function (d) { cloudSaveDue(d); });
+              state.recurring.forEach(function (r) { cloudSaveRecurring(r); });
+              state.checklist.forEach(function (c) { cloudSaveChecklist(c); });
+              state.customCats.forEach(function (ct) { cloudSaveCustomCat(ct); });
+              cloudSaveBudget(state.budgets);
+            }
+            var uDoc = await fbDb.collection('users').doc(state.currentUser.uid).get({ source: 'server' }).catch(function () { return null; });
+            if (uDoc && uDoc.exists) {
+              var uData = uDoc.data();
+              if (uData.familyId) state.currentUser.familyId = uData.familyId;
+              if (uData.activeKhataMode) {
+                state.khataMode = uData.activeKhataMode;
+                saveKey(KEYS.khataMode, state.khataMode);
+              }
+              state.activeLedgerId = (state.khataMode === 'personal') ? ('user_' + state.currentUser.uid) : (state.currentUser.familyId || ('fam_' + state.currentUser.uid));
+            }
+            attachLedgerListeners(state.activeLedgerId);
+            updateAuthUI();
+            toast('✓ সিঙ্ক সম্পন্ন (' + (state.khataMode === 'personal' ? 'ব্যক্তিগত খাতা' : 'ফ্যামিলি খাতা') + ')');
+          } catch (e) {
+            handleCloudErr(e, 'Manual sync');
+          }
         });
       }
       if (el.modalKhataPersonalBtn) {
