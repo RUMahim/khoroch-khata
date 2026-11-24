@@ -1751,7 +1751,7 @@
           state.items = cloudItems;
           saveKey(KEYS.items, state.items);
           renderAll();
-          setSyncStatus(snap.metadata && snap.metadata.hasPendingWrites ? 'syncing' : 'synced');
+          setSyncStatus((snap.metadata && (snap.metadata.hasPendingWrites || snap.metadata.fromCache)) ? 'syncing' : 'synced');
         }, function (err) { handleCloudErr(err, 'Items sync'); });
         state.unsubListeners.push(uItems);
 
