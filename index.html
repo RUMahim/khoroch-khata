@@ -1837,34 +1837,37 @@
       }
 
       /* Realtime User Profile & Cross-Device Active Khata Listener */
+      var userDocUnsub = null;
+      function detachUserListener() {
+        if (userDocUnsub) { try { userDocUnsub(); } catch (e) {} userDocUnsub = null; }
+      }
       function listenToUserDoc(uid) {
         if (!fbDb || !uid) return;
-        var uSub = fbDb.collection('users').doc(uid).onSnapshot(function (doc) {
+        detachUserListener();
+        userDocUnsub = fbDb.collection('users').doc(uid).onSnapshot(function (doc) {
           if (!doc.exists) return;
           var uData = doc.data();
           if (!uData) return;
 
-          if (uData.familyId && state.currentUser && state.currentUser.familyId !== uData.familyId) {
-            state.currentUser.familyId = uData.familyId;
+          var nextFamId = uData.familyId || (state.currentUser && state.currentUser.familyId) || ('fam_' + uid);
+          if (state.currentUser && state.currentUser.familyId !== nextFamId) {
+            state.currentUser.familyId = nextFamId;
           }
 
-          // If another device (mobile or desktop) changed the active mode, switch this device in real time!
-          if (uData.activeKhataMode && uData.activeKhataMode !== state.khataMode) {
-            state.khataMode = uData.activeKhataMode;
+          var nextMode = uData.activeKhataMode || state.khataMode || 'family';
+          var targetLedgerId = (nextMode === 'personal') ? ('user_' + uid) : nextFamId;
+
+          if (nextMode !== state.khataMode || targetLedgerId !== state.activeLedgerId) {
+            state.khataMode = nextMode;
             saveKey(KEYS.khataMode, state.khataMode);
-            var famId = uData.familyId || (state.currentUser && state.currentUser.familyId) || ('fam_' + uid);
-            var targetLedgerId = (state.khataMode === 'personal') ? ('user_' + uid) : famId;
-            if (targetLedgerId !== state.activeLedgerId) {
-              state.activeLedgerId = targetLedgerId;
-              attachLedgerListeners(state.activeLedgerId);
-              updateAuthUI();
-              toast(state.khataMode === 'personal' ? '👤 ব্যক্তিগত খাতা লোড হয়েছে' : '👨‍👩‍👧 ফ্যামিলি খাতা লোড হয়েছে');
-            }
+            state.activeLedgerId = targetLedgerId;
+            attachLedgerListeners(state.activeLedgerId);
+            updateAuthUI();
+            toast(state.khataMode === 'personal' ? '👤 ব্যক্তিগত খাতা লোড হয়েছে' : '👨‍👩‍👧 ফ্যামিলি খাতা লোড হয়েছে');
           }
         }, function (err) {
           console.warn('User doc realtime sync error:', err);
         });
-        state.unsubListeners.push(uSub);
       }
 
       /* Switch Khata between Personal and Family */
@@ -1907,28 +1910,39 @@
         var userRef = fbDb.collection('users').doc(user.uid);
 
         try {
-          // 1. Fetch user doc from Firestore
-          var userDoc = await userRef.get().catch(function () { return null; });
+          // 1. Fetch latest user doc from Firestore server first (avoids stale IndexedDB cache across devices)
+          var userDoc = await userRef.get({ source: 'server' }).catch(function () {
+            return userRef.get().catch(function () { return null; });
+          });
           var uData = (userDoc && userDoc.exists) ? userDoc.data() : null;
           var famId = (uData && uData.familyId) ? uData.familyId : defaultFamId;
+
+          // If user has no custom familyId saved on profile yet, check if they already created a family
+          if (!uData || !uData.familyId || famId === defaultFamId) {
+            var createdFamSnap = await fbDb.collection('families')
+              .where('createdBy', '==', user.uid)
+              .limit(1).get({ source: 'server' }).catch(function () {
+                return fbDb.collection('families').where('createdBy', '==', user.uid).limit(1).get().catch(function () { return null; });
+              });
+            if (createdFamSnap && !createdFamSnap.empty) {
+              famId = createdFamSnap.docs[0].id;
+            }
+          }
 
           if (state.currentUser) {
             state.currentUser.familyId = famId;
           }
 
           // 2. Determine khataMode:
-          // Check if user has an explicit activeKhataMode saved in cloud profile
           var chosenMode = uData ? uData.activeKhataMode : null;
 
-          // If no cloud mode saved yet (e.g. existing user before this update):
+          // If no cloud mode saved yet:
           if (!chosenMode) {
-            // Check if user has ledger items in family ledger
             var fSnap = await fbDb.collection('ledger_items')
               .where('familyId', '==', famId)
               .limit(1).get().catch(function () { return null; });
             var hasFamilyItems = fSnap && !fSnap.empty;
 
-            // Check if user has ledger items in personal ledger
             var pSnap = await fbDb.collection('ledger_items')
               .where('familyId', '==', 'user_' + user.uid)
               .limit(1).get().catch(function () { return null; });
@@ -1939,7 +1953,6 @@
             } else if (hasPersonalItems && !hasFamilyItems) {
               chosenMode = 'personal';
             } else {
-              // If user has family doc created, default to family
               var famDoc = await fbDb.collection('families').doc(famId).get().catch(function () { return null; });
               chosenMode = (famDoc && famDoc.exists) ? 'family' : (state.khataMode || 'personal');
             }
@@ -1949,22 +1962,24 @@
           saveKey(KEYS.khataMode, state.khataMode);
           state.activeLedgerId = (state.khataMode === 'personal') ? ('user_' + user.uid) : famId;
 
-          // 3. Save profile only if missing or changed (saves Firestore writes!)
-          var uName = user.displayName || (user.email ? user.email.split('@')[0] : 'ব্যবহারকারী');
-          var uEmail = user.email || '';
-          var uPhoto = user.photoURL || '';
-          if (!uData || uData.name !== uName || uData.email !== uEmail || uData.photoURL !== uPhoto ||
-              uData.familyId !== famId || uData.activeKhataMode !== state.khataMode || uData.activeLedgerId !== state.activeLedgerId) {
-            await userRef.set({
-              uid: user.uid,
-              name: uName,
-              email: uEmail,
-              photoURL: uPhoto,
-              familyId: famId,
-              activeKhataMode: state.khataMode,
-              activeLedgerId: state.activeLedgerId,
-              updatedAt: Date.now()
-            }, { merge: true }).catch(function (e) { console.warn('User profile update error:', e); });
+          // 3. Save profile only if userDoc succeeded and is missing or changed (never overwrite on network failure)
+          if (userDoc !== null) {
+            var uName = user.displayName || (user.email ? user.email.split('@')[0] : 'ব্যবহারকারী');
+            var uEmail = user.email || '';
+            var uPhoto = user.photoURL || '';
+            if (!uData || uData.name !== uName || uData.email !== uEmail || uData.photoURL !== uPhoto ||
+                uData.familyId !== famId || uData.activeKhataMode !== state.khataMode || uData.activeLedgerId !== state.activeLedgerId) {
+              await userRef.set({
+                uid: user.uid,
+                name: uName,
+                email: uEmail,
+                photoURL: uPhoto,
+                familyId: famId,
+                activeKhataMode: state.khataMode,
+                activeLedgerId: state.activeLedgerId,
+                updatedAt: Date.now()
+              }, { merge: true }).catch(function (e) { console.warn('User profile update error:', e); });
+            }
           }
 
           // 4. Migrate any orphaned items from user_<uid> if user is active in family mode
@@ -2362,6 +2377,7 @@
             state.isCloudMode = false;
             state.activeLedgerId = '';
             state.familyData = null;
+            detachUserListener();
             detachListeners();
             state.items = [];
             state.dues = [];
@@ -2472,7 +2488,12 @@
               });
               await fbDb.collection('families').doc(targetFam.id).update({ members: members });
             }
-            await fbDb.collection('users').doc(state.currentUser.uid).update({ familyId: targetFam.id });
+            await fbDb.collection('users').doc(state.currentUser.uid).set({
+              familyId: targetFam.id,
+              activeKhataMode: 'family',
+              activeLedgerId: targetFam.id,
+              updatedAt: Date.now()
+            }, { merge: true });
             state.currentUser.familyId = targetFam.id;
             state.familyData = targetFam;
             setKhataMode('family');
@@ -2508,7 +2529,12 @@
               }]
             };
             await fbDb.collection('families').doc(newId).set(newFam);
-            await fbDb.collection('users').doc(state.currentUser.uid).update({ familyId: newId });
+            await fbDb.collection('users').doc(state.currentUser.uid).set({
+              familyId: newId,
+              activeKhataMode: 'family',
+              activeLedgerId: newId,
+              updatedAt: Date.now()
+            }, { merge: true });
             state.currentUser.familyId = newId;
             state.familyData = newFam;
             setKhataMode('family');
@@ -4223,6 +4249,7 @@
             state.isCloudMode = false;
             state.activeLedgerId = '';
             state.familyData = null;
+            detachUserListener();
             detachListeners();
             state.items = [];
             state.dues = [];
