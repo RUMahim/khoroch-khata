@@ -3736,9 +3736,9 @@
         toast('৪ সংখ্যার পিন লক চালু হয়েছে');
       });
       el.lockNowBtn.addEventListener('click', function () {
-        el.pinModal.classList.add('hidden');
+        if (el.pinModal) el.pinModal.classList.add('hidden');
         clearPinUnlocked();
-        if (state.pin && !isPinUnlocked()) showLockScreen();
+        if (state.pin) showLockScreen();
       });
       el.removePinBtn.addEventListener('click', function () {
         state.pin = '';
@@ -4033,7 +4033,7 @@
       setTab('ledger');
       renderAll();
       updateAuthUI();
-      if (state.pin) showLockScreen();
+      if (state.pin && !isPinUnlocked()) showLockScreen();
     })();
   </script>
 </body>
