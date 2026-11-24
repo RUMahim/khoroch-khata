@@ -1978,11 +1978,19 @@
         }
       }
       function cloudDeleteItem(id) {
+        var docId = String(id || '').trim();
+        if (!docId) return;
         if (state.isCloudMode && fbDb) {
-          var docId = String(id).trim();
-          fbDb.collection('ledger_items').doc(docId).delete().catch(function (e) {
-            console.warn("Item del err:", e);
+          fbDb.collection('ledger_items').doc(docId).delete().then(function () {
+            console.log("FIRESTORE_DELETE_SUCCESS:", docId);
+            toast("হিসাবটি সফলভাবে মুছে ফেলা হয়েছে");
+          }).catch(function (e) {
+            console.error("FIRESTORE_DELETE_ERROR:", docId, e);
+            toast("ক্লাউড ডিলিট এরর: " + (e.code || e.message || e));
           });
+        } else {
+          console.warn("FIRESTORE_DELETE_SKIPPED:", docId, "isCloudMode=", state.isCloudMode);
+          toast("লোকাল হিসাবটি মুছে ফেলা হয়েছে");
         }
       }
       function cloudSaveDue(due) {
@@ -3232,7 +3240,7 @@
           } catch (e) {}
           if (state.editingId === delId) resetForm(false);
           renderAll();
-          toast('হিসাবটি মুছে ফেলা হয়েছে');
+          toast(state.isCloudMode ? 'মুছে ফেলা হচ্ছে...' : 'হিসাবটি মুছে ফেলা হয়েছে');
           return;
         }
         if (act === 'edit') {
