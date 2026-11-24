@@ -1580,8 +1580,27 @@
           el.cloudSyncBadge.classList.remove('hidden');
           el.cloudSyncBadge.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
           el.cloudSyncText.textContent = 'সিঙ্ক হচ্ছে...';
+        } else if (status === 'error') {
+          el.cloudSyncBadge.classList.remove('hidden');
+          el.cloudSyncBadge.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800';
+          el.cloudSyncText.textContent = 'সিঙ্ক ব্যর্থ';
         } else {
           el.cloudSyncBadge.classList.add('hidden');
+        }
+      }
+      var lastCloudErrToast = 0;
+      function handleCloudErr(e, label) {
+        console.warn((label || 'Cloud') + ' err:', e);
+        setSyncStatus('error');
+        var now = Date.now();
+        if (now - lastCloudErrToast < 4000) return;
+        lastCloudErrToast = now;
+        if (e && e.code === 'resource-exhausted') {
+          toast('ফায়ারবেস দৈনিক কোটা শেষ! তাই অন্য ডিভাইসে এখন সিঙ্ক হচ্ছে না।');
+        } else if (e && e.code === 'permission-denied') {
+          toast('ফায়ারবেস পারমিশন এরর: ডাটা ক্লাউডে সেভ হয়নি');
+        } else {
+          toast('ক্লাউড সিঙ্ক এরর: ' + ((e && (e.code || e.message)) || 'সংযোগ ব্যর্থ'));
         }
       }
 
@@ -1732,8 +1751,8 @@
           state.items = cloudItems;
           saveKey(KEYS.items, state.items);
           renderAll();
-          setSyncStatus('synced');
-        }, function (err) { console.warn('Items sync err:', err); });
+          setSyncStatus(snap.metadata && snap.metadata.hasPendingWrites ? 'syncing' : 'synced');
+        }, function (err) { handleCloudErr(err, 'Items sync'); });
         state.unsubListeners.push(uItems);
 
         // 3. Listen to Dues (Strict Isolation & Cloud Authority)
@@ -1930,17 +1949,23 @@
           saveKey(KEYS.khataMode, state.khataMode);
           state.activeLedgerId = (state.khataMode === 'personal') ? ('user_' + user.uid) : famId;
 
-          // 3. Save profile with activeKhataMode and activeLedgerId so all other devices sync
-          await userRef.set({
-            uid: user.uid,
-            name: user.displayName || (user.email ? user.email.split('@')[0] : 'ব্যবহারকারী'),
-            email: user.email || '',
-            photoURL: user.photoURL || '',
-            familyId: famId,
-            activeKhataMode: state.khataMode,
-            activeLedgerId: state.activeLedgerId,
-            updatedAt: Date.now()
-          }, { merge: true }).catch(function (e) { console.warn('User profile update error:', e); });
+          // 3. Save profile only if missing or changed (saves Firestore writes!)
+          var uName = user.displayName || (user.email ? user.email.split('@')[0] : 'ব্যবহারকারী');
+          var uEmail = user.email || '';
+          var uPhoto = user.photoURL || '';
+          if (!uData || uData.name !== uName || uData.email !== uEmail || uData.photoURL !== uPhoto ||
+              uData.familyId !== famId || uData.activeKhataMode !== state.khataMode || uData.activeLedgerId !== state.activeLedgerId) {
+            await userRef.set({
+              uid: user.uid,
+              name: uName,
+              email: uEmail,
+              photoURL: uPhoto,
+              familyId: famId,
+              activeKhataMode: state.khataMode,
+              activeLedgerId: state.activeLedgerId,
+              updatedAt: Date.now()
+            }, { merge: true }).catch(function (e) { console.warn('User profile update error:', e); });
+          }
 
           // 4. Migrate any orphaned items from user_<uid> if user is active in family mode
           if (state.khataMode === 'family') {
@@ -1991,7 +2016,7 @@
             } : null
           };
           fbDb.collection('ledger_items').doc(clean.id).set(clean).catch(function (e) {
-            console.warn("Item save err:", e);
+            handleCloudErr(e, 'Item save');
           });
         }
       }
@@ -2032,7 +2057,7 @@
             }) : []
           };
           fbDb.collection('ledger_dues').doc(clean.id).set(clean).catch(function (e) {
-            console.warn("Due save err:", e);
+            handleCloudErr(e, 'Due save');
           });
         }
       }
@@ -2051,12 +2076,12 @@
             cat: String(rec.cat || 'other'),
             pay: String(rec.pay || 'cash')
           };
-          fbDb.collection('ledger_recurring').doc(clean.id).set(clean).catch(function (e) {});
+          fbDb.collection('ledger_recurring').doc(clean.id).set(clean).catch(function (e) { handleCloudErr(e, 'Recurring save'); });
         }
       }
       function cloudDeleteRecurring(id) {
         if (state.isCloudMode && fbDb) {
-          fbDb.collection('ledger_recurring').doc(String(id).trim()).delete().catch(function (e) {});
+          fbDb.collection('ledger_recurring').doc(String(id).trim()).delete().catch(function (e) { handleCloudErr(e, 'Recurring del'); });
         }
       }
       function cloudSaveChecklist(chk) {
@@ -2068,12 +2093,12 @@
             price: Number(chk.price) || 0,
             done: Boolean(chk.done)
           };
-          fbDb.collection('ledger_checklist').doc(clean.id).set(clean).catch(function (e) {});
+          fbDb.collection('ledger_checklist').doc(clean.id).set(clean).catch(function (e) { handleCloudErr(e, 'Checklist save'); });
         }
       }
       function cloudDeleteChecklist(id) {
         if (state.isCloudMode && fbDb) {
-          fbDb.collection('ledger_checklist').doc(String(id).trim()).delete().catch(function (e) {});
+          fbDb.collection('ledger_checklist').doc(String(id).trim()).delete().catch(function (e) { handleCloudErr(e, 'Checklist del'); });
         }
       }
       function cloudSaveBudget(budgets) {
@@ -2086,7 +2111,7 @@
               }
             });
           }
-          fbDb.collection('ledger_budgets').doc(state.activeLedgerId).set({ budgets: cleanBudgets }).catch(function (e) {});
+          fbDb.collection('ledger_budgets').doc(state.activeLedgerId).set({ budgets: cleanBudgets }).catch(function (e) { handleCloudErr(e, 'Budget save'); });
         }
       }
       function cloudSaveCustomCat(cat) {
@@ -2099,12 +2124,12 @@
             type: cat.type === 'income' ? 'income' : 'expense',
             color: String(cat.color || '#109476').slice(0, 30)
           };
-          fbDb.collection('ledger_customCats').doc(clean.id).set(clean).catch(function (e) {});
+          fbDb.collection('ledger_customCats').doc(clean.id).set(clean).catch(function (e) { handleCloudErr(e, 'Cat save'); });
         }
       }
       function cloudDeleteCustomCat(id) {
         if (state.isCloudMode && fbDb) {
-          fbDb.collection('ledger_customCats').doc(String(id).trim()).delete().catch(function (e) {});
+          fbDb.collection('ledger_customCats').doc(String(id).trim()).delete().catch(function (e) { handleCloudErr(e, 'Cat del'); });
         }
       }
 

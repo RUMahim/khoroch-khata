@@ -148,7 +148,7 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidUser(data) {
-      return hasOnlyAllowedFields(['uid', 'name', 'email', 'photoURL', 'familyId', 'updatedAt']) &&
+      return hasOnlyAllowedFields(['uid', 'name', 'email', 'photoURL', 'familyId', 'activeKhataMode', 'activeLedgerId', 'updatedAt']) &&
              hasRequiredFields(['uid', 'name', 'email', 'photoURL', 'familyId', 'updatedAt']) &&
              data.uid is string && data.uid == request.auth.uid &&
              data.name is string && data.name.size() <= 100 &&
