@@ -368,21 +368,6 @@
     <!-- ================= TAB 1: LEDGER (INCOME & EXPENSE) ================= -->
     <div id="tab-ledger" class="tab-panel space-y-6">
 
-            <!-- Cloud Migrate Local Data Banner -->
-      <div id="cloudMigrateBanner" class="hidden no-print flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-100">
-        <div class="flex items-center gap-2.5 text-sm">
-          <span class="text-2xl">📥</span>
-          <div>
-            <p class="font-bold">লোকাল হিসাব ক্লাউডে যুক্ত করবেন?</p>
-            <p class="text-xs text-amber-800 dark:text-amber-300">আপনার ব্রাউজারে থাকা আগের <strong id="localCountText">০টি</strong> হিসাব এই ক্লাউড ফ্যামিলি খাতায় আপলোড করুন।</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button type="button" id="migrateLocalConfirmBtn" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-sm transition">ক্লাউডে সিঙ্ক করুন</button>
-          <button type="button" id="migrateLocalDismissBtn" class="px-3 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 text-xs">পরে</button>
-        </div>
-      </div>
-
       <!-- Demo Mode Banner -->
       <div id="demoBanner" class="hidden no-print flex items-center gap-2 px-4 py-3 rounded-2xl bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-700/40 text-sm text-brand-900 dark:text-brand-100">
         <span>✨</span>
@@ -1354,8 +1339,6 @@
         authGoogleBtn: $('authGoogleBtn'), authGoogleBtnSignUp: $('authGoogleBtnSignUp'),
 
         // Family / Khata Modal
-        cloudMigrateBanner: $('cloudMigrateBanner'), localCountText: $('localCountText'),
-        migrateLocalConfirmBtn: $('migrateLocalConfirmBtn'), migrateLocalDismissBtn: $('migrateLocalDismissBtn'),
         familyModal: $('familyModal'), closeFamilyModal: $('closeFamilyModal'),
         modalFamilyName: $('modalFamilyName'), editFamilyNameBtn: $('editFamilyNameBtn'),
         modalFamilyCode: $('modalFamilyCode'), copyFamilyCodeBtn: $('copyFamilyCodeBtn'),
@@ -1472,7 +1455,13 @@
             rawItems = localStorage.getItem(KEYS.items);
           }
           var rItems = JSON.parse(rawItems || '[]');
-          state.items = Array.isArray(rItems) ? rItems.map(cleanItem).filter(Boolean) : [];
+          state.items = Array.isArray(rItems) ? rItems.map(function (raw) {
+            var itm = cleanItem(raw);
+            if (itm && !itm.familyId && target !== 'guest') {
+              itm.familyId = 'user_' + target;
+            }
+            return itm;
+          }).filter(Boolean) : [];
 
           var rawBudgets = localStorage.getItem(scopedKey(KEYS.budgets, target)) || (target === 'guest' ? localStorage.getItem(KEYS.budgets) : null);
           var rBudgets = JSON.parse(rawBudgets || '{}');
@@ -1482,19 +1471,31 @@
 
           var rawDues = localStorage.getItem(scopedKey(KEYS.dues, target)) || (target === 'guest' ? localStorage.getItem(KEYS.dues) : null);
           var rDues = JSON.parse(rawDues || '[]');
-          state.dues = Array.isArray(rDues) ? rDues : [];
+          state.dues = Array.isArray(rDues) ? rDues.map(function (d) {
+            if (d && !d.familyId && target !== 'guest') d.familyId = 'user_' + target;
+            return d;
+          }) : [];
 
           var rawRec = localStorage.getItem(scopedKey(KEYS.recurring, target)) || (target === 'guest' ? localStorage.getItem(KEYS.recurring) : null);
           var rRec = JSON.parse(rawRec || '[]');
-          state.recurring = Array.isArray(rRec) ? rRec : [];
+          state.recurring = Array.isArray(rRec) ? rRec.map(function (r) {
+            if (r && !r.familyId && target !== 'guest') r.familyId = 'user_' + target;
+            return r;
+          }) : [];
 
           var rawCheck = localStorage.getItem(scopedKey(KEYS.checklist, target)) || (target === 'guest' ? localStorage.getItem(KEYS.checklist) : null);
           var rCheck = JSON.parse(rawCheck || '[]');
-          state.checklist = Array.isArray(rCheck) ? rCheck : [];
+          state.checklist = Array.isArray(rCheck) ? rCheck.map(function (c) {
+            if (c && !c.familyId && target !== 'guest') c.familyId = 'user_' + target;
+            return c;
+          }) : [];
 
           var rawCats = localStorage.getItem(scopedKey(KEYS.customCats, target)) || (target === 'guest' ? localStorage.getItem(KEYS.customCats) : null);
           var rCats = JSON.parse(rawCats || '[]');
-          state.customCats = Array.isArray(rCats) ? rCats : [];
+          state.customCats = Array.isArray(rCats) ? rCats.map(function (ct) {
+            if (ct && !ct.familyId && target !== 'guest') ct.familyId = 'user_' + target;
+            return ct;
+          }) : [];
 
           state.pin = localStorage.getItem(KEYS.pin) || '';
         } catch (e) {}
@@ -1645,7 +1646,7 @@
           state.unsubListeners.push(uFam);
         }
 
-        // 2. Listen to Ledger Items (Non-destructive sync)
+        // 2. Listen to Ledger Items (Strict Isolation)
         var uItems = fbDb.collection('ledger_items').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var cloudItems = [];
           snap.forEach(function (doc) {
@@ -1653,127 +1654,165 @@
             if (c) cloudItems.push(c);
           });
 
+          cloudItems.sort(function (a, b) { return (b.date + (b.ts || 0)).localeCompare(a.date + (a.ts || 0)); });
+
           if (cloudItems.length > 0) {
             var cloudIds = new Set(cloudItems.map(function (x) { return x.id; }));
-            var unsynced = state.items.filter(function (x) { return !cloudIds.has(x.id) && !x.demo; });
+            var unsynced = state.items.filter(function (x) {
+              return !cloudIds.has(x.id) && !x.demo && x.familyId === ledgerId;
+            });
             if (unsynced.length > 0) {
               unsynced.forEach(function (itm) { cloudSaveItem(itm); });
               state.items = cloudItems.concat(unsynced);
             } else {
               state.items = cloudItems;
             }
-            saveKey(KEYS.items, state.items);
-            renderAll();
           } else {
-            // Cloud has 0 items! If user has existing local items, upload them!
-            if (state.items.length > 0 && isDemo() === false) {
-              state.items.forEach(function (itm) { cloudSaveItem(itm); });
-              saveKey(KEYS.items, state.items);
-              renderAll();
+            // Firestore has 0 items. Only keep/upload local items if they strictly belong to THIS ledgerId
+            var ownLocal = state.items.filter(function (x) {
+              return !x.demo && x.familyId === ledgerId;
+            });
+            if (ownLocal.length > 0) {
+              ownLocal.forEach(function (itm) { cloudSaveItem(itm); });
+              state.items = ownLocal;
             } else {
               state.items = [];
-              saveKey(KEYS.items, state.items);
-              renderAll();
             }
           }
+          saveKey(KEYS.items, state.items);
+          renderAll();
           setSyncStatus('synced');
         }, function (err) { console.warn('Items sync err:', err); });
         state.unsubListeners.push(uItems);
 
-        // 3. Listen to Dues (Non-destructive)
+        // 3. Listen to Dues (Strict Isolation)
         var uDues = fbDb.collection('ledger_dues').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var cloudDues = [];
           snap.forEach(function (doc) { cloudDues.push(doc.data()); });
           if (cloudDues.length > 0) {
-            state.dues = cloudDues;
-            saveKey(KEYS.dues, state.dues);
-            renderDues();
-          } else if (state.dues.length > 0) {
-            state.dues.forEach(function (d) { cloudSaveDue(d); });
-            saveKey(KEYS.dues, state.dues);
-            renderDues();
+            var cloudIds = new Set(cloudDues.map(function (x) { return x.id; }));
+            var unsynced = state.dues.filter(function (x) {
+              return !cloudIds.has(x.id) && x.familyId === ledgerId;
+            });
+            if (unsynced.length > 0) {
+              unsynced.forEach(function (d) { cloudSaveDue(d); });
+              state.dues = cloudDues.concat(unsynced);
+            } else {
+              state.dues = cloudDues;
+            }
           } else {
-            state.dues = [];
-            saveKey(KEYS.dues, state.dues);
-            renderDues();
+            var ownDues = state.dues.filter(function (d) { return d.familyId === ledgerId; });
+            if (ownDues.length > 0) {
+              ownDues.forEach(function (d) { cloudSaveDue(d); });
+              state.dues = ownDues;
+            } else {
+              state.dues = [];
+            }
           }
+          saveKey(KEYS.dues, state.dues);
+          renderDues();
         }, function (err) { console.warn('Dues sync err:', err); });
         state.unsubListeners.push(uDues);
 
-        // 4. Listen to Recurring (Non-destructive)
+        // 4. Listen to Recurring (Strict Isolation)
         var uRec = fbDb.collection('ledger_recurring').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var cloudRec = [];
           snap.forEach(function (doc) { cloudRec.push(doc.data()); });
           if (cloudRec.length > 0) {
-            state.recurring = cloudRec;
-            saveKey(KEYS.recurring, state.recurring);
-            renderRecurring();
-          } else if (state.recurring.length > 0) {
-            state.recurring.forEach(function (r) { cloudSaveRecurring(r); });
-            saveKey(KEYS.recurring, state.recurring);
-            renderRecurring();
+            var cloudIds = new Set(cloudRec.map(function (x) { return x.id; }));
+            var unsynced = state.recurring.filter(function (x) {
+              return !cloudIds.has(x.id) && x.familyId === ledgerId;
+            });
+            if (unsynced.length > 0) {
+              unsynced.forEach(function (r) { cloudSaveRecurring(r); });
+              state.recurring = cloudRec.concat(unsynced);
+            } else {
+              state.recurring = cloudRec;
+            }
           } else {
-            state.recurring = [];
-            saveKey(KEYS.recurring, state.recurring);
-            renderRecurring();
+            var ownRec = state.recurring.filter(function (r) { return r.familyId === ledgerId; });
+            if (ownRec.length > 0) {
+              ownRec.forEach(function (r) { cloudSaveRecurring(r); });
+              state.recurring = ownRec;
+            } else {
+              state.recurring = [];
+            }
           }
+          saveKey(KEYS.recurring, state.recurring);
+          renderRecurring();
         }, function (err) { console.warn('Recurring sync err:', err); });
         state.unsubListeners.push(uRec);
 
-        // 5. Listen to Checklist (Non-destructive)
+        // 5. Listen to Checklist (Strict Isolation)
         var uChk = fbDb.collection('ledger_checklist').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var cloudChk = [];
           snap.forEach(function (doc) { cloudChk.push(doc.data()); });
           if (cloudChk.length > 0) {
-            state.checklist = cloudChk;
-            saveKey(KEYS.checklist, state.checklist);
-            renderChecklist();
-          } else if (state.checklist.length > 0) {
-            state.checklist.forEach(function (c) { cloudSaveChecklist(c); });
-            saveKey(KEYS.checklist, state.checklist);
-            renderChecklist();
+            var cloudIds = new Set(cloudChk.map(function (x) { return x.id; }));
+            var unsynced = state.checklist.filter(function (x) {
+              return !cloudIds.has(x.id) && x.familyId === ledgerId;
+            });
+            if (unsynced.length > 0) {
+              unsynced.forEach(function (c) { cloudSaveChecklist(c); });
+              state.checklist = cloudChk.concat(unsynced);
+            } else {
+              state.checklist = cloudChk;
+            }
           } else {
-            state.checklist = [];
-            saveKey(KEYS.checklist, state.checklist);
-            renderChecklist();
+            var ownChk = state.checklist.filter(function (c) { return c.familyId === ledgerId; });
+            if (ownChk.length > 0) {
+              ownChk.forEach(function (c) { cloudSaveChecklist(c); });
+              state.checklist = ownChk;
+            } else {
+              state.checklist = [];
+            }
           }
+          saveKey(KEYS.checklist, state.checklist);
+          renderChecklist();
         }, function (err) { console.warn('Checklist sync err:', err); });
         state.unsubListeners.push(uChk);
 
-        // 6. Listen to Custom Categories (Non-destructive)
+        // 6. Listen to Custom Categories (Strict Isolation)
         var uCats = fbDb.collection('ledger_customCats').where('familyId', '==', ledgerId).onSnapshot(function (snap) {
           var cloudCats = [];
           snap.forEach(function (doc) { cloudCats.push(doc.data()); });
           if (cloudCats.length > 0) {
-            state.customCats = cloudCats;
-            saveKey(KEYS.customCats, state.customCats);
-            buildDropdowns();
-            renderFormCategories();
-            renderAll();
-          } else if (state.customCats.length > 0) {
-            state.customCats.forEach(function (c) { cloudSaveCustomCat(c); });
-            saveKey(KEYS.customCats, state.customCats);
-            buildDropdowns();
-            renderFormCategories();
-            renderAll();
+            var cloudIds = new Set(cloudCats.map(function (x) { return x.id; }));
+            var unsynced = state.customCats.filter(function (x) {
+              return !cloudIds.has(x.id) && x.familyId === ledgerId;
+            });
+            if (unsynced.length > 0) {
+              unsynced.forEach(function (c) { cloudSaveCustomCat(c); });
+              state.customCats = cloudCats.concat(unsynced);
+            } else {
+              state.customCats = cloudCats;
+            }
           } else {
-            state.customCats = [];
-            saveKey(KEYS.customCats, state.customCats);
-            buildDropdowns();
-            renderFormCategories();
-            renderAll();
+            var ownCats = state.customCats.filter(function (c) { return c.familyId === ledgerId; });
+            if (ownCats.length > 0) {
+              ownCats.forEach(function (c) { cloudSaveCustomCat(c); });
+              state.customCats = ownCats;
+            } else {
+              state.customCats = [];
+            }
           }
+          saveKey(KEYS.customCats, state.customCats);
+          buildDropdowns();
+          renderFormCategories();
+          renderAll();
         }, function (err) { console.warn('Cats sync err:', err); });
         state.unsubListeners.push(uCats);
 
-        // 7. Listen to Budgets (Non-destructive)
+        // 7. Listen to Budgets (Strict Isolation)
         var uBud = fbDb.collection('ledger_budgets').doc(ledgerId).onSnapshot(function (doc) {
           if (doc.exists) {
             state.budgets = doc.data().budgets || {};
             saveKey(KEYS.budgets, state.budgets);
             renderAll();
-          } else if (Object.keys(state.budgets).length > 0) {
-            cloudSaveBudget(state.budgets);
+          } else {
+            state.budgets = {};
+            saveKey(KEYS.budgets, state.budgets);
+            renderAll();
           }
         }, function (err) { console.warn('Budget sync err:', err); });
         state.unsubListeners.push(uBud);
@@ -1866,21 +1905,11 @@
 
           updateAuthUI();
           attachLedgerListeners(state.activeLedgerId);
-          checkLocalMigrationOffer();
           toast('লগইন সম্পন্ন: ' + (user.displayName || user.email));
         } catch (err) {
           console.error("Cloud init error:", err);
-          updateAuthUI(); // Ensure profile stays visible even if Firestore rules or sync fail
+          updateAuthUI();
           toast("ক্লাউড সিঙ্ক সতর্কতা: " + err.message);
-        }
-      }
-
-      function checkLocalMigrationOffer() {
-        if (!el.cloudMigrateBanner) return;
-        var localItems = JSON.parse(localStorage.getItem(KEYS.items) || '[]');
-        if (localItems.length > 0 && isDemo() === false) {
-          el.localCountText.textContent = nfInt.format(localItems.length) + 'টি';
-          el.cloudMigrateBanner.classList.remove('hidden');
         }
       }
 
@@ -2093,17 +2122,7 @@
           if (!email || !pass) return;
           try {
             toast('লগইন হচ্ছে...');
-            var cred = await fbAuth.signInWithEmailAndPassword(email, pass);
-            if (cred && cred.user) {
-              state.currentUser = {
-                uid: cred.user.uid,
-                name: cred.user.displayName || (cred.user.email ? cred.user.email.split('@')[0] : 'ব্যবহারকারী'),
-                email: cred.user.email || '',
-                photoURL: cred.user.photoURL || ''
-              };
-              updateAuthUI();
-              initUserCloud(cred.user);
-            }
+            await fbAuth.signInWithEmailAndPassword(email, pass);
             closeAuthModal();
             el.signInEmail.value = ''; el.signInPass.value = '';
             toast('সফলভাবে লগইন হয়েছে!');
@@ -2148,14 +2167,6 @@
             toast('অ্যাকাউন্ট তৈরি হচ্ছে...');
             var cred = await fbAuth.createUserWithEmailAndPassword(email, pass);
             await cred.user.updateProfile({ displayName: name });
-            state.currentUser = {
-              uid: cred.user.uid,
-              name: name,
-              email: email,
-              photoURL: cred.user.photoURL || ''
-            };
-            updateAuthUI();
-            initUserCloud(cred.user);
             closeAuthModal();
             el.signUpName.value = ''; el.signUpEmail.value = ''; el.signUpPass.value = '';
             if (el.signUpConfirmPass) el.signUpConfirmPass.value = '';
@@ -2200,16 +2211,6 @@
         if (!fbAuth) { toast('Firebase সক্রিয় নেই'); return; }
         var provider = new firebase.auth.GoogleAuthProvider();
         fbAuth.signInWithPopup(provider).then(function (result) {
-          if (result && result.user) {
-            state.currentUser = {
-              uid: result.user.uid,
-              name: result.user.displayName || (result.user.email ? result.user.email.split('@')[0] : 'ব্যবহারকারী'),
-              email: result.user.email || '',
-              photoURL: result.user.photoURL || ''
-            };
-            updateAuthUI();
-            initUserCloud(result.user);
-          }
           closeAuthModal();
           toast('গুগল দিয়ে সফলভাবে লগইন হয়েছে!');
         }).catch(function (error) {
@@ -2245,6 +2246,12 @@
             state.activeLedgerId = '';
             state.familyData = null;
             detachListeners();
+            state.items = [];
+            state.dues = [];
+            state.recurring = [];
+            state.checklist = [];
+            state.customCats = [];
+            state.budgets = {};
             loadAll('guest');
             updateAuthUI();
             renderAll();
@@ -2394,33 +2401,6 @@
           } catch (e) {
             toast('খাতা তৈরি ব্যর্থ: ' + e.message);
           }
-        });
-      }
-
-      if (el.migrateLocalConfirmBtn) {
-        el.migrateLocalConfirmBtn.addEventListener('click', async function () {
-          var localItems = JSON.parse(localStorage.getItem(KEYS.items) || '[]');
-          if (!localItems.length) { el.cloudMigrateBanner.classList.add('hidden'); return; }
-          try {
-            toast('ক্লাউডে আপলোড হচ্ছে...');
-            var batch = fbDb.batch();
-            localItems.forEach(function (it) {
-              it.familyId = state.activeLedgerId;
-              it.addedBy = { uid: state.currentUser.uid, name: state.currentUser.name };
-              var ref = fbDb.collection('ledger_items').doc(it.id);
-              batch.set(ref, it);
-            });
-            await batch.commit();
-            el.cloudMigrateBanner.classList.add('hidden');
-            toast('সব লোকাল হিসাব সফলভাবে ক্লাউডে সিঙ্ক হয়েছে!');
-          } catch (e) {
-            toast('আপলোড করতে সমস্যা: ' + e.message);
-          }
-        });
-      }
-      if (el.migrateLocalDismissBtn) {
-        el.migrateLocalDismissBtn.addEventListener('click', function () {
-          el.cloudMigrateBanner.classList.add('hidden');
         });
       }
 
@@ -3139,6 +3119,7 @@
         var isEdit = idx >= 0;
         var item = {
           id: isEdit ? state.items[idx].id : newId(),
+          familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
           type: state.formType,
           amount: amount,
           cat: selectedCat(),
@@ -3146,7 +3127,12 @@
           note: el.note.value.trim(),
           date: date,
           ts: isEdit ? state.items[idx].ts : Date.now(),
-          items: sub.items
+          items: sub.items,
+          addedBy: state.currentUser ? {
+            uid: String(state.currentUser.uid),
+            name: String(state.currentUser.name || 'ব্যবহারকারী'),
+            photoURL: String(state.currentUser.photoURL || '')
+          } : null
         };
 
         if (isEdit) state.items[idx] = item;
@@ -3239,8 +3225,15 @@
         }
 
         var newDue = {
-          id: newId(), type: type, person: person, amount: amount,
-          note: el.dueNote.value.trim(), date: el.dueDate.value || today, settled: false, payments: []
+          id: newId(),
+          familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
+          type: type,
+          person: person,
+          amount: amount,
+          note: el.dueNote.value.trim(),
+          date: el.dueDate.value || today,
+          settled: false,
+          payments: []
         };
         state.dues.push(newDue);
         saveKey(KEYS.dues, state.dues);
@@ -3327,6 +3320,7 @@
           var isGet = d.type === 'get';
           var ledgerItem = {
             id: newId(),
+            familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
             type: isGet ? 'income' : 'expense',
             amount: amt,
             cat: isGet ? 'gift_in' : 'loan',
@@ -3334,7 +3328,12 @@
             note: (isGet ? 'পাওনা আদায়: ' : 'ধার পরিশোধ: ') + d.person + (pNote ? ' (' + pNote + ')' : ''),
             date: pDate,
             ts: Date.now(),
-            items: []
+            items: [],
+            addedBy: state.currentUser ? {
+              uid: String(state.currentUser.uid),
+              name: String(state.currentUser.name || 'ব্যবহারকারী'),
+              photoURL: String(state.currentUser.photoURL || '')
+            } : null
           };
           state.items.push(ledgerItem);
           saveKey(KEYS.items, state.items);
@@ -3450,7 +3449,12 @@
         var amount = parseAmount(el.recAmount.value);
         if (!title || isNaN(amount)) { toast('সঠিক নাম ও পরিমাণ লিখুন'); return; }
         var newRec = {
-          id: newId(), title: title, amount: amount, cat: el.recCat.value, pay: el.recPay.value
+          id: newId(),
+          familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
+          title: title,
+          amount: amount,
+          cat: el.recCat.value,
+          pay: el.recPay.value
         };
         state.recurring.push(newRec);
         saveKey(KEYS.recurring, state.recurring);
@@ -3466,8 +3470,21 @@
           if (!r) return;
           var targetDate = state.viewMonth === curMonth ? today : state.viewMonth + '-01';
           var itm = {
-            id: newId(), type: 'expense', amount: r.amount, cat: r.cat, pay: r.pay,
-            note: r.title, date: targetDate, ts: Date.now(), items: []
+            id: newId(),
+            familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
+            type: 'expense',
+            amount: r.amount,
+            cat: r.cat,
+            pay: r.pay,
+            note: r.title,
+            date: targetDate,
+            ts: Date.now(),
+            items: [],
+            addedBy: state.currentUser ? {
+              uid: String(state.currentUser.uid),
+              name: String(state.currentUser.name || 'ব্যবহারকারী'),
+              photoURL: String(state.currentUser.photoURL || '')
+            } : null
           };
           state.items.push(itm);
           saveKey(KEYS.items, state.items);
@@ -3493,7 +3510,13 @@
         var name = el.checkName.value.trim();
         if (!name) { toast('জিনিসের নাম লিখুন'); return; }
         var p = parseAmount(el.checkPrice.value);
-        var newChk = { id: newId(), name: name, price: isNaN(p) ? 0 : p, done: false };
+        var newChk = {
+          id: newId(),
+          familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
+          name: name,
+          price: isNaN(p) ? 0 : p,
+          done: false
+        };
         state.checklist.push(newChk);
         saveKey(KEYS.checklist, state.checklist);
         cloudSaveChecklist(newChk);
@@ -3552,10 +3575,21 @@
           return;
         }
         var bItem = {
-          id: newId(), type: 'expense', amount: Math.round(total * 100) / 100,
-          cat: 'bazar', pay: 'cash', note: 'বাজারের ফর্দ (' + nfInt.format(doneList.length) + 'টি জিনিস)',
-          date: today, ts: Date.now(),
-          items: doneList.map(function (c) { return { name: c.name, price: Number(c.price) || 0 }; })
+          id: newId(),
+          familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
+          type: 'expense',
+          amount: Math.round(total * 100) / 100,
+          cat: 'bazar',
+          pay: 'cash',
+          note: 'বাজারের ফর্দ (' + nfInt.format(doneList.length) + 'টি জিনিস)',
+          date: today,
+          ts: Date.now(),
+          items: doneList.map(function (c) { return { name: c.name, price: Number(c.price) || 0 }; }),
+          addedBy: state.currentUser ? {
+            uid: String(state.currentUser.uid),
+            name: String(state.currentUser.name || 'ব্যবহারকারী'),
+            photoURL: String(state.currentUser.photoURL || '')
+          } : null
         };
         state.items.push(bItem);
         cloudSaveItem(bItem);
@@ -3598,7 +3632,10 @@
         var colors = ['#0d9488', '#7c3aed', '#e11d48', '#d97706', '#2563eb', '#059669'];
         var newCat = {
           id: 'c-' + Date.now().toString(36),
-          name: name, icon: icon, type: type,
+          familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
+          name: name,
+          icon: icon,
+          type: type,
           color: colors[state.customCats.length % colors.length],
           notePh: 'যেমন: ' + name
         };
@@ -3958,7 +3995,16 @@
         fbAuth.onAuthStateChanged(function (user) {
           if (user) {
             var prevUid = state.currentUser ? state.currentUser.uid : 'guest';
-            saveAllState(prevUid);
+            if (prevUid !== user.uid) {
+              saveAllState(prevUid);
+              detachListeners();
+              state.items = [];
+              state.dues = [];
+              state.recurring = [];
+              state.checklist = [];
+              state.customCats = [];
+              state.budgets = {};
+            }
 
             state.currentUser = {
               uid: user.uid,
@@ -3967,18 +4013,8 @@
               photoURL: user.photoURL || ''
             };
 
-            // Load user's local cache
+            // Load strictly this user's local cache
             loadAll(user.uid);
-
-            // Auto-migrate guest items if this user account has no local cache yet
-            if (state.items.length === 0) {
-              var guestRaw = localStorage.getItem(scopedKey(KEYS.items, 'guest')) || localStorage.getItem(KEYS.items);
-              var guestItems = JSON.parse(guestRaw || '[]');
-              if (Array.isArray(guestItems) && guestItems.length > 0) {
-                state.items = guestItems.map(cleanItem).filter(Boolean);
-                saveAllState(user.uid);
-              }
-            }
 
             updateAuthUI();
             renderAll();
@@ -3992,6 +4028,12 @@
             state.activeLedgerId = '';
             state.familyData = null;
             detachListeners();
+            state.items = [];
+            state.dues = [];
+            state.recurring = [];
+            state.checklist = [];
+            state.customCats = [];
+            state.budgets = {};
             loadAll('guest');
             updateAuthUI();
             renderAll();
