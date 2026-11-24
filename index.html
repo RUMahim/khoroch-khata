@@ -2269,17 +2269,26 @@
       }
 
       // 1-Click Google Sign In (Works for both Login and Sign-up)
+      var googleSignInBusy = false;
       function loginWithGoogle() {
         if (!fbAuth) { toast('Firebase সক্রিয় নেই'); return; }
+        if (googleSignInBusy) return;
+        googleSignInBusy = true;
         var provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
         fbAuth.signInWithPopup(provider).then(function (result) {
+          googleSignInBusy = false;
           closeAuthModal();
+          closeProfileDropdown();
           toast('গুগল দিয়ে সফলভাবে লগইন হয়েছে!');
         }).catch(function (error) {
-          if (error.code === 'auth/popup-blocked') {
+          googleSignInBusy = false;
+          if (error.code === 'auth/popup-blocked' || error.code === 'auth/operation-not-supported-in-this-environment') {
             fbAuth.signInWithRedirect(provider);
-          } else if (error.code !== 'auth/popup-closed-by-user') {
-            toast('লগইন ত্রুটি: ' + error.message);
+          } else if (error.code === 'auth/unauthorized-domain') {
+            toast('এই ডোমেইনটি Firebase-এ অনুমোদিত নয়: ' + location.hostname);
+          } else if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+            toast('লগইন ত্রুটি: ' + (error.message || error.code));
           }
         });
       }
@@ -4137,8 +4146,21 @@
 
       /* ================= FIREBASE AUTH STATE LISTENER ================= */
       if (fbAuth) {
+        fbAuth.getRedirectResult().then(function (result) {
+          if (result && result.user) {
+            closeAuthModal();
+            closeProfileDropdown();
+            toast('গুগল দিয়ে সফলভাবে লগইন হয়েছে!');
+          }
+        }).catch(function (err) {
+          if (err && err.code !== 'auth/popup-closed-by-user') {
+            toast('গুগল লগইন ত্রুটি: ' + (err.message || err.code));
+          }
+        });
+
         fbAuth.onAuthStateChanged(function (user) {
           if (user) {
+            closeAuthModal();
             var prevUid = state.currentUser ? state.currentUser.uid : 'guest';
             if (prevUid !== user.uid) {
               if (prevUid !== 'guest') saveAllState(prevUid);
