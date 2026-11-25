@@ -10,49 +10,19 @@
   <!-- Inline SVG Favicon (Prevents 404 on Live Hosting) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230d7a61'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-size='34' font-weight='bold'%3E৳%3C/text%3E%3C/svg%3E">
 
-  <!-- Google Fonts: Anek Bangla (Display) & Hind Siliguri (Body) -->
+  <!-- Google Fonts (Non-blocking): Anek Bangla & Hind Siliguri -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap"></noscript>
 
-  <!-- Direct PDF Generator Library (Supports Bengali Fonts via Browser Rendering) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Static Built Tailwind CSS -->
+  <link rel="stylesheet" href="/styles.css?v=1">
 
-    <!-- Firebase App, Auth, and Firestore (Compat CDN for browser) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Hind Siliguri"', 'system-ui', 'sans-serif'],
-            display: ['"Anek Bangla"', '"Hind Siliguri"', 'system-ui', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#eefaf6',
-              100: '#d5f2e8',
-              200: '#aee5d3',
-              300: '#6ee7b7',
-              400: '#34d399',
-              500: '#109476',
-              600: '#0d7a61',
-              700: '#0b614e',
-              800: '#065f46',
-              900: '#073b30',
-              950: '#042f26',
-            }
-          }
-        }
-      }
-    };
-  </script>
+  <!-- Firebase App, Auth, and Firestore (Deferred for fast FCP/LCP) -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <!-- Initial Theme Detection (Prevents Flash of Wrong Theme) -->
   <script>
@@ -1147,7 +1117,7 @@
   </div>
 
   <script>
-    (function () {
+    document.addEventListener('DOMContentLoaded', function () {
       'use strict';
 
       /* ================= FIREBASE INITIALIZATION ================= */
@@ -4103,9 +4073,16 @@
         if (!mAll.length) { toast('এই মাসে PDF করার মতো কোনো হিসাব নেই'); return; }
 
         if (typeof window.html2pdf === 'undefined') {
-          toast('প্রিন্টার অপশন থেকে "Save as PDF" সিলেক্ট করুন');
-          setTab('ledger');
-          setTimeout(function () { window.print(); }, 250);
+          toast('PDF লাইব্রেরি লোড হচ্ছে...');
+          var s = document.createElement('script');
+          s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+          s.onload = function () { downloadPdfReport(); };
+          s.onerror = function () {
+            toast('প্রিন্টার অপশন থেকে "Save as PDF" সিলেক্ট করুন');
+            setTab('ledger');
+            setTimeout(function () { window.print(); }, 250);
+          };
+          document.head.appendChild(s);
           return;
         }
 
@@ -4399,7 +4376,7 @@
       renderAll();
       updateAuthUI();
       if (state.pin && !isPinUnlocked()) showLockScreen();
-    })();
+    });
   </script>
 </body>
 </html>
