@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="দৈনন্দিন আয়-ব্যয়, মাসিক বাজেট, ধার-দেনা (হালখাতা), নিয়মিত খরচ ও বাজারের ফর্দ হিসাব রাখার সহজ ও প্রফেশনাল বাংলা ওয়েব অ্যাপ।">
+  <meta name="description" content="দৈনন্দিন আয়-ব্যয়, মাসিক বাজেট, দেনা-পাওনা (হালখাতা), নিয়মিত খরচ ও বাজারের ফর্দ হিসাব রাখার সহজ ও প্রফেশনাল বাংলা ওয়েব অ্যাপ।">
   <meta name="theme-color" content="#0d7a61">
   <title>খরচের খাতা — পূর্ণাঙ্গ দৈনিক হিসাব</title>
 
@@ -396,7 +396,7 @@
         <span>📊</span><span>আয় ও খরচ</span>
       </button>
       <button type="button" data-tab="dues" class="tab-btn px-4 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition flex items-center gap-1.5">
-        <span>🤝</span><span>ধার-দেনা</span>
+        <span>🤝</span><span>দেনা-পাওনা</span>
         <span id="duesBadge" class="hidden px-1.5 py-0.5 text-[10px] rounded-full bg-rose-500 text-white leading-none">0</span>
       </button>
       <button type="button" data-tab="recurring" class="tab-btn px-4 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition flex items-center gap-1.5">
@@ -641,7 +641,7 @@
       </div>
     </div>
 
-    <!-- ================= TAB 2: DUES (ধার-দেনা / হালখাতা) ================= -->
+    <!-- ================= TAB 2: DUES (দেনা-পাওনা / হালখাতা) ================= -->
     <div id="tab-dues" class="tab-panel hidden space-y-6">
       <!-- Dues Summary -->
       <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -662,7 +662,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <!-- Add / Edit Due Form -->
         <section class="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
-          <h2 id="dueFormTitle" class="font-display text-xl font-bold mb-4">নতুন ধার-দেনা যোগ করুন</h2>
+          <h2 id="dueFormTitle" class="font-display text-xl font-bold mb-4">নতুন দেনা-পাওনা যোগ করুন</h2>
           <form id="dueForm" class="space-y-3.5" novalidate>
             <div class="grid grid-cols-2 gap-2">
               <label class="cursor-pointer">
@@ -3056,7 +3056,7 @@
         }).join('');
       }
 
-      /* ================= RENDER DUES (ধার-দেনা) ================= */
+      /* ================= RENDER DUES (দেনা-পাওনা) ================= */
       var activeDuePayId = '';
       var editingDuePayId = '';
 
@@ -3113,7 +3113,7 @@
         });
 
         if (!list.length) {
-          el.duesList.innerHTML = '<div class="py-10 text-center text-sm text-slate-400">এই তালিকায় কোনো ধার-দেনা নেই।</div>';
+          el.duesList.innerHTML = '<div class="py-10 text-center text-sm text-slate-400">এই তালিকায় কোনো দেনা-পাওনা নেই।</div>';
           return;
         }
         el.duesList.innerHTML = list.map(function (d) {
@@ -3382,7 +3382,7 @@
       /* ================= DUES EVENTS ================= */
       function resetDueForm() {
         state.editingDueId = '';
-        el.dueFormTitle.textContent = 'নতুন ধার-দেনা যোগ করুন';
+        el.dueFormTitle.textContent = 'নতুন দেনা-পাওনা যোগ করুন';
         el.dueSaveBtn.textContent = 'তালিকায় যোগ করুন';
         el.dueCancelEdit.classList.add('hidden');
         el.duePerson.value = '';
@@ -3413,7 +3413,7 @@
             cloudSaveDue(existing);
             resetDueForm();
             renderDues();
-            toast('ধার-দেনার তথ্য আপডেট হয়েছে');
+            toast('দেনা-পাওনার তথ্য আপডেট হয়েছে');
             return;
           }
         }
@@ -3434,7 +3434,7 @@
         cloudSaveDue(newDue);
         resetDueForm();
         renderDues();
-        toast('ধার-দেনার তালিকায় যোগ হয়েছে');
+        toast('দেনা-পাওনার তালিকায় যোগ হয়েছে');
       });
 
       el.dueFilterTabs.addEventListener('click', function (ev) {
@@ -3564,7 +3564,7 @@
           el.dueAmount.value = String(ed.amount);
           el.dueNote.value = ed.note || '';
           el.dueDate.value = ed.date || today;
-          el.dueFormTitle.textContent = 'ধার-দেনা সম্পাদনা করুন';
+          el.dueFormTitle.textContent = 'দেনা-পাওনা সম্পাদনা করুন';
           el.dueSaveBtn.textContent = 'পরিবর্তন সংরক্ষণ';
           el.dueCancelEdit.classList.remove('hidden');
           el.dueForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3644,7 +3644,7 @@
             }
           } catch (e) {}
           renderDues();
-          toast('ধার-দেনার রেকর্ড মুছে ফেলা হয়েছে');
+          toast('দেনা-পাওনার রেকর্ড মুছে ফেলা হয়েছে');
         }
       });
 
