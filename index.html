@@ -750,12 +750,12 @@
 
         <!-- Saved Recurring List -->
         <section class="lg:col-span-8 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h2 class="font-display text-xl font-bold">মাসিক নিয়মিত খরচের তালিকা</h2>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="min-w-0">
+              <h2 class="font-display text-lg sm:text-xl font-bold">মাসিক নিয়মিত খরচের তালিকা</h2>
               <p class="text-xs text-slate-500 dark:text-slate-400">এক ক্লিকেই চলতি মাসের খাতায় যোগ হয়ে যাবে</p>
             </div>
-            <span id="recTotalBadge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300"></span>
+            <span id="recTotalBadge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 whitespace-nowrap shrink-0"></span>
           </div>
           <div id="recList" class="space-y-3"></div>
         </section>
@@ -3198,20 +3198,31 @@
         el.recList.innerHTML = state.recurring.map(function (r) {
           var c = catOf(r.cat, 'expense'), p = payOf(r.pay);
           var addedThisMonth = mExp.some(function (i) { return i.note === r.title && i.amount === r.amount; });
-          return '<div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">' +
-            '<div class="flex items-center gap-3 min-w-0 flex-1">' +
-              '<div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0" style="background:' + (c.color || '#109476') + '1a">' + esc(c.icon) + '</div>' +
-              '<div class="min-w-0">' +
-                '<p class="font-bold text-sm sm:text-base truncate">' + esc(r.title) + '</p>' +
-                '<p class="text-xs text-slate-500">' + esc(c.name) + ' • ' + p.icon + ' ' + esc(p.name) + '</p>' +
+          var statusOrAddHtml = addedThisMonth
+            ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-700/40 whitespace-nowrap">✓ যোগ হয়েছে</span>'
+            : '<button type="button" data-rec-add="' + esc(r.id) + '" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white transition active:scale-95 whitespace-nowrap">+ এই মাসে যোগ</button>';
+
+          return '<div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2.5">' +
+            '<div class="flex items-start justify-between gap-3">' +
+              '<div class="flex items-center gap-3 min-w-0 flex-1">' +
+                '<div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0" style="background:' + (c.color || '#109476') + '1a">' + esc(c.icon) + '</div>' +
+                '<div class="min-w-0 flex-1">' +
+                  '<p class="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-snug break-words">' + esc(r.title) + '</p>' +
+                  '<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">' + esc(c.name) + ' • ' + p.icon + ' ' + esc(p.name) + '</p>' +
+                '</div>' +
               '</div>' +
+              '<span class="font-display font-bold text-base sm:text-lg text-slate-900 dark:text-white shrink-0">' + money(r.amount) + '</span>' +
             '</div>' +
-            '<div class="flex items-center gap-2">' +
-              '<span class="font-display font-bold text-base sm:text-lg mr-1">' + money(r.amount) + '</span>' +
-              '<button type="button" data-rec-add="' + esc(r.id) + '" class="px-3 py-2 rounded-xl text-xs font-semibold transition ' +
-                (addedThisMonth ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-brand-600 hover:bg-brand-700 text-white') + '">' +
-                (addedThisMonth ? '✓ যোগ হয়েছে (+আবার)' : '+ এই মাসে যোগ') + '</button>' +
-              '<button type="button" data-rec-del="' + esc(r.id) + '" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600" title="মুছুন">✕</button>' +
+            '<div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/70 dark:border-slate-800/80">' +
+              statusOrAddHtml +
+              '<div class="flex items-center gap-1 shrink-0">' +
+                '<button type="button" data-rec-edit="' + esc(r.id) + '" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition" title="সম্পাদনা">' +
+                  '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>' +
+                '</button>' +
+                '<button type="button" data-rec-del="' + esc(r.id) + '" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition" title="মুছুন">' +
+                  '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>' +
+                '</button>' +
+              '</div>' +
             '</div>' +
           '</div>';
         }).join('');
@@ -3649,25 +3660,36 @@
       });
 
       /* ================= RECURRING EVENTS ================= */
+      var editingRecId = '';
       el.recForm.addEventListener('submit', function (ev) {
         ev.preventDefault();
         var title = el.recTitle.value.trim();
         var amount = parseAmount(el.recAmount.value);
         if (!title || isNaN(amount)) { toast('সঠিক নাম ও পরিমাণ লিখুন'); return; }
-        var newRec = {
-          id: newId(),
+        var isEdit = !!editingRecId;
+        var recObj = {
+          id: isEdit ? editingRecId : newId(),
           familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
           title: title,
           amount: amount,
           cat: el.recCat.value,
           pay: el.recPay.value
         };
-        state.recurring.push(newRec);
+        if (isEdit) {
+          var idx = state.recurring.findIndex(function (x) { return x.id === editingRecId; });
+          if (idx >= 0) state.recurring[idx] = recObj;
+          else state.recurring.push(recObj);
+          editingRecId = '';
+        } else {
+          state.recurring.push(recObj);
+        }
         saveKey(KEYS.recurring, state.recurring);
-        cloudSaveRecurring(newRec);
+        cloudSaveRecurring(recObj);
         el.recTitle.value = ''; el.recAmount.value = '';
+        var subBtn = el.recForm.querySelector('button[type="submit"]');
+        if (subBtn) subBtn.textContent = 'টেমপ্লেট সেভ করুন';
         renderRecurring();
-        toast('নিয়মিত খরচ সেভ হয়েছে');
+        toast(isEdit ? 'নিয়মিত খরচ আপডেট হয়েছে' : 'নিয়মিত খরচ সেভ হয়েছে');
       });
       el.recList.addEventListener('click', function (ev) {
         var addBtn = ev.target.closest('button[data-rec-add]');
@@ -3697,6 +3719,21 @@
           cloudSaveItem(itm);
           renderAll();
           toast('"' + r.title + '" এই মাসের খরচে যোগ হয়েছে');
+          return;
+        }
+        var editBtn = ev.target.closest('button[data-rec-edit]');
+        if (editBtn) {
+          var rEdit = state.recurring.find(function (x) { return x.id === editBtn.getAttribute('data-rec-edit'); });
+          if (!rEdit) return;
+          editingRecId = rEdit.id;
+          el.recTitle.value = rEdit.title || '';
+          el.recAmount.value = String(rEdit.amount || '');
+          el.recCat.value = rEdit.cat || 'other';
+          el.recPay.value = rEdit.pay || 'cash';
+          var subBtn = el.recForm.querySelector('button[type="submit"]');
+          if (subBtn) subBtn.textContent = 'পরিবর্তন সেভ করুন';
+          el.recTitle.focus();
+          el.recForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
         }
         var delBtn = ev.target.closest('button[data-rec-del]');
