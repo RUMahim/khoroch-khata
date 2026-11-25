@@ -377,14 +377,8 @@
     <!-- ================= TAB 1: LEDGER (INCOME & EXPENSE) ================= -->
     <div id="tab-ledger" class="tab-panel space-y-6">
 
-      <!-- Demo Mode Banner -->
-      <div id="demoBanner" class="hidden no-print flex items-center gap-2 px-4 py-3 rounded-2xl bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-700/40 text-sm text-brand-900 dark:text-brand-100">
-        <span>✨</span>
-        <span>এগুলো নমুনা হিসাব। আপনার প্রথম আয় বা খরচ যোগ করলেই এগুলো স্বয়ংক্রিয়ভাবে সরে যাবে।</span>
-      </div>
-
       <!-- Hero Summary Card: Income, Expense, Balance + Budget + Comparison + Wallets -->
-      <section class="print-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5" aria-label="মাসের সারাংশ">
+      <section class="print-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5 min-h-[248px]" aria-label="মাসের সারাংশ">
 
         <!-- Top 3 Financial Pillars: Income, Expense, Remaining Balance -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
@@ -413,7 +407,7 @@
           <!-- Budget Bar -->
           <div class="lg:col-span-6 space-y-2">
             <div class="flex items-center justify-between">
-              <p id="budgetText" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium"></p>
+              <p id="budgetText" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium min-h-[1.25rem]">মাসের খরচের বাজেট ঠিক করলে এখানে অগ্রগতি দেখাবে</p>
               <button type="button" id="budgetBtn" class="no-print text-xs sm:text-sm font-semibold text-brand-600 dark:text-brand-500 hover:underline underline-offset-4 shrink-0 ml-2">
                 বাজেট ঠিক করুন
               </button>
@@ -604,6 +598,12 @@
             <div id="list" class="space-y-5"></div>
           </section>
         </main>
+      </div>
+
+      <!-- Demo Mode Banner (placed below Grid to prevent CLS) -->
+      <div id="demoBanner" class="hidden no-print flex items-center gap-2 px-4 py-3 rounded-2xl bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-700/40 text-sm text-brand-900 dark:text-brand-100">
+        <span>✨</span>
+        <span>এগুলো নমুনা হিসাব। আপনার প্রথম আয় বা খরচ যোগ করলেই এগুলো স্বয়ংক্রিয়ভাবে সরে যাবে।</span>
       </div>
     </div>
 
