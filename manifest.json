@@ -1,0 +1,18 @@
+{
+  "name": "খরচের খাতা — পূর্ণাঙ্গ দৈনিক হিসাব",
+  "short_name": "খরচের খাতা",
+  "description": "দৈনন্দিন আয়-ব্যয়, মাসিক বাজেট, দেনা-পাওনা, নিয়মিত খরচ ও বাজারের ফর্দ হিসাব রাখার সহজ বাংলা অ্যাপ।",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0d7a61",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

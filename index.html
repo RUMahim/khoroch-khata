@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="দৈনন্দিন আয়-ব্যয়, মাসিক বাজেট, দেনা-পাওনা (হালখাতা), নিয়মিত খরচ ও বাজারের ফর্দ হিসাব রাখার সহজ ও প্রফেশনাল বাংলা ওয়েব অ্যাপ।">
   <meta name="theme-color" content="#0d7a61">
+  <link rel="manifest" href="/manifest.json">
   <title>খরচের খাতা — পূর্ণাঙ্গ দৈনিক হিসাব</title>
 
   <!-- Inline SVG Favicon (Prevents 404 on Live Hosting) -->
@@ -4391,10 +4392,19 @@
       renderAll();
       updateAuthUI();
       if (state.pin && !isPinUnlocked()) showLockScreen();
+      function registerOfflineSW() {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js').catch(function () {});
+        }
+      }
       if (document.readyState === 'complete') {
         setTimeout(loadFirebaseAndBoot, 50);
+        setTimeout(registerOfflineSW, 150);
       } else {
-        window.addEventListener('load', function () { setTimeout(loadFirebaseAndBoot, 50); });
+        window.addEventListener('load', function () {
+          setTimeout(loadFirebaseAndBoot, 50);
+          setTimeout(registerOfflineSW, 150);
+        });
       }
     })();
   </script>
