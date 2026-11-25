@@ -18,11 +18,7 @@
 
   <!-- Static Built Tailwind CSS -->
   <link rel="stylesheet" href="/styles.css?v=1">
-
-  <!-- Firebase App, Auth, and Firestore (Deferred for fast FCP/LCP) -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
   <!-- Initial Theme Detection (Prevents Flash of Wrong Theme) -->
   <script>
@@ -1117,10 +1113,10 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    (function () {
       'use strict';
 
-      /* ================= FIREBASE INITIALIZATION ================= */
+      /* ================= FIREBASE INITIALIZATION (LAZY AFTER FIRST PAINT) ================= */
       var firebaseConfig = {
         apiKey: "AIzaSyD4IBdMytSS1hocpUR8mVUzWahPBSA8FkM",
         authDomain: "expense-tracker-fdf3d.firebaseapp.com",
@@ -1131,17 +1127,36 @@
       };
 
       var fbApp = null, fbAuth = null, fbDb = null;
-      try {
-        if (typeof firebase !== 'undefined') {
+      function setupFirebase() {
+        try {
+          if (typeof firebase === 'undefined' || fbApp) return;
           fbApp = firebase.initializeApp(firebaseConfig);
           fbAuth = firebase.auth();
           fbDb = firebase.firestore();
           fbDb.enablePersistence({ synchronizeTabs: true }).catch(function (err) {
             console.warn("Firestore offline persistence notice:", err.message);
           });
+          attachFirebaseAuthListeners();
+        } catch (e) {
+          console.warn("Firebase initialization error:", e);
         }
-      } catch (e) {
-        console.warn("Firebase initialization error:", e);
+      }
+      function loadScriptSeq(urls, idx, done) {
+        if (idx >= urls.length) { done(); return; }
+        var s = document.createElement('script');
+        s.src = urls[idx];
+        s.async = true;
+        s.onload = function () { loadScriptSeq(urls, idx + 1, done); };
+        s.onerror = function () { console.warn('Failed to load:', urls[idx]); };
+        document.head.appendChild(s);
+      }
+      function loadFirebaseAndBoot() {
+        if (typeof firebase !== 'undefined') { setupFirebase(); return; }
+        loadScriptSeq([
+          'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',
+          'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js',
+          'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js'
+        ], 0, setupFirebase);
       }
 
       /* ================= DEFAULT CATEGORIES & METHODS ================= */
@@ -4277,7 +4292,8 @@
       });
 
       /* ================= FIREBASE AUTH STATE LISTENER ================= */
-      if (fbAuth) {
+      function attachFirebaseAuthListeners() {
+        if (!fbAuth) return;
         fbAuth.getRedirectResult().then(function (result) {
           if (result && result.user) {
             closeAuthModal();
@@ -4376,7 +4392,12 @@
       renderAll();
       updateAuthUI();
       if (state.pin && !isPinUnlocked()) showLockScreen();
-    });
+      if (window.requestAnimationFrame) {
+        requestAnimationFrame(function () { setTimeout(loadFirebaseAndBoot, 0); });
+      } else {
+        setTimeout(loadFirebaseAndBoot, 0);
+      }
+    })();
   </script>
 </body>
 </html>
