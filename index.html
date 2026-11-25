@@ -2783,9 +2783,17 @@
       el.chips.addEventListener('change', updatePlaceholders);
 
       /* ================= RENDER LEDGER ================= */
+      function monthLabel(ym) { return dfMonth.format(parseYmd(ym + '-01')); }
+      function nextMonthOf(ym) {
+        var p = ym.split('-');
+        var d = new Date(+p[0], +p[1], 1);
+        return d.getFullYear() + '-' + pad(d.getMonth() + 1);
+      }
+      var maxAllowedMonth = nextMonthOf(curMonth);
+
       function renderSummary(mAll, mExp, mInc, expTotal, incTotal) {
-        el.monthLabel.textContent = dfMonth.format(parseYmd(state.viewMonth + '-01'));
-        el.next.disabled = state.viewMonth >= curMonth;
+        el.monthLabel.textContent = monthLabel(state.viewMonth);
+        el.next.disabled = state.viewMonth >= maxAllowedMonth;
         el.demoBanner.classList.toggle('hidden', !isDemo());
 
         el.monthIncome.textContent = money(incTotal);
@@ -3195,12 +3203,27 @@
           return;
         }
         var mExp = monthAllItems(state.viewMonth).filter(function (i) { return i.type !== 'income'; });
+        var nextM = nextMonthOf(state.viewMonth);
+        var nextExp = monthAllItems(nextM).filter(function (i) { return i.type !== 'income'; });
         el.recList.innerHTML = state.recurring.map(function (r) {
           var c = catOf(r.cat, 'expense'), p = payOf(r.pay);
           var addedThisMonth = mExp.some(function (i) { return i.note === r.title && i.amount === r.amount; });
+          var addedNextMonth = nextExp.some(function (i) { return i.note === r.title && i.amount === r.amount; });
+          var nextBtnHtml = '';
+          if (state.viewMonth <= curMonth) {
+            nextBtnHtml = addedNextMonth
+              ? '<span class="inline-flex items-center px-2.5 py-1 rounded-xl text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 whitespace-nowrap">✓ পরের মাসেও যোগ</span>'
+              : '<button type="button" data-rec-add-next="' + esc(r.id) + '" class="px-2.5 py-1 rounded-xl text-xs font-semibold bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-700/60 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition active:scale-95 whitespace-nowrap">+ পরের মাসে যোগ</button>';
+          }
           var statusOrAddHtml = addedThisMonth
-            ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-700/40 whitespace-nowrap">✓ যোগ হয়েছে</span>'
-            : '<button type="button" data-rec-add="' + esc(r.id) + '" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white transition active:scale-95 whitespace-nowrap">+ এই মাসে যোগ</button>';
+            ? '<div class="flex flex-wrap items-center gap-1.5">' +
+                '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-700/40 whitespace-nowrap">✓ যোগ হয়েছে</span>' +
+                nextBtnHtml +
+              '</div>'
+            : '<div class="flex flex-wrap items-center gap-1.5">' +
+                '<button type="button" data-rec-add="' + esc(r.id) + '" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white transition active:scale-95 whitespace-nowrap">+ এই মাসে যোগ</button>' +
+                nextBtnHtml +
+              '</div>';
 
           return '<div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2.5">' +
             '<div class="flex items-start justify-between gap-3">' +
@@ -3693,10 +3716,13 @@
       });
       el.recList.addEventListener('click', function (ev) {
         var addBtn = ev.target.closest('button[data-rec-add]');
-        if (addBtn) {
-          var r = state.recurring.find(function (x) { return x.id === addBtn.getAttribute('data-rec-add'); });
+        var addNextBtn = ev.target.closest('button[data-rec-add-next]');
+        if (addBtn || addNextBtn) {
+          var recId = (addBtn || addNextBtn).getAttribute(addBtn ? 'data-rec-add' : 'data-rec-add-next');
+          var r = state.recurring.find(function (x) { return x.id === recId; });
           if (!r) return;
-          var targetDate = state.viewMonth === curMonth ? today : state.viewMonth + '-01';
+          var targetMonth = addNextBtn ? nextMonthOf(state.viewMonth) : state.viewMonth;
+          var targetDate = targetMonth === curMonth ? today : targetMonth + '-01';
           var itm = {
             id: newId(),
             familyId: state.activeLedgerId || (state.currentUser ? ('user_' + state.currentUser.uid) : ''),
@@ -3718,7 +3744,7 @@
           saveKey(KEYS.items, state.items);
           cloudSaveItem(itm);
           renderAll();
-          toast('"' + r.title + '" এই মাসের খরচে যোগ হয়েছে');
+          toast(addNextBtn ? ('"' + r.title + '" পরের মাসের (' + monthLabel(targetMonth) + ') খাতায় যোগ হয়েছে') : ('"' + r.title + '" এই মাসের খরচে যোগ হয়েছে'));
           return;
         }
         var editBtn = ev.target.closest('button[data-rec-edit]');
@@ -3950,7 +3976,7 @@
         var p = state.viewMonth.split('-');
         var d = new Date(+p[0], +p[1] - 1 + n, 1);
         var key = d.getFullYear() + '-' + pad(d.getMonth() + 1);
-        if (key > curMonth) return;
+        if (key > maxAllowedMonth) return;
         state.viewMonth = key;
         state.pendingDelete = '';
         renderAll();
